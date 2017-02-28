@@ -44,7 +44,7 @@ gulp.task('build', ['lint', 'clean'], function () {
 
 gulp.task('test-mocha', ['build'], function () {
     if (!process.env.BROWSERSTACK_USERNAME || !process.env.BROWSERSTACK_ACCESS_KEY)
-        throw new Error('Specify your credentials by using the SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables to authenticate to SauceLabs.');
+        throw new Error('Specify your credentials by using the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables to authenticate to BrowserStack.');
 
     process.env.NODE_PATH = PACKAGE_SEARCH_PATH;
 
@@ -59,7 +59,7 @@ gulp.task('test-mocha', ['build'], function () {
 
 gulp.task('test-testcafe', ['build'], function () {
     if (!process.env.BROWSERSTACK_USERNAME || !process.env.BROWSERSTACK_ACCESS_KEY)
-        throw new Error('Specify your credentials by using the SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables to authenticate to SauceLabs.');
+        throw new Error('Specify your credentials by using the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables to authenticate to BrowserStack.');
 
     var testCafeCmd = path.join(__dirname, 'node_modules/.bin/testcafe');
 

@@ -34,5 +34,7 @@ testCafe
     .run();
 ```
 
+Tip: you can skip version (`@53.0`) or/and OS name (`:Windows 10`).
+
 ## Author
 Developer Express Inc. (https://devexpress.com)

@@ -4,10 +4,36 @@ import request from 'request-promise';
 import parseCapabilities from 'desired-capabilities';
 import { Local as BrowserstackConnector } from 'browserstack-local';
 import jimp from 'jimp';
+import OS from 'os-family';
 
 
-const TESTS_TIMEOUT                = 1800;
+const TESTS_TIMEOUT                = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
 const BROWSERSTACK_CONNECTOR_DELAY = 10000;
+
+const MINIMAL_WORKER_TIME        = 30000;
+const TESTCAFE_CLOSING_TIMEOUT   = 10000;
+const TOO_SMALL_TIME_FOR_WAITING = MINIMAL_WORKER_TIME - TESTCAFE_CLOSING_TIMEOUT;
+
+const BROWSERSTACK_API_PATHS = {
+    browserList: {
+        url: 'https://api.browserstack.com/4/browsers?flat=true'
+    },
+
+    newWorker: {
+        url:    'https://api.browserstack.com/4/worker',
+        method: 'POST'
+    },
+
+    deleteWorker: id => ({
+        url:    `https://api.browserstack.com/4/worker/${id}`,
+        method: 'DELETE'
+    }),
+
+    screenshot: id => ({
+        url:          `https://api.browserstack.com/4/worker/${id}/screenshot.png`,
+        binaryStream: true
+    })
+};
 
 function delay (ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -17,7 +43,13 @@ function createBrowserStackConnector (accessKey) {
     return new Promise((resolve, reject) => {
         var connector = new BrowserstackConnector();
 
-        connector.start({ key: accessKey }, err => {
+        var opts = {
+            'key':                    accessKey,
+            'logfile':                OS.win ? 'NUL' : '/dev/null',
+            'enable-logging-for-api': true
+        };
+
+        connector.start(opts, err => {
             if (err) {
                 reject(err);
                 return;
@@ -41,7 +73,9 @@ function destroyBrowserStackConnector (connector) {
     });
 }
 
-function doRequest (url, method = 'GET', params = null, binaryStream = false) {
+function doRequest (apiPath, params) {
+    var url = apiPath.url;
+
     if (params)
         url += '?' + makeQueryString(params);
 
@@ -51,11 +85,11 @@ function doRequest (url, method = 'GET', params = null, binaryStream = false) {
             pass: process.env['BROWSERSTACK_ACCESS_KEY'],
         },
 
-        method: method,
-        json:   !binaryStream
+        method: apiPath.method || 'GET',
+        json:   !apiPath.binaryStream
     };
 
-    if (binaryStream)
+    if (apiPath.binaryStream)
         opts.encoding = null;
 
     return request(url, opts);
@@ -94,7 +128,7 @@ export default {
     },
 
     async _getDeviceList () {
-        this.platformsInfo = await doRequest('https://api.browserstack.com/4/browsers?flat=true');
+        this.platformsInfo = await doRequest(BROWSERSTACK_API_PATHS.browserList);
 
         this.platformsInfo.reverse();
     },
@@ -166,21 +200,22 @@ export default {
 
         await this._getConnector();
 
-        this.workers[id]         = await doRequest('https://api.browserstack.com/4/worker', 'POST', capabilities);
+        this.workers[id]         = await doRequest(BROWSERSTACK_API_PATHS.newWorker, capabilities);
         this.workers[id].started = Date.now();
     },
 
     async closeBrowser (id) {
         var workerTime = Date.now() - this.workers[id].started;
+        var workerId   = this.workers[id].id;
 
-        if (workerTime < 30000) {
-            if (workerTime < 20000)
-                await doRequest(`https://api.browserstack.com/4/worker/${this.workers[id].id}`, 'DELETE');
+        if (workerTime < MINIMAL_WORKER_TIME) {
+            if (workerTime < TOO_SMALL_TIME_FOR_WAITING)
+                await doRequest(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
 
-            await delay(30000 - workerTime);
+            await delay(MINIMAL_WORKER_TIME - workerTime);
         }
 
-        await doRequest(`https://api.browserstack.com/4/worker/${this.workers[id].id}`, 'DELETE');
+        await doRequest(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
     },
 
 
@@ -214,9 +249,7 @@ export default {
 
     async takeScreenshot (id, screenshotPath) {
         return new Promise(async (resolve, reject) => {
-            var url = `https://api.browserstack.com/4/worker/${this.workers[id].id}/screenshot.png`;
-
-            var buffer = await doRequest(url, 'GET', null, true);
+            var buffer = await doRequest(BROWSERSTACK_API_PATHS.screenshot(this.workers[id].id));
 
             jimp
                 .read(buffer)
