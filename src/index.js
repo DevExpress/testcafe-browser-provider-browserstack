@@ -14,6 +14,9 @@ const MINIMAL_WORKER_TIME        = 30000;
 const TESTCAFE_CLOSING_TIMEOUT   = 10000;
 const TOO_SMALL_TIME_FOR_WAITING = MINIMAL_WORKER_TIME - TESTCAFE_CLOSING_TIMEOUT;
 
+const AUTH_FAILED_ERROR = 'Authentication failed. Please set the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY ' +
+                          'environment variables to the correct pair of an username and an access key.';
+
 const BROWSERSTACK_API_PATHS = {
     browserList: {
         url: 'https://api.browserstack.com/4/browsers?flat=true'
@@ -74,6 +77,9 @@ function destroyBrowserStackConnector (connector) {
 }
 
 function doRequest (apiPath, params) {
+    if (!process.env['BROWSERSTACK_USERNAME'] || !process.env['BROWSERSTACK_ACCESS_KEY'])
+        throw new Error(AUTH_FAILED_ERROR);
+
     var url = apiPath.url;
 
     if (params)
@@ -92,7 +98,13 @@ function doRequest (apiPath, params) {
     if (apiPath.binaryStream)
         opts.encoding = null;
 
-    return request(url, opts);
+    return request(url, opts)
+        .catch(error => {
+            if (error.statusCode === 401)
+                throw new Error(AUTH_FAILED_ERROR);
+
+            throw error;
+        });
 }
 
 export default {
