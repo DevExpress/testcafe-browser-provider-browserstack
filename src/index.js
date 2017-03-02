@@ -14,8 +14,8 @@ const MINIMAL_WORKER_TIME        = 30000;
 const TESTCAFE_CLOSING_TIMEOUT   = 10000;
 const TOO_SMALL_TIME_FOR_WAITING = MINIMAL_WORKER_TIME - TESTCAFE_CLOSING_TIMEOUT;
 
-const AUTH_FAILED_ERROR = 'Authentication failed. Please set the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY ' +
-                          'environment variables to the correct pair of an username and an access key.';
+const AUTH_FAILED_ERROR = 'Authentication failed. Please assign the correct username and access key ' +
+                          'to the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables.';
 
 const BROWSERSTACK_API_PATHS = {
     browserList: {
