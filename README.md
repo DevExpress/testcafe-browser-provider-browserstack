@@ -36,5 +36,13 @@ testCafe
 
 Tip: you can skip version (`@53.0`) or/and OS name (`:Windows 10`).
 
+## Browserstack Proxy Options
+Proxy options can be passed via envrionment variables.
+
+BROWSERSTACK_PROXY - This string needs to be in the form of `user:pass@proxyHostName:port`
+BROWERSTACK_LOCAL_PROXY - This string needs to be in the form of `user:pass@proxyHostName:port` 
+BROWSERSTACK_FORCE_LOCAL - This can be true or omitted for false
+BROWSERSTACK_FORCE_PROXY - This can be true or omitted for false
+
 ## Author
 Developer Express Inc. (https://devexpress.com)

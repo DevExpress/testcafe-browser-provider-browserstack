@@ -5,7 +5,7 @@ import parseCapabilities from 'desired-capabilities';
 import { Local as BrowserstackConnector } from 'browserstack-local';
 import jimp from 'jimp';
 import OS from 'os-family';
-
+import nodeUrl from 'url';
 
 const TESTS_TIMEOUT                = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
 const BROWSERSTACK_CONNECTOR_DELAY = 10000;
@@ -42,15 +42,60 @@ function delay (ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function getProxyOptions (environmentVariable) {
+    var browserstackProxy = process.env[environmentVariable];
+    var proxyOptions;
+
+    if (browserstackProxy) {
+        var proxyURL = nodeUrl.parse('http://' + browserstackProxy);
+
+        if (proxyURL) {
+            proxyOptions = {};
+
+            if (proxyURL.auth) {
+                var auth = proxyURL.auth.split(':');
+
+                proxyOptions.user = auth[0];
+                proxyOptions.password = auth.length === 2 ? auth[1] : '';
+            }
+
+            if (proxyURL.host) {
+                proxyOptions.host = proxyURL.host.hostname;
+                proxyOptions.port = proxyURL.host.port;
+            }
+        }
+    }
+
+    return proxyOptions;
+}
+
 function createBrowserStackConnector (accessKey) {
     return new Promise((resolve, reject) => {
         var connector = new BrowserstackConnector();
+        var proxyOptions = getProxyOptions('BROWSERSTACK_PROXY');
+        var localProxyOptions = getProxyOptions('BROWSERSTACK_LOCAL_PROXY');
 
         var opts = {
             'key':                    accessKey,
             'logfile':                OS.win ? 'NUL' : '/dev/null',
-            'enable-logging-for-api': true
+            'enable-logging-for-api': true,
+            'forceLocal':             process.env['BROWSERSTACK_FORCE_LOCAL'] || false,
+            'forceProxy':             process.env['BROWSERSTACK_FORCE_PROXY'] || false
         };
+
+        if (proxyOptions) {
+            opts.proxyUser = proxyOptions.user;
+            opts.proxyPass = proxyOptions.password;
+            opts.proxyHost = proxyOptions.host;
+            opts.proxyPort = proxyOptions.port;
+        }
+
+        if (localProxyOptions) {
+            opts['local-proxy-user'] = localProxyOptions.user;
+            opts['local-proxy-pass'] = localProxyOptions.password;
+            opts['local-proxy-host'] = localProxyOptions.host;
+            opts['local-proxy-port'] = localProxyOptions.port;
+        }
 
         connector.start(opts, err => {
             if (err) {
