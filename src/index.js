@@ -15,7 +15,9 @@ const TESTCAFE_CLOSING_TIMEOUT   = 10000;
 const TOO_SMALL_TIME_FOR_WAITING = MINIMAL_WORKER_TIME - TESTCAFE_CLOSING_TIMEOUT;
 
 const AUTH_FAILED_ERROR = 'Authentication failed. Please assign the correct username and access key ' +
-                          'to the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables.';
+    'to the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables.';
+
+const PROXY_AUTH_RE = /^([^:]*):(.*)$/;
 
 const BROWSERSTACK_API_PATHS = {
     browserList: {
@@ -38,64 +40,56 @@ const BROWSERSTACK_API_PATHS = {
     })
 };
 
+const identity = x => x;
+
+const capitalize = str => str[0].toUpperCase() + str.slice(1);
+
 function delay (ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function getProxyOptions (environmentVariable) {
-    var browserstackProxy = process.env[environmentVariable];
-    var proxyOptions;
+function copyOptions (source, destination, transfromFunc = identity) {
+    Object
+        .keys(source)
+        .forEach(key => source[key] && (destination[transfromFunc(key)] = source[key]));
+}
 
-    if (browserstackProxy) {
-        var proxyURL = nodeUrl.parse('http://' + browserstackProxy);
+function getProxyOptions (proxyConfig) {
+    try {
+        var { hostname, port, auth } = nodeUrl.parse('http://' + proxyConfig);
+        var parsedAuth               = auth.match(PROXY_AUTH_RE);
 
-        if (proxyURL) {
-            proxyOptions = {};
-
-            if (proxyURL.auth) {
-                var auth = proxyURL.auth.split(':');
-
-                proxyOptions.user = auth[0];
-                proxyOptions.password = auth.length === 2 ? auth[1] : '';
-            }
-
-            if (proxyURL.host) {
-                proxyOptions.host = proxyURL.host.hostname;
-                proxyOptions.port = proxyURL.host.port;
-            }
-        }
+        return {
+            host: hostname,
+            port: port,
+            user: parsedAuth && parsedAuth[1],
+            pass: parsedAuth && parsedAuth[2]
+        };
     }
-
-    return proxyOptions;
+    catch (e) {
+        return {};
+    }
 }
 
 function createBrowserStackConnector (accessKey) {
     return new Promise((resolve, reject) => {
         var connector = new BrowserstackConnector();
-        var proxyOptions = getProxyOptions('BROWSERSTACK_PROXY');
-        var localProxyOptions = getProxyOptions('BROWSERSTACK_LOCAL_PROXY');
 
         var opts = {
-            'key':                    accessKey,
-            'logfile':                OS.win ? 'NUL' : '/dev/null',
-            'enable-logging-for-api': true,
-            'forceLocal':             process.env['BROWSERSTACK_FORCE_LOCAL'] || false,
-            'forceProxy':             process.env['BROWSERSTACK_FORCE_PROXY'] || false
+            key:        accessKey,
+            logfile:    OS.win ? 'NUL' : '/dev/null',
+            forceLocal: !!process.env['BROWSERSTACK_FORCE_LOCAL'],
+            forceProxy: !!process.env['BROWSERSTACK_FORCE_PROXY'],
+
+            //NOTE: additional args use different format
+            'enable-logging-for-api': true
         };
 
-        if (proxyOptions) {
-            opts.proxyUser = proxyOptions.user;
-            opts.proxyPass = proxyOptions.password;
-            opts.proxyHost = proxyOptions.host;
-            opts.proxyPort = proxyOptions.port;
-        }
+        var proxyOptions      = getProxyOptions(process.env['BROWSERSTACK_PROXY']);
+        var localProxyOptions = getProxyOptions(process.env['BROWSERSTACK_LOCAL_PROXY']);
 
-        if (localProxyOptions) {
-            opts['local-proxy-user'] = localProxyOptions.user;
-            opts['local-proxy-pass'] = localProxyOptions.password;
-            opts['local-proxy-host'] = localProxyOptions.host;
-            opts['local-proxy-port'] = localProxyOptions.port;
-        }
+        copyOptions(proxyOptions, opts, key => 'proxy' + capitalize(key));
+        copyOptions(localProxyOptions, opts, key => 'local-proxy-' + key);
 
         connector.start(opts, err => {
             if (err) {

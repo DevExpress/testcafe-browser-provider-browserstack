@@ -39,10 +39,10 @@ Tip: you can skip version (`@53.0`) or/and OS name (`:Windows 10`).
 ## Browserstack Proxy Options
 Proxy options can be passed via envrionment variables.
 
-BROWSERSTACK_PROXY - This string needs to be in the form of `user:pass@proxyHostName:port`
-BROWERSTACK_LOCAL_PROXY - This string needs to be in the form of `user:pass@proxyHostName:port` 
-BROWSERSTACK_FORCE_LOCAL - This can be true or omitted for false
-BROWSERSTACK_FORCE_PROXY - This can be true or omitted for false
+ - `BROWSERSTACK_PROXY` - a string that specifies a proxy for the Browserstack local binary. It should have the following structure: `user:pass@proxyHostName:port`,
+ - `BROWERSTACK_LOCAL_PROXY` - a string that specifies a proxy for the local web server. It should have the following structure: `user:pass@proxyHostName:port`, 
+ - `BROWSERSTACK_FORCE_PROXY` - if it's not empty, forces all traffic of Browserstack local binary to go through the proxy,
+ - `BROWSERSTACK_FORCE_LOCAL` - if it's not empty, forces all traffic of Browserstack local binary to go through the local machine
 
 ## Author
 Developer Express Inc. (https://devexpress.com)
