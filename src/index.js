@@ -17,7 +17,7 @@ const TOO_SMALL_TIME_FOR_WAITING = MINIMAL_WORKER_TIME - TESTCAFE_CLOSING_TIMEOU
 const AUTH_FAILED_ERROR = 'Authentication failed. Please assign the correct username and access key ' +
     'to the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables.';
 
-const PROXY_AUTH_RE = /^([^:]*):(.*)$/;
+const PROXY_AUTH_RE = /^([^:]*)(?::(.*))?$/;
 
 const BROWSERSTACK_API_PATHS = {
     browserList: {
@@ -57,10 +57,10 @@ function copyOptions (source, destination, transfromFunc = identity) {
 function getProxyOptions (proxyConfig) {
     try {
         var { hostname, port, auth } = nodeUrl.parse('http://' + proxyConfig);
-        var parsedAuth               = auth.match(PROXY_AUTH_RE);
+        var parsedAuth               = auth && auth.match(PROXY_AUTH_RE);
 
         return {
-            host: hostname,
+            host: hostname === 'undefined' ? null : hostname,
             port: port,
             user: parsedAuth && parsedAuth[1],
             pass: parsedAuth && parsedAuth[2]
@@ -76,10 +76,11 @@ function createBrowserStackConnector (accessKey) {
         var connector = new BrowserstackConnector();
 
         var opts = {
-            key:        accessKey,
-            logfile:    OS.win ? 'NUL' : '/dev/null',
-            forceLocal: !!process.env['BROWSERSTACK_FORCE_LOCAL'],
-            forceProxy: !!process.env['BROWSERSTACK_FORCE_PROXY'],
+            key:             accessKey,
+            logfile:         OS.win ? 'NUL' : '/dev/null',
+            forceLocal:      !!process.env['BROWSERSTACK_FORCE_LOCAL'],
+            forceProxy:      !!process.env['BROWSERSTACK_FORCE_PROXY'],
+            localIdentifier: Date.now(),
 
             //NOTE: additional args use different format
             'enable-logging-for-api': true
@@ -244,12 +245,13 @@ export default {
     // Browser control
     async openBrowser (id, pageUrl, browserName) {
         var capabilities = this._generateCapabilities(browserName);
+        var connector    = await this._getConnector();
 
-        capabilities.timeout = TESTS_TIMEOUT;
-        capabilities.url     = pageUrl;
-        capabilities.name    = `TestCafe test run ${id}`;
-
-        await this._getConnector();
+        capabilities.timeout              = TESTS_TIMEOUT;
+        capabilities.url                  = pageUrl;
+        capabilities.name                 = `TestCafe test run ${id}`;
+        capabilities.localIdentifier      = connector.localIdentifierFlag;
+        capabilities['browserstack.local'] = true;
 
         this.workers[id]         = await doRequest(BROWSERSTACK_API_PATHS.newWorker, capabilities);
         this.workers[id].started = Date.now();
