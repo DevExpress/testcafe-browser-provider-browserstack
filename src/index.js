@@ -82,6 +82,8 @@ function createBrowserStackConnector (accessKey) {
             forceProxy:      !!process.env['BROWSERSTACK_FORCE_PROXY'],
             localIdentifier: Date.now(),
 
+            force: true, //Stop previously not properly closed BrowserStack client before run
+
             //NOTE: additional args use different format
             'enable-logging-for-api': true
         };
