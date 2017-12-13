@@ -29,8 +29,8 @@ describe('Browser names', function () {
                     'ie@11.0:Windows 8.1',
                     'edge@14.0:Windows 10',
                     'iPhone 6@8.3',
-                    'iPhone SE@10.0',
-                    'iPad Pro (9.7 inch)@10.0',
+                    'iPhone SE@10.3',
+                    'iPad Pro (9.7 inch)@10.3',
                     'Google Nexus 5@5.0'
                 ]);
             });
