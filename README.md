@@ -12,6 +12,8 @@ npm install testcafe-browser-provider-browserstack
 ## Usage
 Before using this plugin, save the BrowserStack username and access key to environment variables `BROWSERSTACK_USERNAME` and `BROWSERSTACK_ACCESS_KEY`.
 
+Project name and build name will be displayed in BrowserStack if you set the environment variables `BROWSERSTACK_PROJECT_NAME` and `BROWSERSTACK_BUILD_ID`.
+
 You can determine the available browser aliases by running
 ```
 testcafe -b browserstack

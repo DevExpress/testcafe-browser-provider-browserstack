@@ -1,4 +1,3 @@
-import { stringify as makeQueryString } from 'querystring';
 import Promise from 'pinkie';
 import request from 'request-promise';
 import parseCapabilities from 'desired-capabilities';
@@ -6,6 +5,9 @@ import { Local as BrowserstackConnector } from 'browserstack-local';
 import jimp from 'jimp';
 import OS from 'os-family';
 import nodeUrl from 'url';
+
+const BUILD_ID = process.env['BROWSERSTACK_BUILD_ID'];
+const PROJECT_NAME = process.env['BROWSERSTACK_PROJECT_NAME'];
 
 const TESTS_TIMEOUT                = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
 const BROWSERSTACK_CONNECTOR_DELAY = 10000;
@@ -122,14 +124,17 @@ function doRequest (apiPath, params) {
 
     var url = apiPath.url;
 
-    if (params)
-        url += '?' + makeQueryString(params);
-
     var opts = {
         auth: {
             user: process.env['BROWSERSTACK_USERNAME'],
             pass: process.env['BROWSERSTACK_ACCESS_KEY'],
         },
+
+        qs: Object.assign({},
+            BUILD_ID && { build: BUILD_ID },
+            PROJECT_NAME && { project: PROJECT_NAME },
+            params
+        ),
 
         method: apiPath.method || 'GET',
         json:   !apiPath.binaryStream
