@@ -1,4 +1,3 @@
-import { stringify as makeQueryString } from 'querystring';
 import Promise from 'pinkie';
 import request from 'request-promise';
 import parseCapabilities from 'desired-capabilities';
@@ -125,19 +124,17 @@ function doRequest (apiPath, params) {
 
     var url = apiPath.url;
 
-    if (params)
-        url += '?' + makeQueryString(params);
-
     var opts = {
         auth: {
             user: process.env['BROWSERSTACK_USERNAME'],
             pass: process.env['BROWSERSTACK_ACCESS_KEY'],
         },
 
-        qs: {
-            ...BUILD_ID && { build: BUILD_ID },
-            ...PROJECT_NAME && { project: PROJECT_NAME }
-        },
+        qs: Object.assign({},
+            BUILD_ID && { build: BUILD_ID },
+            PROJECT_NAME && { project: PROJECT_NAME },
+            params
+        ),
 
         method: apiPath.method || 'GET',
         json:   !apiPath.binaryStream
