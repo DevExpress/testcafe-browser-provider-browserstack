@@ -3,6 +3,9 @@
   "version": "1.1.1",
   "description": "browserstack TestCafe browser provider plugin.",
   "repository": "https://github.com/DevExpress/testcafe-browser-provider-browserstack",
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "homepage": "https://github.com/DevExpress/testcafe-browser-provider-browserstack",
   "author": {
     "name": "Andrey Belym",
