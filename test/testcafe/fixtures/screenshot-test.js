@@ -7,8 +7,8 @@ import { tmpNameSync as getTempFileName } from 'tmp';
 
 fixture `Screenshot`
     .page('https://google.com')
-    .beforeEach(() => del('.screenshots/*'))
-    .afterEach(() => del('.screenshots/*'));
+    .before(() => del('.screenshots/*'))
+    .after(() => del('.screenshots/*'));
 
 test('Take screenshot', async t => {
     var screenshotName = getTempFileName({ template: 'screenshot-XXXXXX.png' });
