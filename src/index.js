@@ -75,15 +75,17 @@ function getProxyOptions (proxyConfig) {
 
 function createBrowserStackConnector (accessKey) {
     return new Promise((resolve, reject) => {
-        var connector = new BrowserstackConnector();
-
+        var connector    = new BrowserstackConnector();
+        var parallelRuns = process.env['BROWSERSTACK_PARALLEL_RUNS'];
+        
         var opts = {
             key:             accessKey,
             logfile:         OS.win ? 'NUL' : '/dev/null',
             forceLocal:      !!process.env['BROWSERSTACK_FORCE_LOCAL'],
             forceProxy:      !!process.env['BROWSERSTACK_FORCE_PROXY'],
             localIdentifier: Date.now(),
-            parallelRuns:    process.env['BROWSERSTACK_PARALLEL_RUNS'] || 1,
+
+            ...parallelRuns ? { parallelRuns } : {},
 
             //NOTE: additional args use different format
             'enable-logging-for-api': true
