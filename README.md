@@ -14,8 +14,8 @@ Before using this plugin, save the BrowserStack username and access key to envir
 
 Project name and build name will be displayed in BrowserStack if you set the environment variables `BROWSERSTACK_PROJECT_NAME` and `BROWSERSTACK_BUILD_ID`.
 
-If you have troubles with starting multiple browsers at once, or `browserstack-local` related errors like [#27](https://github.com/DevExpress/testcafe-browser-provider-browserstack/issues/27), 
-try to set the `BROWSERSTACK_PARALLEL_RUNS` environment variable to the number of simultaneous browsers you want to run, or to 1 if you want to run just one browser. 
+If you have troubles starting multiple browsers at once, or get browserstack-local related errors like [#27](https://github.com/DevExpress/testcafe-browser-provider-browserstack/issues/27),
+try setting the BROWSERSTACK_PARALLEL_RUNS environment variable to the number of browsers you want to run simultaneously, or to 1 if you want to run just one browser. 
 
 You can determine the available browser aliases by running
 ```
