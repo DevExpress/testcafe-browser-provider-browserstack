@@ -83,6 +83,7 @@ function createBrowserStackConnector (accessKey) {
             forceLocal:      !!process.env['BROWSERSTACK_FORCE_LOCAL'],
             forceProxy:      !!process.env['BROWSERSTACK_FORCE_PROXY'],
             localIdentifier: Date.now(),
+            parallelRuns:    process.env['BROWSERSTACK_PARALLEL_RUNS'] || 1,
 
             //NOTE: additional args use different format
             'enable-logging-for-api': true

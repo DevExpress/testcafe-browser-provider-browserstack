@@ -14,6 +14,8 @@ Before using this plugin, save the BrowserStack username and access key to envir
 
 Project name and build name will be displayed in BrowserStack if you set the environment variables `BROWSERSTACK_PROJECT_NAME` and `BROWSERSTACK_BUILD_ID`.
 
+You can set the number of [parallel runs](https://www.browserstack.com/question/581) by setting the `BROWSERSTACK_PARALLEL_RUNS` environment variable (defaults to `1`).
+
 You can determine the available browser aliases by running
 ```
 testcafe -b browserstack
