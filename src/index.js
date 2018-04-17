@@ -1,3 +1,4 @@
+import { parse as parseUrl } from 'url';
 import Promise from 'pinkie';
 import request from 'request-promise';
 import parseCapabilities from 'desired-capabilities';
@@ -5,6 +6,8 @@ import { Local as BrowserstackConnector } from 'browserstack-local';
 import jimp from 'jimp';
 import OS from 'os-family';
 import nodeUrl from 'url';
+import BrowserProxy from './browser-proxy';
+
 
 const BUILD_ID = process.env['BROWSERSTACK_BUILD_ID'];
 const PROJECT_NAME = process.env['BROWSERSTACK_PROJECT_NAME'];
@@ -15,6 +18,8 @@ const BROWSERSTACK_CONNECTOR_DELAY = 10000;
 const MINIMAL_WORKER_TIME        = 30000;
 const TESTCAFE_CLOSING_TIMEOUT   = 10000;
 const TOO_SMALL_TIME_FOR_WAITING = MINIMAL_WORKER_TIME - TESTCAFE_CLOSING_TIMEOUT;
+
+const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
 const AUTH_FAILED_ERROR = 'Authentication failed. Please assign the correct username and access key ' +
     'to the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables.';
@@ -77,7 +82,7 @@ function createBrowserStackConnector (accessKey) {
     return new Promise((resolve, reject) => {
         var connector    = new BrowserstackConnector();
         var parallelRuns = process.env['BROWSERSTACK_PARALLEL_RUNS'];
-        
+
         var opts = {
             key:             accessKey,
             logfile:         OS.win ? 'NUL' : '/dev/null',
@@ -157,11 +162,14 @@ function doRequest (apiPath, params) {
 
 export default {
     // Multiple browsers support
-    isMultiBrowser:   true,
-    connectorPromise: Promise.resolve(null),
-    workers:          {},
-    platformsInfo:    [],
-    browserNames:     [],
+    isMultiBrowser: true,
+
+    connectorPromise:    Promise.resolve(null),
+    browserProxyPromise: Promise.resolve(null),
+
+    workers:       {},
+    platformsInfo: [],
+    browserNames:  [],
 
     _getConnector () {
         this.connectorPromise = this.connectorPromise
@@ -185,6 +193,33 @@ export default {
             });
 
         return this.connectorPromise;
+    },
+
+    _getBrowserProxy (host, port) {
+        this.browserProxyPromise = this.browserProxyPromise
+            .then(async browserProxy => {
+                if (!browserProxy) {
+                    browserProxy = new BrowserProxy(host, port, { responseDelay: ANDROID_PROXY_RESPONSE_DELAY });
+
+                    await browserProxy.init();
+                }
+
+                return browserProxy;
+            });
+
+        return this.browserProxyPromise;
+    },
+
+    _disposeBrowserProxy () {
+        this.browserProxyPromise = this.browserProxyPromise
+            .then(async browserProxy => {
+                if (browserProxy)
+                    await browserProxy.dispose();
+
+                return null;
+            });
+
+        return this.browserProxyPromise;
     },
 
     async _getDeviceList () {
@@ -255,10 +290,17 @@ export default {
         var capabilities = this._generateCapabilities(browserName);
         var connector    = await this._getConnector();
 
-        capabilities.timeout              = TESTS_TIMEOUT;
-        capabilities.url                  = pageUrl;
-        capabilities.name                 = `TestCafe test run ${id}`;
-        capabilities.localIdentifier      = connector.localIdentifierFlag;
+        if (capabilities.os.toLowerCase() === 'android') {
+            const parsedPageUrl = parseUrl(pageUrl);
+            const browserProxy  = await this._getBrowserProxy(parsedPageUrl.hostname, parsedPageUrl.port);
+
+            pageUrl = 'http://' + browserProxy.targetHost + ':' + browserProxy.proxyPort + parsedPageUrl.path;
+        }
+
+        capabilities.timeout               = TESTS_TIMEOUT;
+        capabilities.url                   = pageUrl;
+        capabilities.name                  = `TestCafe test run ${id}`;
+        capabilities.localIdentifier       = connector.localIdentifierFlag;
         capabilities['browserstack.local'] = true;
 
         this.workers[id]         = await doRequest(BROWSERSTACK_API_PATHS.newWorker, capabilities);
@@ -290,6 +332,7 @@ export default {
 
     async dispose () {
         await this._disposeConnector();
+        await this._disposeBrowserProxy();
     },
 
 
