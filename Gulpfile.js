@@ -64,7 +64,7 @@ gulp.task('test-testcafe', ['build'], function () {
     var testCafeCmd = path.join(__dirname, 'node_modules/.bin/testcafe');
 
     var testCafeOpts = [
-        'browserstack:chrome',
+        'browserstack:chrome,browserstack:Google Pixel,browserstack:iPhone SE',
         'test/testcafe/**/*.js',
         '-s', '.screenshots'
     ];

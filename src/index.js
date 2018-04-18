@@ -1,13 +1,14 @@
+import { parse as parseUrl } from 'url';
 import Promise from 'pinkie';
-import request from 'request-promise';
 import parseCapabilities from 'desired-capabilities';
 import { Local as BrowserstackConnector } from 'browserstack-local';
 import jimp from 'jimp';
 import OS from 'os-family';
 import nodeUrl from 'url';
+import apiRequest from './api-request';
+import BrowserProxy from './browser-proxy';
+import delay from './utils/delay';
 
-const BUILD_ID = process.env['BROWSERSTACK_BUILD_ID'];
-const PROJECT_NAME = process.env['BROWSERSTACK_PROJECT_NAME'];
 
 const TESTS_TIMEOUT                = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
 const BROWSERSTACK_CONNECTOR_DELAY = 10000;
@@ -16,8 +17,7 @@ const MINIMAL_WORKER_TIME        = 30000;
 const TESTCAFE_CLOSING_TIMEOUT   = 10000;
 const TOO_SMALL_TIME_FOR_WAITING = MINIMAL_WORKER_TIME - TESTCAFE_CLOSING_TIMEOUT;
 
-const AUTH_FAILED_ERROR = 'Authentication failed. Please assign the correct username and access key ' +
-    'to the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables.';
+const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
 const PROXY_AUTH_RE = /^([^:]*)(?::(.*))?$/;
 
@@ -46,10 +46,6 @@ const identity = x => x;
 
 const capitalize = str => str[0].toUpperCase() + str.slice(1);
 
-function delay (ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 function copyOptions (source, destination, transfromFunc = identity) {
     Object
         .keys(source)
@@ -77,7 +73,7 @@ function createBrowserStackConnector (accessKey) {
     return new Promise((resolve, reject) => {
         var connector    = new BrowserstackConnector();
         var parallelRuns = process.env['BROWSERSTACK_PARALLEL_RUNS'];
-        
+
         var opts = {
             key:             accessKey,
             logfile:         OS.win ? 'NUL' : '/dev/null',
@@ -121,47 +117,16 @@ function destroyBrowserStackConnector (connector) {
     });
 }
 
-function doRequest (apiPath, params) {
-    if (!process.env['BROWSERSTACK_USERNAME'] || !process.env['BROWSERSTACK_ACCESS_KEY'])
-        throw new Error(AUTH_FAILED_ERROR);
-
-    var url = apiPath.url;
-
-    var opts = {
-        auth: {
-            user: process.env['BROWSERSTACK_USERNAME'],
-            pass: process.env['BROWSERSTACK_ACCESS_KEY'],
-        },
-
-        qs: Object.assign({},
-            BUILD_ID && { build: BUILD_ID },
-            PROJECT_NAME && { project: PROJECT_NAME },
-            params
-        ),
-
-        method: apiPath.method || 'GET',
-        json:   !apiPath.binaryStream
-    };
-
-    if (apiPath.binaryStream)
-        opts.encoding = null;
-
-    return request(url, opts)
-        .catch(error => {
-            if (error.statusCode === 401)
-                throw new Error(AUTH_FAILED_ERROR);
-
-            throw error;
-        });
-}
-
 export default {
     // Multiple browsers support
-    isMultiBrowser:   true,
-    connectorPromise: Promise.resolve(null),
-    workers:          {},
-    platformsInfo:    [],
-    browserNames:     [],
+    isMultiBrowser: true,
+
+    connectorPromise:    Promise.resolve(null),
+    browserProxyPromise: Promise.resolve(null),
+
+    workers:       {},
+    platformsInfo: [],
+    browserNames:  [],
 
     _getConnector () {
         this.connectorPromise = this.connectorPromise
@@ -187,8 +152,35 @@ export default {
         return this.connectorPromise;
     },
 
+    _getBrowserProxy (host, port) {
+        this.browserProxyPromise = this.browserProxyPromise
+            .then(async browserProxy => {
+                if (!browserProxy) {
+                    browserProxy = new BrowserProxy(host, port, { responseDelay: ANDROID_PROXY_RESPONSE_DELAY });
+
+                    await browserProxy.init();
+                }
+
+                return browserProxy;
+            });
+
+        return this.browserProxyPromise;
+    },
+
+    _disposeBrowserProxy () {
+        this.browserProxyPromise = this.browserProxyPromise
+            .then(async browserProxy => {
+                if (browserProxy)
+                    await browserProxy.dispose();
+
+                return null;
+            });
+
+        return this.browserProxyPromise;
+    },
+
     async _getDeviceList () {
-        this.platformsInfo = await doRequest(BROWSERSTACK_API_PATHS.browserList);
+        this.platformsInfo = await apiRequest(BROWSERSTACK_API_PATHS.browserList);
 
         this.platformsInfo.reverse();
     },
@@ -255,13 +247,20 @@ export default {
         var capabilities = this._generateCapabilities(browserName);
         var connector    = await this._getConnector();
 
-        capabilities.timeout              = TESTS_TIMEOUT;
-        capabilities.url                  = pageUrl;
-        capabilities.name                 = `TestCafe test run ${id}`;
-        capabilities.localIdentifier      = connector.localIdentifierFlag;
+        if (capabilities.os.toLowerCase() === 'android') {
+            const parsedPageUrl = parseUrl(pageUrl);
+            const browserProxy  = await this._getBrowserProxy(parsedPageUrl.hostname, parsedPageUrl.port);
+
+            pageUrl = 'http://' + browserProxy.targetHost + ':' + browserProxy.proxyPort + parsedPageUrl.path;
+        }
+
+        capabilities.timeout               = TESTS_TIMEOUT;
+        capabilities.url                   = pageUrl;
+        capabilities.name                  = `TestCafe test run ${id}`;
+        capabilities.localIdentifier       = connector.localIdentifierFlag;
         capabilities['browserstack.local'] = true;
 
-        this.workers[id]         = await doRequest(BROWSERSTACK_API_PATHS.newWorker, capabilities);
+        this.workers[id]         = await apiRequest(BROWSERSTACK_API_PATHS.newWorker, capabilities);
         this.workers[id].started = Date.now();
     },
 
@@ -271,12 +270,12 @@ export default {
 
         if (workerTime < MINIMAL_WORKER_TIME) {
             if (workerTime < TOO_SMALL_TIME_FOR_WAITING)
-                await doRequest(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
+                await apiRequest(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
 
             await delay(MINIMAL_WORKER_TIME - workerTime);
         }
 
-        await doRequest(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
+        await apiRequest(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
     },
 
 
@@ -290,6 +289,7 @@ export default {
 
     async dispose () {
         await this._disposeConnector();
+        await this._disposeBrowserProxy();
     },
 
 
@@ -310,7 +310,7 @@ export default {
 
     async takeScreenshot (id, screenshotPath) {
         return new Promise(async (resolve, reject) => {
-            var buffer = await doRequest(BROWSERSTACK_API_PATHS.screenshot(this.workers[id].id));
+            var buffer = await apiRequest(BROWSERSTACK_API_PATHS.screenshot(this.workers[id].id));
 
             jimp
                 .read(buffer)
