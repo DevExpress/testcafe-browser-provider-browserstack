@@ -57,7 +57,7 @@ Browserstack offers two APIs for browser testing:
  JS testing supports more types of devices (compare: [JS Testing devices](https://www.browserstack.com/list-of-browsers-and-platforms?product=js_testing) 
  vs [Automate devices](https://www.browserstack.com/list-of-browsers-and-platforms?product=automate)), 
  while Automate allows for much longer tests ([2 hours](https://www.browserstack.com/automate/timeouts) vs [30 minutes](https://github.com/browserstack/api#timeout300)) 
- and provides some additional features (like a window resizing functionality).
+ and provides some additional features (like the window resizing functionality).
     
  TestCafe uses the JS Testing API by default. In order to use Browserstack Automate, 
  set the `BROWSERSTACK_USE_AUTOMATE` environment variable to `1`.
