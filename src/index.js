@@ -1,125 +1,27 @@
 import { parse as parseUrl } from 'url';
 import Promise from 'pinkie';
 import parseCapabilities from 'desired-capabilities';
-import { Local as BrowserstackConnector } from 'browserstack-local';
-import jimp from 'jimp';
-import OS from 'os-family';
-import nodeUrl from 'url';
-import apiRequest from './api-request';
+import BrowserstackConnector from './connector';
+import JSTestingBackend from './backends/js-testing';
+import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
-import delay from './utils/delay';
 
 
-const TESTS_TIMEOUT                = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
-const BROWSERSTACK_CONNECTOR_DELAY = 10000;
-
-const MINIMAL_WORKER_TIME        = 30000;
-const TESTCAFE_CLOSING_TIMEOUT   = 10000;
-const TOO_SMALL_TIME_FOR_WAITING = MINIMAL_WORKER_TIME - TESTCAFE_CLOSING_TIMEOUT;
+const BUILD_ID     = process.env['BROWSERSTACK_BUILD_ID'];
+const PROJECT_NAME = process.env['BROWSERSTACK_PROJECT_NAME'];
 
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
-const PROXY_AUTH_RE = /^([^:]*)(?::(.*))?$/;
-
-const BROWSERSTACK_API_PATHS = {
-    browserList: {
-        url: 'https://api.browserstack.com/4/browsers?flat=true'
-    },
-
-    newWorker: {
-        url:    'https://api.browserstack.com/4/worker',
-        method: 'POST'
-    },
-
-    deleteWorker: id => ({
-        url:    `https://api.browserstack.com/4/worker/${id}`,
-        method: 'DELETE'
-    }),
-
-    screenshot: id => ({
-        url:          `https://api.browserstack.com/4/worker/${id}/screenshot.png`,
-        binaryStream: true
-    })
-};
-
-const identity = x => x;
-
-const capitalize = str => str[0].toUpperCase() + str.slice(1);
-
-function copyOptions (source, destination, transfromFunc = identity) {
-    Object
-        .keys(source)
-        .forEach(key => source[key] && (destination[transfromFunc(key)] = source[key]));
+function isAutomateEnabled () {
+    return process.env['BROWSERSTACK_USE_AUTOMATE'] && process.env['BROWSERSTACK_USE_AUTOMATE'] !== '0';
 }
 
-function getProxyOptions (proxyConfig) {
-    try {
-        var { hostname, port, auth } = nodeUrl.parse('http://' + proxyConfig);
-        var parsedAuth               = auth && auth.match(PROXY_AUTH_RE);
-
-        return {
-            host: hostname === 'undefined' ? null : hostname,
-            port: port,
-            user: parsedAuth && parsedAuth[1],
-            pass: parsedAuth && parsedAuth[2]
-        };
-    }
-    catch (e) {
-        return {};
-    }
-}
-
-function createBrowserStackConnector (accessKey) {
-    return new Promise((resolve, reject) => {
-        var connector    = new BrowserstackConnector();
-        var parallelRuns = process.env['BROWSERSTACK_PARALLEL_RUNS'];
-
-        var opts = {
-            key:             accessKey,
-            logfile:         OS.win ? 'NUL' : '/dev/null',
-            forceLocal:      !!process.env['BROWSERSTACK_FORCE_LOCAL'],
-            forceProxy:      !!process.env['BROWSERSTACK_FORCE_PROXY'],
-            localIdentifier: Date.now(),
-
-            ...parallelRuns ? { parallelRuns } : {},
-
-            //NOTE: additional args use different format
-            'enable-logging-for-api': true
-        };
-
-        var proxyOptions      = getProxyOptions(process.env['BROWSERSTACK_PROXY']);
-        var localProxyOptions = getProxyOptions(process.env['BROWSERSTACK_LOCAL_PROXY']);
-
-        copyOptions(proxyOptions, opts, key => 'proxy' + capitalize(key));
-        copyOptions(localProxyOptions, opts, key => 'local-proxy-' + key);
-
-        connector.start(opts, err => {
-            if (err) {
-                reject(err);
-                return;
-            }
-
-            setTimeout(() => resolve(connector), BROWSERSTACK_CONNECTOR_DELAY);
-        });
-    });
-}
-
-function destroyBrowserStackConnector (connector) {
-    return new Promise((resolve, reject) => {
-        connector.stop(err => {
-            if (err) {
-                reject(err);
-                return;
-            }
-
-            resolve(connector);
-        });
-    });
-}
 
 export default {
     // Multiple browsers support
     isMultiBrowser: true,
+
+    backend: null,
 
     connectorPromise:    Promise.resolve(null),
     browserProxyPromise: Promise.resolve(null),
@@ -131,8 +33,11 @@ export default {
     _getConnector () {
         this.connectorPromise = this.connectorPromise
             .then(async connector => {
-                if (!connector)
-                    connector = await createBrowserStackConnector(process.env['BROWSERSTACK_ACCESS_KEY']);
+                if (!connector) {
+                    connector = new BrowserstackConnector(process.env['BROWSERSTACK_ACCESS_KEY']);
+
+                    await connector.create();
+                }
 
                 return connector;
             });
@@ -144,7 +49,7 @@ export default {
         this.connectorPromise = this.connectorPromise
             .then(async connector => {
                 if (connector)
-                    await destroyBrowserStackConnector(connector);
+                    await connector.destroy();
 
                 return null;
             });
@@ -180,9 +85,7 @@ export default {
     },
 
     async _getDeviceList () {
-        this.platformsInfo = await apiRequest(BROWSERSTACK_API_PATHS.browserList);
-
-        this.platformsInfo.reverse();
+        this.platformsInfo = await this.backend.getBrowsersList();
     },
 
     _createQuery (capabilities) {
@@ -254,34 +157,32 @@ export default {
             pageUrl = 'http://' + browserProxy.targetHost + ':' + browserProxy.proxyPort + parsedPageUrl.path;
         }
 
-        capabilities.timeout               = TESTS_TIMEOUT;
-        capabilities.url                   = pageUrl;
-        capabilities.name                  = `TestCafe test run ${id}`;
-        capabilities.localIdentifier       = connector.localIdentifierFlag;
-        capabilities['browserstack.local'] = true;
+        if (PROJECT_NAME)
+            capabilities.project = PROJECT_NAME;
 
-        this.workers[id]         = await apiRequest(BROWSERSTACK_API_PATHS.newWorker, capabilities);
-        this.workers[id].started = Date.now();
+        if (BUILD_ID)
+            capabilities.build = BUILD_ID;
+
+        capabilities.name            = `TestCafe test run ${id}`;
+        capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
+        capabilities.local           = true;
+
+        await this.backend.openBrowser(id, pageUrl, capabilities);
+
+        this.setUserAgentMetaInfo(id, this.backend.getSessionUrl(id));
     },
 
     async closeBrowser (id) {
-        var workerTime = Date.now() - this.workers[id].started;
-        var workerId   = this.workers[id].id;
-
-        if (workerTime < MINIMAL_WORKER_TIME) {
-            if (workerTime < TOO_SMALL_TIME_FOR_WAITING)
-                await apiRequest(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
-
-            await delay(MINIMAL_WORKER_TIME - workerTime);
-        }
-
-        await apiRequest(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
+        await this.backend.closeBrowser(id);
     },
-
 
     // Optional - implement methods you need, remove other methods
     // Initialization
     async init () {
+        var reportWarning = (...args) => this.reportWarning(...args);
+
+        this.backend = isAutomateEnabled() ? new AutomateBackend(reportWarning) : new JSTestingBackend(reportWarning);
+
         await this._getDeviceList();
 
         this._generateBrowserNames();
@@ -304,18 +205,20 @@ export default {
 
 
     // Extra methods
-    async resizeWindow (/* id, width, height, currentWidth, currentHeight */) {
-        this.reportWarning('The window resize functionality is not supported by the "browserstack" browser provider.');
+    async resizeWindow (id, width, height, currentWidth, currentHeight) {
+        await this.backend.resizeWindow(id, width, height, currentWidth, currentHeight);
     },
 
-    async takeScreenshot (id, screenshotPath) {
-        return new Promise(async (resolve, reject) => {
-            var buffer = await apiRequest(BROWSERSTACK_API_PATHS.screenshot(this.workers[id].id));
+    async maximizeWindow (id) {
+        await this.backend.maximizeWindow(id);
+    },
 
-            jimp
-                .read(buffer)
-                .then(image => image.write(screenshotPath, resolve))
-                .catch(reject);
-        });
+
+    async takeScreenshot (id, screenshotPath) {
+        await this.backend.takeScreenshot(id, screenshotPath);
+    },
+
+    async reportJobResult (id, jobResult, jobData) {
+        await this.backend.reportJobResult(id, jobResult, jobData, this.JOB_RESULT);
     }
 };

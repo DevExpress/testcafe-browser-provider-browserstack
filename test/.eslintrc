@@ -3,7 +3,9 @@
       "no-unused-expressions": 0
     },
     "env": {
-        "mocha": true
+      "mocha":   true,
+      "node":    true,
+      "browser": true
     },
     "globals": {
       "fixture": true
