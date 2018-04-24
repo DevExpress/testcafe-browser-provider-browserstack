@@ -9,7 +9,7 @@ import BrowserProxy from './browser-proxy';
 
 const BUILD_ID     = process.env['BROWSERSTACK_BUILD_ID'];
 const PROJECT_NAME = process.env['BROWSERSTACK_PROJECT_NAME'];
-const BROWSERSTACK_RESOLUTION = process.env['BROWSERSTACK_RESOLUTION'] || "1024x768";
+const BROWSERSTACK_RESOLUTION = process.env['BROWSERSTACK_RESOLUTION'] || '1024x768';
 
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
