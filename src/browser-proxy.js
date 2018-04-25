@@ -7,7 +7,7 @@ module.exports = class BrowserProxy {
     constructor (targetHost, targetPort, { proxyPort, responseDelay } = {}) {
         this.targetHost    = targetHost;
         this.targetPort    = targetPort;
-        this.proxyPort     = proxyPort;
+        this.proxyPort     = proxyPort || 0;
         this.responseDelay = responseDelay || 0;
 
         this.server = http.createServer((...args) => this._onBrowserRequest(...args));
