@@ -7,7 +7,6 @@ import createBrowserstackStatus from '../utils/create-browserstack-status';
 
 
 const TESTS_TIMEOUT     = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
-const SCREEN_RESOLUTION = process.env['BROWSERSTACK_RESOLUTION'] || '1024x768';
 
 const MINIMAL_WORKER_TIME        = 30000;
 const TESTCAFE_CLOSING_TIMEOUT   = 10000;
@@ -80,7 +79,6 @@ export default class JSTestingBackend extends BaseBackend {
 
             timeout:    TESTS_TIMEOUT,
             url:        pageUrl,
-            resolution: SCREEN_RESOLUTION,
 
             ...restCapabilities
         };

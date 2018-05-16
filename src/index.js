@@ -7,8 +7,9 @@ import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
 
 
-const BUILD_ID     = process.env['BROWSERSTACK_BUILD_ID'];
-const PROJECT_NAME = process.env['BROWSERSTACK_PROJECT_NAME'];
+const BUILD_ID           = process.env['BROWSERSTACK_BUILD_ID'];
+const PROJECT_NAME       = process.env['BROWSERSTACK_PROJECT_NAME'];
+const DISPLAY_RESOLUTION = process.env['BROWSERSTACK_DISPLAY_RESOLUTION'];
 
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
@@ -162,6 +163,9 @@ export default {
 
         if (BUILD_ID)
             capabilities.build = BUILD_ID;
+
+        if (DISPLAY_RESOLUTION)
+            capabilities.resolution = DISPLAY_RESOLUTION;
 
         capabilities.name            = `TestCafe test run ${id}`;
         capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
