@@ -41,6 +41,12 @@ testCafe
 
 Tip: you can skip version (`@53.0`) or/and OS name (`:Windows 10`).
 
+If you use JS testing (see [Browserstack JS Testing and Browserstack Automate](#browserstack-js-testing-and-browserstack-automate) below) and want to set the device resolution, use the `BROWSERSTACK_RESOLUTION` environment variable.
+Note for JS testing, changing the screen resolution during the test is not supported.
+So it can only be set once before the test starts.
+Supported resolutions can be found [here](https://github.com/browserstack/api#resolution).
+If you use Browserstack Automate, change the screen size with [TestCafe's native method](https://devexpress.github.io/testcafe/documentation/test-api/actions/resize-window.html). 
+
 ## Browserstack Proxy Options
 Proxy options can be passed via envrionment variables.
 
