@@ -6,7 +6,7 @@ import delay from '../utils/delay';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
 
 
-const TESTS_TIMEOUT     = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
+const TESTS_TIMEOUT = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
 
 const MINIMAL_WORKER_TIME        = 30000;
 const TESTCAFE_CLOSING_TIMEOUT   = 10000;
@@ -77,8 +77,8 @@ export default class JSTestingBackend extends BaseBackend {
         capabilities = {
             'browserstack.local': local,
 
-            timeout:    TESTS_TIMEOUT,
-            url:        pageUrl,
+            timeout: TESTS_TIMEOUT,
+            url:     pageUrl,
 
             ...restCapabilities
         };
