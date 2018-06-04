@@ -32,7 +32,10 @@ describe('Resolution Changing', function () {
     });
 
     after(function () {
-        process.env.BROWSERSTACK_DISPLAY_RESOLUTION = prevDisplayResolution;
+        if (prevDisplayResolution)
+            process.env.BROWSERSTACK_DISPLAY_RESOLUTION = prevDisplayResolution;
+        else
+            delete process.env.BROWSERSTACK_DISPLAY_RESOLUTION;
 
         return testcafe.close();
     });
