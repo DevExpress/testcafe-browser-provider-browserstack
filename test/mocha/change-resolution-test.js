@@ -20,7 +20,7 @@ describe('Resolution Changing', function () {
             .browsers('browserstack:chrome')
             .src('test/mocha/data/change-resolution-fixture.js')
             .filter(currentTestName => currentTestName === testName)
-            .reporter('simple', NULL_STREAM)
+            .reporter('minimal', NULL_STREAM)
             .run();
     }
 
