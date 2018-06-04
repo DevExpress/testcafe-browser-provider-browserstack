@@ -2,7 +2,7 @@ const expect  = require('chai').expect;
 const createTestCafe = require('testcafe');
 
 
-const NULL_STREAM     = () => ({ write: () => {}, end: () => {} });
+const NULL_STREAM     = { write: () => {}, end: () => {} };
 const LOW_RESOLUTION  = '1024x768';
 const HIGH_RESOLUTION = '1920x1080';
 
