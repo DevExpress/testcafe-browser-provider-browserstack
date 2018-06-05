@@ -6,10 +6,6 @@ import JSTestingBackend from './backends/js-testing';
 import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
 
-
-const BUILD_ID     = process.env['BROWSERSTACK_BUILD_ID'];
-const PROJECT_NAME = process.env['BROWSERSTACK_PROJECT_NAME'];
-
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
 function isAutomateEnabled () {
@@ -29,6 +25,21 @@ export default {
     workers:       {},
     platformsInfo: [],
     browserNames:  [],
+
+    _addEnvironmentPreferencesToCapabilities (capabilities) {
+        const BUILD_ID           = process.env['BROWSERSTACK_BUILD_ID'];
+        const PROJECT_NAME       = process.env['BROWSERSTACK_PROJECT_NAME'];
+        const DISPLAY_RESOLUTION = process.env['BROWSERSTACK_DISPLAY_RESOLUTION'];
+
+        if (PROJECT_NAME)
+            capabilities.project = PROJECT_NAME;
+
+        if (BUILD_ID)
+            capabilities.build = BUILD_ID;
+
+        if (DISPLAY_RESOLUTION)
+            capabilities.resolution = DISPLAY_RESOLUTION;
+    },
 
     _getConnector () {
         this.connectorPromise = this.connectorPromise
@@ -157,11 +168,7 @@ export default {
             pageUrl = 'http://' + browserProxy.targetHost + ':' + browserProxy.proxyPort + parsedPageUrl.path;
         }
 
-        if (PROJECT_NAME)
-            capabilities.project = PROJECT_NAME;
-
-        if (BUILD_ID)
-            capabilities.build = BUILD_ID;
+        this._addEnvironmentPreferencesToCapabilities(capabilities);
 
         capabilities.name            = `TestCafe test run ${id}`;
         capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;

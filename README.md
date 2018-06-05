@@ -62,5 +62,10 @@ Browserstack offers two APIs for browser testing:
  TestCafe uses the JS Testing API by default. In order to use Browserstack Automate, 
  set the `BROWSERSTACK_USE_AUTOMATE` environment variable to `1`.
 
+## Setting display resolution
+
+To set the display resolution, use the `BROWSERSTACK_DISPLAY_RESOLUTION` environment variable.
+Valid resolutions can be found [here](https://github.com/browserstack/api#resolution).
+
 ## Author
 Developer Express Inc. (https://devexpress.com)
