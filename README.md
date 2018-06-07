@@ -49,6 +49,12 @@ Proxy options can be passed via envrionment variables.
  - `BROWSERSTACK_FORCE_PROXY` - if it's not empty, forces all traffic of Browserstack local binary to go through the proxy,
  - `BROWSERSTACK_FORCE_LOCAL` - if it's not empty, forces all traffic of Browserstack local binary to go through the local machine
 
+## Browserstack target resolution
+Resolution specification can be passed via environment variables.
+
+ - `BROWSERSTACK_RESOLUTION` - a string that specifies the target resolution (default is 1024x768)
+
+
 ## Browserstack JS Testing and Browserstack Automate 
 Browserstack offers two APIs for browser testing:
  - [Browserstack JS Testing](https://www.browserstack.com/javascript-testing-api)
