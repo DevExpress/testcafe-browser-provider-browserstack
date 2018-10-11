@@ -106,5 +106,15 @@ export BROWSERSTACK_CHROME_ARGS="--start-maximized --autoplay-policy=no-user-ges
 testcafe browserstack:chrome test.js
 ```
 
+## Extra capabilities
+
+Browserstack has a few more custom capabilities. You can find the expected values [here](https://www.browserstack.com/automate/capabilities).
+
+- `BROWSERSTACK_DEBUG`
+- `BROWSERSTACK_CONSOLE`
+- `BROWSERSTACK_NETWORK_LOGS`
+- `BROWSERSTACK_VIDEO`
+- `BROWSERSTACK_TIMEZONE`
+
 ## Author
 Developer Express Inc. (https://devexpress.com)
