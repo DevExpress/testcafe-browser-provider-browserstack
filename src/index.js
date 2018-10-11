@@ -27,18 +27,31 @@ export default {
     browserNames:  [],
 
     _addEnvironmentPreferencesToCapabilities (capabilities) {
-        const BUILD_ID           = process.env['BROWSERSTACK_BUILD_ID'];
-        const PROJECT_NAME       = process.env['BROWSERSTACK_PROJECT_NAME'];
-        const DISPLAY_RESOLUTION = process.env['BROWSERSTACK_DISPLAY_RESOLUTION'];
+        /**
+         * This maps env var BROWSERSTACK_${key} to capabilities[value].
+         *
+         * For the full list of customized capabilities, see https://www.browserstack.com/automate/capabilities
+         */
+        const envToCapabilities = {
+            'BUILD_ID':           'build',
+            'PROJECT_NAME':       'project',
+            'DISPLAY_RESOLUTION': 'resolution',
+            'DEBUG':              'browserstack.debug',
+            'CONSOLE':            'browserstack.console',
+            'NETWORK_LOGS':       'browserstack.networkLogs',
+            'VIDEO':              'browserstack.video',
+            'TIMEZONE':           'browserstack.timezone',
+        };
 
-        if (PROJECT_NAME)
-            capabilities.project = PROJECT_NAME;
+        Object.keys(envToCapabilities).forEach((key) => {
+            const envName = 'BROWSERSTACK_' + key;
+            const value = process.env[envName];
+            const capName = envToCapabilities[key];
 
-        if (BUILD_ID)
-            capabilities.build = BUILD_ID;
-
-        if (DISPLAY_RESOLUTION)
-            capabilities.resolution = DISPLAY_RESOLUTION;
+            if (value) 
+                capabilities[capName] = value;
+            
+        });
     },
 
     _getConnector () {
