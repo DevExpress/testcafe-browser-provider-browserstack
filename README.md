@@ -67,5 +67,7 @@ Browserstack offers two APIs for browser testing:
 To set the display resolution, use the `BROWSERSTACK_DISPLAY_RESOLUTION` environment variable.
 Valid resolutions can be found [here](https://github.com/browserstack/api#resolution).
 
+Remember that this only sets the display resolution and does not resize the browser window. You'll still need to use TestCafe's [window resizing API](https://devexpress.github.io/testcafe/documentation/test-api/actions/resize-window.html) to do so.
+
 ## Author
 Developer Express Inc. (https://devexpress.com)
