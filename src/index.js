@@ -177,7 +177,7 @@ export default {
             capabilities.local           = true;
         }
 
-        if (browserName === 'chrome' && process.env['BROWSERSTACK_CHROME_OPTIONS'] && process.env['BROWSERSTACK_CHROME_OPTIONS'].length > 0) {
+        if (browserName.toLowerCase() === 'chrome' && process.env['BROWSERSTACK_CHROME_OPTIONS'] && process.env['BROWSERSTACK_CHROME_OPTIONS'].length > 0) {
             capabilities.chromeOptions = { args: [process.env['BROWSERSTACK_CHROME_OPTIONS']] };
         }
 
