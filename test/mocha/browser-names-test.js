@@ -28,10 +28,10 @@ describe('Browser names', function () {
                     'ie@10.0:Windows 8',
                     'ie@11.0:Windows 8.1',
                     'edge@15.0:Windows 10',
-                    'iPhone 6@8.3',
+                    'iPhone 7@10.3',
                     'iPhone SE@11.2',
                     'iPad Pro@11.2',
-                    'Google Nexus 5@5.0'
+                    'Google Nexus 5@4.4'
                 ]);
             });
     });
