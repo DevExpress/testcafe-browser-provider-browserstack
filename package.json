@@ -1,6 +1,6 @@
 {
   "name": "testcafe-browser-provider-browserstack",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "browserstack TestCafe browser provider plugin.",
   "repository": "https://github.com/DevExpress/testcafe-browser-provider-browserstack",
   "engines": {
@@ -30,7 +30,7 @@
   "license": "MIT",
   "dependencies": {
     "babel-runtime": "^6.11.6",
-    "browserstack-local": "^1.3.0",
+    "browserstack-local": "^1.3.6",
     "desired-capabilities": "^0.1.0",
     "jimp": "^0.2.27",
     "os-family": "^1.0.0",
