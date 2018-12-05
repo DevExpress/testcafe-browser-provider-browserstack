@@ -45,9 +45,9 @@ Tip: you can skip version (`@53.0`) or/and OS name (`:Windows 10`).
 
 ### Chrome
 
-For adding `chromeOptions` you can use `BROWSERSTACK_CHROME_OPTIONS=XXX` where `XXX` stand for example for `--disable-plugins` or if you need to set multiple options use `BROWSERSTACK_CHROME_OPTIONS="--disable-plugins --autoplay-policy=no-user-gesture-required"`
+For adding `chromeOptions` you can use `BROWSERSTACK_CHROME_ARGS=XXX` where `XXX` stand for example for `--disable-plugins` or if you need to set multiple options use `BROWSERSTACK_CHROME_ARGS="--disable-plugins --autoplay-policy=no-user-gesture-required"`
 BrowserStack supports the [full complement of ChromeOptions](https://sites.google.com/a/chromium.org/chromedriver/capabilities).
-
+This option works only when `BROWSERSTACK_USE_AUTOMATE` is se to `1`.
 
 ## Browserstack Proxy Options
 Proxy options can be passed via envrionment variables.
