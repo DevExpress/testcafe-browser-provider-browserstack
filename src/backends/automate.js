@@ -63,7 +63,7 @@ const BROWSERSTACK_API_PATHS = {
 function requestApi (path, params) {
     return requestApiBase(path, params)
         .then(response => {
-            if (response.status !== 0)
+            if (response.status)
                 throw new Error(`API error ${response.status}: ${response.value.message}`);
 
             return response;

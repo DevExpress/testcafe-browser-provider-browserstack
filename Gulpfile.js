@@ -1,9 +1,7 @@
 var path        = require('path');
 var gulp        = require('gulp');
 var babel       = require('gulp-babel');
-var sequence    = require('gulp-sequence');
 var del         = require('del');
-var nodeVersion = require('node-version');
 var execa       = require('execa');
 
 
@@ -11,16 +9,11 @@ var PACKAGE_PARENT_DIR  = path.join(__dirname, '../');
 var PACKAGE_SEARCH_PATH = (process.env.NODE_PATH ? process.env.NODE_PATH + path.delimiter : '') + PACKAGE_PARENT_DIR;
 
 
-gulp.task('clean', function () {
+function clean () {
     return del('lib');
-});
+}
 
-gulp.task('lint', function () {
-    // TODO: eslint supports node version 4 or higher.
-    // Remove this condition once we get rid of node 0.10 support.
-    if (nodeVersion.major === '0')
-        return null;
-
+function lint () {
     var eslint = require('gulp-eslint');
 
     return gulp
@@ -32,14 +25,14 @@ gulp.task('lint', function () {
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
-});
+}
 
-gulp.task('build', ['lint', 'clean'], function () {
+function build () {
     return gulp
         .src('src/**/*.js')
         .pipe(babel())
         .pipe(gulp.dest('lib'));
-});
+}
 
 function testMocha () {
     if (!process.env.BROWSERSTACK_USERNAME || !process.env.BROWSERSTACK_ACCESS_KEY)
@@ -62,17 +55,17 @@ function testMocha () {
     return execa(mochaCmd, mochaOpts, { stdio: 'inherit' });
 }
 
-gulp.task('test-mocha', ['build'], function () {
+function testMochaRest () {
     process.env.BROWSERSTACK_USE_AUTOMATE = 0;
 
     return testMocha();
-});
+}
 
-gulp.task('test-mocha-automate', ['build'], function () {
+function testMochaAutomate () {
     process.env.BROWSERSTACK_USE_AUTOMATE = 1;
 
     return testMocha();
-});
+}
 
 function testTestcafe () {
     if (!process.env.BROWSERSTACK_USERNAME || !process.env.BROWSERSTACK_ACCESS_KEY)
@@ -93,16 +86,19 @@ function testTestcafe () {
     return execa(testCafeCmd, testCafeOpts, { stdio: 'inherit' });
 }
 
-gulp.task('test-testcafe', ['build'], function () {
+function testTestcafeRest () {
     process.env.BROWSERSTACK_USE_AUTOMATE = '0';
 
     return testTestcafe();
-});
+}
 
-gulp.task('test-testcafe-automate', ['build'], function () {
+function testTestcafeAutomate () {
     process.env.BROWSERSTACK_USE_AUTOMATE = '1';
 
     return testTestcafe();
-});
+}
 
-gulp.task('test', sequence('test-mocha', 'test-mocha-automate', 'test-testcafe', 'test-testcafe-automate'));
+exports.clean = clean;
+exports.lint  = lint;
+exports.build = gulp.parallel(gulp.series(clean, build), lint);
+exports.test  = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeRest, testTestcafeAutomate);
