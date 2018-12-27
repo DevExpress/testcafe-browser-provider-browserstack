@@ -5,13 +5,13 @@ import BrowserstackConnector from './connector';
 import JSTestingBackend from './backends/js-testing';
 import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
+import isEnvVarTrue from './utils/is-env-var-true';
 
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
-function isAutomateEnabled () {
-    return process.env['BROWSERSTACK_USE_AUTOMATE'] && process.env['BROWSERSTACK_USE_AUTOMATE'] !== '0';
-}
 
+const isAutomateEnabled = () => isEnvVarTrue('BROWSERSTACK_USE_AUTOMATE');
+const isLocalEnabled    = () => !isEnvVarTrue('BROWSERSTACK_NO_LOCAL');
 
 export default {
     // Multiple browsers support
@@ -44,7 +44,7 @@ export default {
     _getConnector () {
         this.connectorPromise = this.connectorPromise
             .then(async connector => {
-                if (!connector) {
+                if (!connector && isLocalEnabled()) {
                     connector = new BrowserstackConnector(process.env['BROWSERSTACK_ACCESS_KEY']);
 
                     await connector.create();
@@ -171,8 +171,11 @@ export default {
         this._addEnvironmentPreferencesToCapabilities(capabilities);
 
         capabilities.name            = `TestCafe test run ${id}`;
-        capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
-        capabilities.local           = true;
+
+        if (connector) {
+            capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
+            capabilities.local           = true;
+        }
 
         await this.backend.openBrowser(id, pageUrl, capabilities);
 

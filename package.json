@@ -32,10 +32,10 @@
     "babel-runtime": "^6.11.6",
     "browserstack-local": "^1.3.6",
     "desired-capabilities": "^0.1.0",
-    "jimp": "^0.2.27",
+    "jimp": "^0.2.28",
     "os-family": "^1.0.0",
     "pinkie": "^2.0.4",
-    "request": "^2.79.0",
+    "request": "^2.88.0",
     "request-promise": "^4.1.1"
   },
   "devDependencies": {
@@ -48,13 +48,11 @@
     "chai": "^3.5.0",
     "del": "^2.2.2",
     "execa": "^0.9.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-babel": "^6.1.2",
     "gulp-eslint": "^3.0.1",
-    "gulp-sequence": "^0.4.6",
     "mocha": "^5.0.1",
-    "node-version": "^1.0.0",
-    "publish-please": "^2.1.4",
+    "publish-please": "^5.4.3",
     "testcafe": "latest",
     "tmp": "0.0.31"
   }
