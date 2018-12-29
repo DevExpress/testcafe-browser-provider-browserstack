@@ -71,13 +71,9 @@ Browserstack offers two APIs for browser testing:
  TestCafe uses the JS Testing API by default. In order to use Browserstack Automate,
  set the `BROWSERSTACK_USE_AUTOMATE` environment variable to `1`.
 
-Examples:
+Example:
 ```
 export BROWSERSTACK_USE_AUTOMATE="1"
-testcafe browserstack:chrome test.js
-```
-```
-export BROWSERSTACK_USE_AUTOMATE="0"
 testcafe browserstack:chrome test.js
 ```
 
