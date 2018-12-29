@@ -51,7 +51,7 @@ Proxy options can be passed via envrionment variables.
 
 Example:
 ```
-export BROWERSTACK_LOCAL_PROXY="user:p@ssw0rd@proxy.com:8080"
+export BROWERSTACK_PROXY="user:p@ssw0rd@proxy.com:8080"
 export BROWERSTACK_LOCAL_PROXY="admin:12345678@192.168.0.2:8080"
 export BROWSERSTACK_FORCE_PROXY="1"
 export BROWSERSTACK_FORCE_LOCAL="1"
