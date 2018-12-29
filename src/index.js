@@ -177,6 +177,9 @@ export default {
             capabilities.local           = true;
         }
 
+        if (browserName.indexOf('chrome') !== -1 && process.env['BROWSERSTACK_CHROME_ARGS'] && process.env['BROWSERSTACK_CHROME_ARGS'].length > 0)
+            capabilities.chromeOptions = { args: [process.env['BROWSERSTACK_CHROME_ARGS']] };
+
         await this.backend.openBrowser(id, pageUrl, capabilities);
 
         this.setUserAgentMetaInfo(id, this.backend.getSessionUrl(id));
