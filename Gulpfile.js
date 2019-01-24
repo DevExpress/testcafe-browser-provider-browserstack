@@ -34,10 +34,15 @@ function build () {
         .pipe(gulp.dest('lib'));
 }
 
-function testMocha () {
-    if (!process.env.BROWSERSTACK_USERNAME || !process.env.BROWSERSTACK_ACCESS_KEY)
-        throw new Error('Specify your credentials by using the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables to authenticate to BrowserStack.');
+function ensureAuthCredentials () {
+    const ERROR_MESSAGES = require('./lib/templates/error-messages');
 
+    if (!process.env.BROWSERSTACK_USERNAME || !process.env.BROWSERSTACK_ACCESS_KEY)
+        throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());    
+}
+
+function testMocha () {
+    ensureAuthCredentials();
 
     var mochaCmd = path.join(__dirname, 'node_modules/.bin/mocha');
 
@@ -68,8 +73,7 @@ function testMochaAutomate () {
 }
 
 function testTestcafe () {
-    if (!process.env.BROWSERSTACK_USERNAME || !process.env.BROWSERSTACK_ACCESS_KEY)
-        throw new Error('Specify your credentials by using the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables to authenticate to BrowserStack.');
+    ensureAuthCredentials();
 
     var testCafeCmd = path.join(__dirname, 'node_modules/.bin/testcafe');
 

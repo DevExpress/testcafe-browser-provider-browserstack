@@ -1,8 +1,10 @@
+import { inspect } from 'util';
 import Promise from 'pinkie';
 import jimp from 'jimp';
 import BaseBackend from './base';
 import requestApiBase from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
+import * as ERROR_MESSAGES from '../templates/error-messages';
 
 
 const API_POLLING_INTERVAL = 80000;
@@ -63,8 +65,12 @@ const BROWSERSTACK_API_PATHS = {
 function requestApi (path, params) {
     return requestApiBase(path, params)
         .then(response => {
-            if (response.status)
-                throw new Error(`API error ${response.status}: ${response.value.message}`);
+            if (response.status) {
+                throw new Error(ERROR_MESSAGES.REMOTE_API_REQUEST_FAILED({
+                    status:      response.status,
+                    apiResponse: response.value && response.value.message || inspect(response)    
+                }));
+            }
 
             return response;
         });
@@ -85,6 +91,22 @@ export default class AutomateBackend extends BaseBackend {
         super(...args);
 
         this.sessions = {};
+    }
+
+    static _ensureSessionId (sessionInfo) {
+        const sessionData         = sessionInfo.value || {};
+        const sessionCapabilities = sessionData.capabilities || {};
+
+        sessionInfo.sessionId = sessionInfo.sessionId ||
+                                sessionData.sessionId ||
+                                sessionData['webdriver.remote.sessionid'] ||
+                                sessionCapabilities['webdriver.remote.sessionid'];
+
+        if (!sessionInfo.sessionId) {
+            throw new Error(ERROR_MESSAGES.SESSION_ID_NOT_FOUND({
+                sessionInfoDump: inspect(sessionInfo)
+            }));
+        }
     }
 
     async _requestSessionUrl (id) {
@@ -126,6 +148,8 @@ export default class AutomateBackend extends BaseBackend {
 
             executeImmediately: true
         });
+
+        AutomateBackend._ensureSessionId(this.sessions[id]);
 
         this.sessions[id].sessionUrl = await this._requestSessionUrl(id);
 
