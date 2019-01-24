@@ -1,13 +1,11 @@
 import Promise from 'pinkie';
 import request from 'request-promise';
 import delay from './utils/delay';
+import * as ERROR_MESSAGES from './templates/error-messages';
 
 
 const BUILD_ID     = process.env['BROWSERSTACK_BUILD_ID'];
 const PROJECT_NAME = process.env['BROWSERSTACK_PROJECT_NAME'];
-
-const AUTH_FAILED_ERROR = 'Authentication failed. Please assign the correct username and access key ' +
-    'to the BROWSERSTACK_USERNAME and BROWSERSTACK_ACCESS_KEY environment variables.';
 
 const API_REQUEST_DELAY = 100;
 
@@ -16,7 +14,7 @@ let apiRequestPromise = Promise.resolve(null);
 
 export default function (apiPath, params) {
     if (!process.env['BROWSERSTACK_USERNAME'] || !process.env['BROWSERSTACK_ACCESS_KEY'])
-        throw new Error(AUTH_FAILED_ERROR);
+        throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
 
     var url = apiPath.url;
 
@@ -43,7 +41,7 @@ export default function (apiPath, params) {
         .then(() => request(url, opts))
         .catch(error => {
             if (error.statusCode === 401)
-                throw new Error(AUTH_FAILED_ERROR);
+                throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
 
             throw error;
         });
