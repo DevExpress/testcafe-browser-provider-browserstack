@@ -13,5 +13,5 @@ export const REMOTE_API_REQUEST_FAILED = ({ status, apiResponse }) => dedent `
 export const SESSION_ID_NOT_FOUND = ({ sessionInfoDump }) => dedent ` 
     Unable to find a session ID in the following session information: 
     
-    ${ sessionInfoDump }
+    ${sessionInfoDump}
 `;

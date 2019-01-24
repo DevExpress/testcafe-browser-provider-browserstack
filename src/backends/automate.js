@@ -94,12 +94,12 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     static _ensureSessionId (sessionInfo) {
-        const sessonData          = sessionInfo.value || {};
-        const sessionCapabilities = sessonData.capabilities || {};
+        const sessionData         = sessionInfo.value || {};
+        const sessionCapabilities = sessionData.capabilities || {};
 
         sessionInfo.sessionId = sessionInfo.sessionId ||
-                                sessonData.sessionId ||
-                                sessonData['webdriver.remote.sessionid'] ||
+                                sessionData.sessionId ||
+                                sessionData['webdriver.remote.sessionid'] ||
                                 sessionCapabilities['webdriver.remote.sessionid'];
 
         if (!sessionInfo.sessionId) {
