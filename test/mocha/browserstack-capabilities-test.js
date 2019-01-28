@@ -4,8 +4,6 @@ var browserStackProvider = require('../../');
 
 describe('Browserstack capabilities', function () {
     it('Should add custom capabilities from environment variables', function () {
-        const output = {};
-
         process.env['BROWSERSTACK_BUILD_ID'] = 'build-1';
         process.env['BROWSERSTACK_PROJECT_NAME'] = 'project-1';
         process.env['BROWSERSTACK_DISPLAY_RESOLUTION'] = '1024x768';
@@ -15,7 +13,7 @@ describe('Browserstack capabilities', function () {
         process.env['BROWSERSTACK_VIDEO'] = 'true';
         process.env['BROWSERSTACK_TIMEZONE'] = 'Asia/Taipei';
 
-        browserStackProvider._addEnvironmentPreferencesToCapabilities(output);
+        const output = browserStackProvider._getAdditionalCapabilities({});
 
         expect(output).to.deep.equal({
             'build':                    'build-1',

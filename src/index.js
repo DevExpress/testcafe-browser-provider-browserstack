@@ -26,32 +26,32 @@ export default {
     platformsInfo: [],
     browserNames:  [],
 
-    _addEnvironmentPreferencesToCapabilities (capabilities) {
-        /**
-         * This maps env var BROWSERSTACK_${key} to capabilities[value].
-         *
-         * For the full list of customized capabilities, see https://www.browserstack.com/automate/capabilities
-         */
-        const envToCapabilities = {
-            'BUILD_ID':           'build',
-            'PROJECT_NAME':       'project',
-            'DISPLAY_RESOLUTION': 'resolution',
-            'DEBUG':              'browserstack.debug',
-            'CONSOLE':            'browserstack.console',
-            'NETWORK_LOGS':       'browserstack.networkLogs',
-            'VIDEO':              'browserstack.video',
-            'TIMEZONE':           'browserstack.timezone',
+    _getAdditionalCapabilities (capabilities) {
+        // NOTE: This function maps env vars to browserstack capabilities.
+        // For the full list of capabilities, see https://www.browserstack.com/automate/capabilities
+        const capabilitiesFromEnvironment = [
+            ['build', process.env['BROWSERSTACK_BUILD_ID']],
+            ['project', process.env['BROWSERSTACK_PROJECT_NAME']],
+            ['resolution', process.env['BROWSERSTACK_DISPLAY_RESOLUTION']],
+            ['browserstack.debug', process.env['BROWSERSTACK_DEBUG']],
+            ['browserstack.console', process.env['BROWSERSTACK_CONSOLE']],
+            ['browserstack.networkLogs', process.env['BROWSERSTACK_NETWORK_LOGS']],
+            ['browserstack.video', process.env['BROWSERSTACK_VIDEO']],
+            ['browserstack.timezone', process.env['BROWSERSTACK_TIMEZONE']],
+        ];
+
+        const additionalCapabilities = capabilitiesFromEnvironment
+            // eslint-disable-next-line no-unused-vars
+            .filter(([name, value]) => value !== void 0)
+            .reduce((result, [name, value]) => {
+                result[name] = value;
+                return result;
+            }, {});
+
+        return {
+            ...capabilities,
+            ...additionalCapabilities
         };
-
-        Object.keys(envToCapabilities).forEach((key) => {
-            const envName = 'BROWSERSTACK_' + key;
-            const value = process.env[envName];
-            const capName = envToCapabilities[key];
-
-            if (value) 
-                capabilities[capName] = value;
-            
-        });
     },
 
     _getConnector () {
@@ -171,7 +171,7 @@ export default {
     // Required - must be implemented
     // Browser control
     async openBrowser (id, pageUrl, browserName) {
-        var capabilities = this._generateCapabilities(browserName);
+        var capabilities = this._getAdditionalCapabilities(this._generateCapabilities(browserName));
         var connector    = await this._getConnector();
 
         if (capabilities.os.toLowerCase() === 'android') {
@@ -180,8 +180,6 @@ export default {
 
             pageUrl = 'http://' + browserProxy.targetHost + ':' + browserProxy.proxyPort + parsedPageUrl.path;
         }
-
-        this._addEnvironmentPreferencesToCapabilities(capabilities);
 
         capabilities.name            = `TestCafe test run ${id}`;
 
