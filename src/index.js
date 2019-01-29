@@ -26,34 +26,6 @@ export default {
     platformsInfo: [],
     browserNames:  [],
 
-    _getAdditionalCapabilities (capabilities) {
-        // NOTE: This function maps env vars to browserstack capabilities.
-        // For the full list of capabilities, see https://www.browserstack.com/automate/capabilities
-        const capabilitiesFromEnvironment = [
-            ['build', process.env['BROWSERSTACK_BUILD_ID']],
-            ['project', process.env['BROWSERSTACK_PROJECT_NAME']],
-            ['resolution', process.env['BROWSERSTACK_DISPLAY_RESOLUTION']],
-            ['browserstack.debug', process.env['BROWSERSTACK_DEBUG']],
-            ['browserstack.console', process.env['BROWSERSTACK_CONSOLE']],
-            ['browserstack.networkLogs', process.env['BROWSERSTACK_NETWORK_LOGS']],
-            ['browserstack.video', process.env['BROWSERSTACK_VIDEO']],
-            ['browserstack.timezone', process.env['BROWSERSTACK_TIMEZONE']],
-        ];
-
-        const additionalCapabilities = capabilitiesFromEnvironment
-            // eslint-disable-next-line no-unused-vars
-            .filter(([name, value]) => value !== void 0)
-            .reduce((result, [name, value]) => {
-                result[name] = value;
-                return result;
-            }, {});
-
-        return {
-            ...capabilities,
-            ...additionalCapabilities
-        };
-    },
-
     _getConnector () {
         this.connectorPromise = this.connectorPromise
             .then(async connector => {
@@ -127,8 +99,31 @@ export default {
         };
     },
 
-    _generateCapabilities (browserName) {
+    _generateBasicCapabilities (browserName) {
         return this._filterPlatformInfo(this._createQuery(browserName))[0];
+    },
+
+    _getAdditionalCapabilities () {
+        // NOTE: This function maps env vars to browserstack capabilities.
+        // For the full list of capabilities, see https://www.browserstack.com/automate/capabilities
+        const capabilitiesFromEnvironment = [
+            ['build', process.env['BROWSERSTACK_BUILD_ID']],
+            ['project', process.env['BROWSERSTACK_PROJECT_NAME']],
+            ['resolution', process.env['BROWSERSTACK_DISPLAY_RESOLUTION']],
+            ['browserstack.debug', process.env['BROWSERSTACK_DEBUG']],
+            ['browserstack.console', process.env['BROWSERSTACK_CONSOLE']],
+            ['browserstack.networkLogs', process.env['BROWSERSTACK_NETWORK_LOGS']],
+            ['browserstack.video', process.env['BROWSERSTACK_VIDEO']],
+            ['browserstack.timezone', process.env['BROWSERSTACK_TIMEZONE']],
+        ];
+
+        return capabilitiesFromEnvironment
+            .filter(([name, value]) => value !== void 0)
+            .reduce((result, [name, value]) => {
+                result[name] = value;
+            
+                return result;
+            }, {});
     },
 
     _filterPlatformInfo (query) {
@@ -171,7 +166,7 @@ export default {
     // Required - must be implemented
     // Browser control
     async openBrowser (id, pageUrl, browserName) {
-        var capabilities = this._getAdditionalCapabilities(this._generateCapabilities(browserName));
+        var capabilities = { ...this._generateBasicCapabilities(browserName), ...this._getAdditionalCapabilities() };
         var connector    = await this._getConnector();
 
         if (capabilities.os.toLowerCase() === 'android') {
