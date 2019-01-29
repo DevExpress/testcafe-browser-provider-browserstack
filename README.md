@@ -90,7 +90,7 @@ export BROWSERSTACK_DISPLAY_RESOLUTION="1024x768"
 testcafe browserstack:chrome test.js
 ```
 
-## Specyfing Chrome Command Line Arguments
+## Specifying Chrome Command Line Arguments
 
 To set [Chrome command line arguments](https://peter.sh/experiments/chromium-command-line-switches/), use the `BROWSERSTACK_CHROME_ARGS` environment variable. You can specify multiple arguments by joining them with the space symbol. This option works only if the [Browserstack Automate API is enabled](https://github.com/ondrejbartas/testcafe-browser-provider-browserstack/#browserstack-js-testing-and-browserstack-automate).
 
@@ -106,15 +106,29 @@ export BROWSERSTACK_CHROME_ARGS="--start-maximized --autoplay-policy=no-user-ges
 testcafe browserstack:chrome test.js
 ```
 
-## Extra capabilities
-
-Browserstack has a few more custom capabilities. You can find the expected values [here](https://www.browserstack.com/automate/capabilities).
-
-- `BROWSERSTACK_DEBUG`
-- `BROWSERSTACK_CONSOLE`
-- `BROWSERSTACK_NETWORK_LOGS`
-- `BROWSERSTACK_VIDEO`
-- `BROWSERSTACK_TIMEZONE`
+## Other BrowserStack Options
+ 
+BrowserStack Automate allows you to provide options for its internal Selenium Grid in the form of key-value pairs called [capabilities](https://www.browserstack.com/automate/capabilities).
+ 
+To specify BrowserStack capabilities via the TestCafe BrowserStack provider, use environment variables. This provider supports the following capabilities:
+ 
+Capability                 | Environment Variable
+-------------------------- | --------------------
+`browserstack.debug`       | `BROWSERSTACK_DEBUG`
+`browserstack.console`     | `BROWSERSTACK_CONSOLE`
+`browserstack.networkLogs` | `BROWSERSTACK_NETWORK_LOGS`
+`browserstack.video`       | `BROWSERSTACK_VIDEO`
+`browserstack.timezone`    | `BROWSERSTACK_TIMEZONE`
+ 
+Refer to the [BrowserStack documentation](https://www.browserstack.com/automate/capabilities) for information about the values you can specify.
+ 
+**Example**
+ 
+```sh
+export BROWSERSTACK_DEBUG="true"
+export BROWSERSTACK_TIMEZONE="UTC"
+testcafe browserstack:chrome test.js
+```
 
 ## Author
 Developer Express Inc. (https://devexpress.com)
