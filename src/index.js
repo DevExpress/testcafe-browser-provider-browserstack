@@ -118,7 +118,7 @@ export default {
         ];
 
         return capabilitiesFromEnvironment
-            .filter(([name, value]) => value !== void 0)
+            .filter(tuple => tuple.value !== void 0)
             .reduce((result, [name, value]) => {
                 result[name] = value;
             
