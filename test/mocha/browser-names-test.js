@@ -16,7 +16,7 @@ describe('Browser names', function () {
             .dispose();
     });
 
-    it.only('Should return list of common browsers and devices', function () {
+    it('Should return list of common browsers and devices', function () {
         const IS_AUTOMATE = process.env['BROWSERSTACK_USE_AUTOMATE'] && process.env['BROWSERSTACK_USE_AUTOMATE'] !== '0';
 
         const REST_BROWSER_NAMES = [
