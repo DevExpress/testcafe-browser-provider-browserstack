@@ -16,23 +16,41 @@ describe('Browser names', function () {
             .dispose();
     });
 
-    it('Should return list of common browsers and devices', function () {
+    it.only('Should return list of common browsers and devices', function () {
+        const IS_AUTOMATE = process.env['BROWSERSTACK_USE_AUTOMATE'] && process.env['BROWSERSTACK_USE_AUTOMATE'] !== '0';
+
+        const REST_BROWSER_NAMES = [
+            'chrome@51.0:OS X Mavericks',
+            'firefox@45.0:OS X Yosemite',
+            'safari@9.1:OS X El Capitan',
+            'ie@9.0:Windows 7',
+            'ie@10.0:Windows 8',
+            'ie@11.0:Windows 8.1',
+            'edge@15.0:Windows 10',
+            'iPhone 7@10.3',
+            'iPhone SE@11.2',
+            'iPhone XR@12.1',
+            'Google Nexus 6@6.0'
+        ];
+        
+        const AUTOMATE_BROWSER_NAMES = [
+            'chrome@51.0:OS X Mavericks',
+            'firefox@45.0:OS X Yosemite',
+            'safari@9.1:OS X El Capitan',
+            'ie@9.0:Windows 7',
+            'ie@10.0:Windows 8',
+            'ie@11.0:Windows 8.1',
+            'edge@15.0:Windows 10',
+            'iPhone 7@10',
+            'iPhone SE@11',
+            'iPhone XR@12',
+            'Google Nexus 6@6.0'
+        ];
+
         return browserStackProvider
             .getBrowserList()
             .then(function (list) {
-                expect(list).to.include.members([
-                    'chrome@51.0:OS X Mavericks',
-                    'firefox@45.0:OS X Yosemite',
-                    'safari@9.1:OS X El Capitan',
-                    'ie@9.0:Windows 7',
-                    'ie@10.0:Windows 8',
-                    'ie@11.0:Windows 8.1',
-                    'edge@15.0:Windows 10',
-                    'iPhone 7@10.3',
-                    'iPhone SE@11.2',
-                    'iPhone XR@12.1',
-                    'Google Nexus 6@6.0'
-                ]);
+                expect(list).to.include.members(IS_AUTOMATE ? AUTOMATE_BROWSER_NAMES : REST_BROWSER_NAMES);
             });
     });
 
