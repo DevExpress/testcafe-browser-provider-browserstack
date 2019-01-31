@@ -161,9 +161,16 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async closeBrowser (id) {
-        clearInterval(this.sessions[id].interval);
+        const session = this.sessions[id];
 
-        await requestApi(BROWSERSTACK_API_PATHS.deleteSession(this.sessions[id].sessionId));
+        if (!session)
+            return;
+
+        delete this.sessions[id];
+            
+        clearInterval(session.interval);
+
+        await requestApi(BROWSERSTACK_API_PATHS.deleteSession(session.sessionId));
     }
 
     async takeScreenshot (id, screenshotPath) {
