@@ -32,6 +32,7 @@
     "no-spaced-func": "error",
     "no-undef-init": "error",
     "no-unused-expressions": "error",
+    "no-unused-vars": ["error", { "ignoreRestSiblings" : true }],
     "no-with": "error",
     "camelcase": "error",
     "comma-spacing": "error",
