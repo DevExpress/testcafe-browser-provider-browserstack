@@ -48,6 +48,7 @@ Proxy options can be passed via envrionment variables.
  - `BROWERSTACK_LOCAL_PROXY` - a string that specifies a proxy for the local web server. It should have the following structure: `user:pass@proxyHostName:port`,
  - `BROWSERSTACK_FORCE_PROXY` - if it's not empty, forces all traffic of Browserstack local binary to go through the proxy,
  - `BROWSERSTACK_FORCE_LOCAL` - if it's not empty, forces all traffic of Browserstack local binary to go through the local machine
+ - `BROWSERSTACK_NO_LOCAL` - If it's not empty, forces all traffic of Browserstack to go over public internet 
 
 Example:
 ```
@@ -129,6 +130,23 @@ export BROWSERSTACK_DEBUG="true"
 export BROWSERSTACK_TIMEZONE="UTC"
 testcafe browserstack:chrome test.js
 ```
+
+## Concurrency
+
+If you don't specify concurrency in your testcafe command, it runs the tests in multiple browsers one by one.
+You can run the tests in parallel with following command:
+
+**Example**
+
+```ssh
+testcafe browserstack:chrome,browserstack:firefox -c2 test.js
+```
+
+If you specify a lot of browserstack browsers, you might see following error:
+
+`Unable to establish one or more of the specified browser connections.`
+
+TestCafe expects that all specified browsers will be connected, so it will report en error when you are trying to start a lot of browsers but have only one Browserstack worker. The suggested solution for this problem, is to run the testcafe command in batches of the available browserstack queues.
 
 ## Author
 Developer Express Inc. (https://devexpress.com)
