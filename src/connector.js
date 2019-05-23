@@ -58,11 +58,11 @@ export default class BrowserstackConnector {
         return new Promise((resolve, reject) => {
             var connector    = new BrowserstackLocal();
             var parallelRuns = process.env['BROWSERSTACK_PARALLEL_RUNS'];
-
+            var logfile = process.env['BROWSERSTACK_LOGFILE'] || (OS.win ? this._getTempFileName() : '/dev/null');
 
             var opts = {
                 key:             this.accessKey,
-                logfile:         OS.win ? this._getTempFileName() : '/dev/null',
+                logfile,
                 forceLocal:      !!process.env['BROWSERSTACK_FORCE_LOCAL'],
                 forceProxy:      !!process.env['BROWSERSTACK_FORCE_PROXY'],
                 localIdentifier: Date.now(),
