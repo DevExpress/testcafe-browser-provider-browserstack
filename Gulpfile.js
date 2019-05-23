@@ -38,7 +38,7 @@ function ensureAuthCredentials () {
     const ERROR_MESSAGES = require('./lib/templates/error-messages');
 
     if (!process.env.BROWSERSTACK_USERNAME || !process.env.BROWSERSTACK_ACCESS_KEY)
-        throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());    
+        throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
 }
 
 function testMocha () {
@@ -106,3 +106,5 @@ exports.clean = clean;
 exports.lint  = lint;
 exports.build = gulp.parallel(gulp.series(clean, build), lint);
 exports.test  = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeRest, testTestcafeAutomate);
+exports.testTestcafeRest = testTestcafeRest;
+exports.testTestcafeAutomate = testTestcafeAutomate;
