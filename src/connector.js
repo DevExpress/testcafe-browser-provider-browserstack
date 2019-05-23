@@ -59,6 +59,7 @@ export default class BrowserstackConnector {
             var connector    = new BrowserstackLocal();
             var parallelRuns = process.env['BROWSERSTACK_PARALLEL_RUNS'];
             var logfile = process.env['BROWSERSTACK_LOGFILE'] || (OS.win ? this._getTempFileName() : '/dev/null');
+            var verbose = process.env['BROWSERSTACK_VERBOSE'];
 
             var opts = {
                 key:             this.accessKey,
@@ -68,6 +69,7 @@ export default class BrowserstackConnector {
                 localIdentifier: Date.now(),
 
                 ...parallelRuns ? { parallelRuns } : {},
+                ...verbose ? { verbose } : {},
 
                 //NOTE: additional args use different format
                 'enable-logging-for-api': true
