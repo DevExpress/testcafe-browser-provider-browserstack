@@ -131,22 +131,36 @@ export BROWSERSTACK_TIMEZONE="UTC"
 testcafe browserstack:chrome test.js
 ```
 
-## Concurrency
+## Exceeding the Parallel Test Limit
 
-If you don't specify concurrency in your testcafe command, it runs the tests in multiple browsers one by one.
-You can run the tests in parallel with following command:
+When you run tests in multiple browsers or [concurrently](https://devexpress.github.io/testcafe/documentation/using-testcafe/common-concepts/concurrent-test-execution.html), you may exceed the maximum number of parallel tests available for your account.
 
-**Example**
+Assume your plan allows **2** parallel tests, and you run one of the following commands:
 
-```ssh
-testcafe browserstack:chrome,browserstack:firefox -c2 test.js
+```sh
+testcafe 'browserstack:ie@11.0:Windows 10' 'browserstack:chrome@59.0:Windows 10' 'browserstack:safari@9.1:OS X El Capitan' tests/acceptance/
 ```
 
-If you specify a lot of browserstack browsers, you might see following error:
+```sh
+testcafe browserstack:ie@11.0:Windows 10 -c3 tests/acceptance/
+```
 
-`Unable to establish one or more of the specified browser connections.`
+In this instance, BrowserStack will refuse to provide all the required machines and TestCafe will throw an error:
 
-TestCafe expects that all specified browsers will be connected, so it will report en error when you are trying to start a lot of browsers but have only one Browserstack worker. The suggested solution for this problem, is to run the testcafe command in batches of the available browserstack queues.
+```text
+Unable to establish one or more of the specified browser connections.
+```
+
+To keep within your account limitations, you can run tests sequentially (or in batches), like in the following bash script (credits to [@maoberlehner](https://github.com/maoberlehner) for this example):
+
+```sh
+browsers=( "browserstack:ie@10.0:Windows 8" "browserstack:ie@11.0:Windows 10" "browserstack:edge@15.0:Windows 10" "browserstack:edge@14.0:Windows 10" "browserstack:firefox@54.0:Windows 10" "browserstack:firefox@55.0:Windows 10" "browserstack:chrome@59.0:Windows 10" "browserstack:chrome@60.0:Windows 10" "browserstack:opera@46.0:Windows 10" "browserstack:opera@47.0:Windows 10" "browserstack:safari@9.1:OS X El Capitan" "browserstack:safari@10.1:OS X Sierra" )
+
+for i in "${browsers[@]}"
+do
+	./node_modules/.bin/testcafe "${i}" tests/acceptance/
+done
+```
 
 ## Author
 Developer Express Inc. (https://devexpress.com)
