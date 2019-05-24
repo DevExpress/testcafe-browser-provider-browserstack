@@ -48,6 +48,7 @@ Proxy options can be passed via envrionment variables.
  - `BROWERSTACK_LOCAL_PROXY` - a string that specifies a proxy for the local web server. It should have the following structure: `user:pass@proxyHostName:port`,
  - `BROWSERSTACK_FORCE_PROXY` - if it's not empty, forces all traffic of Browserstack local binary to go through the proxy,
  - `BROWSERSTACK_FORCE_LOCAL` - if it's not empty, forces all traffic of Browserstack local binary to go through the local machine
+ - `BROWSERSTACK_NO_LOCAL` - If it's not empty, forces all traffic of Browserstack to go over public internet 
 
 Example:
 ```
@@ -128,6 +129,37 @@ Refer to the [BrowserStack documentation](https://www.browserstack.com/automate/
 export BROWSERSTACK_DEBUG="true"
 export BROWSERSTACK_TIMEZONE="UTC"
 testcafe browserstack:chrome test.js
+```
+
+## Exceeding the Parallel Test Limit
+
+When you run tests in multiple browsers or [concurrently](https://devexpress.github.io/testcafe/documentation/using-testcafe/common-concepts/concurrent-test-execution.html), you may exceed the maximum number of parallel tests available for your account.
+
+Assume your plan allows **2** parallel tests, and you run one of the following commands:
+
+```sh
+testcafe 'browserstack:ie@11.0:Windows 10' 'browserstack:chrome@59.0:Windows 10' 'browserstack:safari@9.1:OS X El Capitan' tests/acceptance/
+```
+
+```sh
+testcafe browserstack:ie@11.0:Windows 10 -c3 tests/acceptance/
+```
+
+In this instance, BrowserStack will refuse to provide all the required machines and TestCafe will throw an error:
+
+```text
+Unable to establish one or more of the specified browser connections.
+```
+
+To keep within your account limitations, you can run tests sequentially (or in batches), like in the following bash script (credits to [@maoberlehner](https://github.com/maoberlehner) for this example):
+
+```sh
+browsers=( "browserstack:ie@10.0:Windows 8" "browserstack:ie@11.0:Windows 10" "browserstack:edge@15.0:Windows 10" "browserstack:edge@14.0:Windows 10" "browserstack:firefox@54.0:Windows 10" "browserstack:firefox@55.0:Windows 10" "browserstack:chrome@59.0:Windows 10" "browserstack:chrome@60.0:Windows 10" "browserstack:opera@46.0:Windows 10" "browserstack:opera@47.0:Windows 10" "browserstack:safari@9.1:OS X El Capitan" "browserstack:safari@10.1:OS X Sierra" )
+
+for i in "${browsers[@]}"
+do
+	./node_modules/.bin/testcafe "${i}" tests/acceptance/
+done
 ```
 
 ## Author
