@@ -78,7 +78,7 @@ function testTestcafe () {
     var testCafeCmd = path.join(__dirname, 'node_modules/.bin/testcafe');
 
     var testCafeOpts = [
-        'browserstack:chrome:windows 10,browserstack:Google Pixel@7.1,browserstack:iPhone 8',
+        'browserstack:chrome:windows 10,browserstack:Google Pixel@7.1,browserstack:Safari@12',
         'test/testcafe/**/*test.js',
         '-s', '.screenshots'
     ];
@@ -106,5 +106,3 @@ exports.clean = clean;
 exports.lint  = lint;
 exports.build = gulp.parallel(gulp.series(clean, build), lint);
 exports.test  = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeRest, testTestcafeAutomate);
-exports.testTestcafeRest = testTestcafeRest;
-exports.testTestcafeAutomate = testTestcafeAutomate;
