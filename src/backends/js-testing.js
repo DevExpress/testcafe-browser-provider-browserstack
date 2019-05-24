@@ -1,4 +1,3 @@
-import Promise from 'pinkie';
 import jimp from 'jimp';
 import BaseBackend from './base';
 import requestApi from '../utils/request-api';
@@ -109,14 +108,16 @@ export default class JSTestingBackend extends BaseBackend {
     }
 
     async takeScreenshot (id, screenshotPath) {
-        return new Promise(async (resolve, reject) => {
-            var buffer = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.workers[id].id));
+        var buffer = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.workers[id].id));
 
-            jimp
-                .read(buffer)
-                .then(image => image.write(screenshotPath, resolve))
-                .catch(reject);
-        });
+        try {
+            var image = await jimp.read(buffer);
+
+            await image.writeAsync(screenshotPath);
+        }
+        catch (error) {
+            throw error;
+        }
     }
 
     async resizeWindow (id) {
