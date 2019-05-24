@@ -72,13 +72,13 @@ function testMochaAutomate () {
     return testMocha();
 }
 
-function testTestcafe () {
+function testTestcafe (browsers) {
     ensureAuthCredentials();
 
     var testCafeCmd = path.join(__dirname, 'node_modules/.bin/testcafe');
 
     var testCafeOpts = [
-        'browserstack:chrome:windows 10,browserstack:Google Pixel@7.1,browserstack:Safari@12',
+        browsers,
         'test/testcafe/**/*test.js',
         '-s', '.screenshots'
     ];
@@ -93,13 +93,13 @@ function testTestcafe () {
 function testTestcafeRest () {
     process.env.BROWSERSTACK_USE_AUTOMATE = '0';
 
-    return testTestcafe();
+    return testTestcafe('browserstack:chrome:windows 10,browserstack:Safari@12');
 }
 
 function testTestcafeAutomate () {
     process.env.BROWSERSTACK_USE_AUTOMATE = '1';
 
-    return testTestcafe();
+    return testTestcafe('browserstack:chrome:windows 10,browserstack:Google Pixel@7.1,browserstack:Safari@12');
 }
 
 exports.clean = clean;
