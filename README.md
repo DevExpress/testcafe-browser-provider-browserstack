@@ -58,6 +58,14 @@ export BROWSERSTACK_FORCE_LOCAL="1"
 testcafe browserstack:chrome test.js
 ```
 
+## Other BrowserStackLocal Options
+
+Option  | Environment Variable
+------  | --------------------
+[`logFile`](https://github.com/browserstack/browserstack-local-nodejs#logfile) | `BROWSERSTACK_LOGFILE`
+[`verbose`](https://github.com/browserstack/browserstack-local-nodejs#verbose-logging) | `BROWSERSTACK_VERBOSE`
+[`binarypath`](https://github.com/browserstack/browserstack-local-nodejs#binary-path) | `BROWSERSTACK_BINARY_PATH`
+
 ## Browserstack JS Testing and Browserstack Automate
 Browserstack offers two APIs for browser testing:
  - [Browserstack JS Testing](https://www.browserstack.com/javascript-testing-api)
