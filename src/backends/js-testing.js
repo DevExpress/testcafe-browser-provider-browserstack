@@ -109,15 +109,9 @@ export default class JSTestingBackend extends BaseBackend {
 
     async takeScreenshot (id, screenshotPath) {
         var buffer = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.workers[id].id));
+        var image = await jimp.read(buffer);
 
-        try {
-            var image = await jimp.read(buffer);
-
-            await image.writeAsync(screenshotPath);
-        }
-        catch (error) {
-            throw error;
-        }
+        await image.writeAsync(screenshotPath);
     }
 
     async resizeWindow (id) {
