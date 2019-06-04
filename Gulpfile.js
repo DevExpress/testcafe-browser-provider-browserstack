@@ -38,7 +38,7 @@ function ensureAuthCredentials () {
     const ERROR_MESSAGES = require('./lib/templates/error-messages');
 
     if (!process.env.BROWSERSTACK_USERNAME || !process.env.BROWSERSTACK_ACCESS_KEY)
-        throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());    
+        throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
 }
 
 function testMocha () {
@@ -72,13 +72,13 @@ function testMochaAutomate () {
     return testMocha();
 }
 
-function testTestcafe () {
+function testTestcafe (browsers) {
     ensureAuthCredentials();
 
     var testCafeCmd = path.join(__dirname, 'node_modules/.bin/testcafe');
 
     var testCafeOpts = [
-        'browserstack:chrome:windows 10,browserstack:Google Pixel@7.1,browserstack:iPhone 8',
+        browsers,
         'test/testcafe/**/*test.js',
         '-s', '.screenshots'
     ];
@@ -93,16 +93,18 @@ function testTestcafe () {
 function testTestcafeRest () {
     process.env.BROWSERSTACK_USE_AUTOMATE = '0';
 
-    return testTestcafe();
+    return testTestcafe('browserstack:chrome:windows 10,browserstack:Safari@12');
 }
 
 function testTestcafeAutomate () {
     process.env.BROWSERSTACK_USE_AUTOMATE = '1';
 
-    return testTestcafe();
+    return testTestcafe('browserstack:chrome:windows 10,browserstack:Google Pixel@7.1,browserstack:Safari@12');
 }
 
 exports.clean = clean;
 exports.lint  = lint;
 exports.build = gulp.parallel(gulp.series(clean, build), lint);
 exports.test  = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeRest, testTestcafeAutomate);
+exports.testTestcafeRest = gulp.series(exports.build, testTestcafeRest);
+exports.testTestcafeAutomate = gulp.series(exports.build, testTestcafeAutomate);
