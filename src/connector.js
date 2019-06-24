@@ -58,16 +58,20 @@ export default class BrowserstackConnector {
         return new Promise((resolve, reject) => {
             var connector    = new BrowserstackLocal();
             var parallelRuns = process.env['BROWSERSTACK_PARALLEL_RUNS'];
-
+            var logfile = process.env['BROWSERSTACK_LOGFILE'] || (OS.win ? this._getTempFileName() : '/dev/null');
+            var verbose = process.env['BROWSERSTACK_VERBOSE'];
+            var binarypath = process.env['BROWSERSTACK_BINARY_PATH'];
 
             var opts = {
                 key:             this.accessKey,
-                logfile:         OS.win ? this._getTempFileName() : '/dev/null',
+                logfile,
                 forceLocal:      !!process.env['BROWSERSTACK_FORCE_LOCAL'],
                 forceProxy:      !!process.env['BROWSERSTACK_FORCE_PROXY'],
                 localIdentifier: Date.now(),
 
                 ...parallelRuns ? { parallelRuns } : {},
+                ...verbose ? { verbose } : {},
+                ...binarypath ? { binarypath } : {},
 
                 //NOTE: additional args use different format
                 'enable-logging-for-api': true
