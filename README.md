@@ -60,11 +60,21 @@ testcafe browserstack:chrome test.js
 
 ## Other BrowserStackLocal Options
 
+This plugin also allows you to specify the following [BrowserStackLocal](https://github.com/browserstack/browserstack-local-nodejs) options via environment variables:
+
 Option  | Environment Variable
 ------  | --------------------
-[`logFile`](https://github.com/browserstack/browserstack-local-nodejs#logfile) | `BROWSERSTACK_LOGFILE`
-[`verbose`](https://github.com/browserstack/browserstack-local-nodejs#verbose-logging) | `BROWSERSTACK_VERBOSE`
-[`binarypath`](https://github.com/browserstack/browserstack-local-nodejs#binary-path) | `BROWSERSTACK_BINARY_PATH`
+[binarypath](https://github.com/browserstack/browserstack-local-nodejs#binary-path) | `BROWSERSTACK_BINARY_PATH`
+[logFile](https://github.com/browserstack/browserstack-local-nodejs#logfile) | `BROWSERSTACK_LOGFILE`
+[verbose](https://github.com/browserstack/browserstack-local-nodejs#verbose-logging) | `BROWSERSTACK_VERBOSE`
+
+Example:
+```
+export BROWSERSTACK_BINARY_PATH="~/BrowserStack/BrowserStackLocal"
+export BROWSERSTACK_LOGFILE="~/BrowserStack/logs.txt"
+export BROWSERSTACK_VERBOSE="1"
+testcafe browserstack:chrome test.js
+```
 
 ## Browserstack JS Testing and Browserstack Automate
 Browserstack offers two APIs for browser testing:
