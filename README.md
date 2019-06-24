@@ -42,7 +42,7 @@ testCafe
 Tip: you can skip version (`@53.0`) or/and OS name (`:Windows 10`).
 
 ## Browserstack Proxy Options
-Proxy options can be passed via envrionment variables.
+Proxy options can be passed via environment variables.
 
  - `BROWSERSTACK_PROXY` - a string that specifies a proxy for the Browserstack local binary. It should have the following structure: `user:pass@proxyHostName:port`,
  - `BROWERSTACK_LOCAL_PROXY` - a string that specifies a proxy for the local web server. It should have the following structure: `user:pass@proxyHostName:port`,
