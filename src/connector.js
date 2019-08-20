@@ -5,7 +5,7 @@ import nodeUrl from 'url';
 import tmp from 'tmp';
 
 
-const BROWSERSTACK_CONNECTOR_DELAY = 10000;
+const BROWSERSTACK_CONNECTOR_DELAY = 1000;
 
 const PROXY_AUTH_RE = /^([^:]*)(?::(.*))?$/;
 

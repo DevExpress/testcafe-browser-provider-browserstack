@@ -7,7 +7,7 @@ import createBrowserstackStatus from '../utils/create-browserstack-status';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
 
-const API_POLLING_INTERVAL = 80000;
+const API_POLLING_INTERVAL = 30000;
 
 const BROWSERSTACK_API_PATHS = {
     browserList: {
@@ -68,7 +68,7 @@ function requestApi (path, params) {
             if (response.status) {
                 throw new Error(ERROR_MESSAGES.REMOTE_API_REQUEST_FAILED({
                     status:      response.status,
-                    apiResponse: response.value && response.value.message || inspect(response)    
+                    apiResponse: response.value && response.value.message || inspect(response)
                 }));
             }
 
@@ -155,7 +155,21 @@ export default class AutomateBackend extends BaseBackend {
 
         var sessionId = this.sessions[id].sessionId;
 
-        this.sessions[id].interval = setInterval(() => requestApi(BROWSERSTACK_API_PATHS.getUrl(sessionId), { executeImmediately: true }), API_POLLING_INTERVAL);
+        // Takes advantage from tail call optimization,
+        // also a better approach then setInterval, as network requests
+        // cannot be ensured in particular time and pushing extra
+        // requests surely degrades the performance.
+        const poolFn = async () => {
+            try {
+                await requestApi(BROWSERSTACK_API_PATHS.getUrl(sessionId), { executeImmediately: true });
+                setTimeout(poolFn, API_POLLING_INTERVAL);
+            }
+            catch (err) {
+                return;
+            }
+        };
+
+        this.sessions[id].interval = setTimeout(() => poolFn(), API_POLLING_INTERVAL);
 
         await requestApi(BROWSERSTACK_API_PATHS.openUrl(sessionId), { body: { url: pageUrl } });
     }
@@ -167,8 +181,8 @@ export default class AutomateBackend extends BaseBackend {
             return;
 
         delete this.sessions[id];
-            
-        clearInterval(session.interval);
+
+        clearTimeout(session.interval);
 
         await requestApi(BROWSERSTACK_API_PATHS.deleteSession(session.sessionId));
     }

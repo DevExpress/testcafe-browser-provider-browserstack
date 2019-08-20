@@ -7,7 +7,7 @@ import createBrowserstackStatus from '../utils/create-browserstack-status';
 
 const TESTS_TIMEOUT = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
 
-const MINIMAL_WORKER_TIME        = 30000;
+const MINIMAL_WORKER_TIME        = 15000;
 const TESTCAFE_CLOSING_TIMEOUT   = 10000;
 const TOO_SMALL_TIME_FOR_WAITING = MINIMAL_WORKER_TIME - TESTCAFE_CLOSING_TIMEOUT;
 
@@ -103,8 +103,8 @@ export default class JSTestingBackend extends BaseBackend {
 
             await delay(MINIMAL_WORKER_TIME - workerTime);
         }
-
         await requestApi(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
+
     }
 
     async takeScreenshot (id, screenshotPath) {
