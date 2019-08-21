@@ -1,7 +1,7 @@
 import path from 'path';
 import del from 'del';
 import { expect } from 'chai';
-import { statSync } from 'fs';
+import { statSync, createWriteStream } from 'fs';
 import { tmpNameSync as getTempFileName } from 'tmp';
 
 
@@ -14,7 +14,10 @@ test('Take screenshot', async t => {
     var screenshotName = getTempFileName({ template: 'screenshot-XXXXXX.png' });
     var screenshotPath = path.join('.screenshots', screenshotName);
 
-    await t.takeScreenshot(screenshotName);
+    // Creates the tempfile in path
+    createWriteStream(screenshotPath).end();
+
+    await t.takeScreenshot(screenshotPath);
 
     expect(statSync(screenshotPath).isFile()).to.be.true;
 });
