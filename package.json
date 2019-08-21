@@ -18,6 +18,7 @@
   ],
   "scripts": {
     "test": "gulp test",
+    "build": "gulp build",
     "publish-please": "publish-please",
     "prepublish": "publish-please guard"
   },
