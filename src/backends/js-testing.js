@@ -97,6 +97,10 @@ export default class JSTestingBackend extends BaseBackend {
         var workerTime = Date.now() - this.workers[id].started;
         var workerId   = this.workers[id].id;
 
+        // Return incase of invalid workerId
+        if (!workerId)
+            return;
+
         if (workerTime < MINIMAL_WORKER_TIME) {
             if (workerTime < TOO_SMALL_TIME_FOR_WAITING)
                 await requestApi(BROWSERSTACK_API_PATHS.deleteWorker(workerId));

@@ -7,8 +7,6 @@ import createBrowserstackStatus from '../utils/create-browserstack-status';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
 
-const API_POLLING_INTERVAL = 30000;
-
 const BROWSERSTACK_API_PATHS = {
     browserList: {
         url: 'https://api.browserstack.com/automate/browsers.json'
@@ -155,22 +153,6 @@ export default class AutomateBackend extends BaseBackend {
 
         var sessionId = this.sessions[id].sessionId;
 
-        // Takes advantage from tail call optimization,
-        // also a better approach then setInterval, as network requests
-        // cannot be ensured in particular time and pushing extra
-        // requests surely degrades the performance.
-        const poolFn = async () => {
-            try {
-                await requestApi(BROWSERSTACK_API_PATHS.getUrl(sessionId), { executeImmediately: true });
-                setTimeout(poolFn, API_POLLING_INTERVAL);
-            }
-            catch (err) {
-                return;
-            }
-        };
-
-        this.sessions[id].interval = setTimeout(() => poolFn(), API_POLLING_INTERVAL);
-
         await requestApi(BROWSERSTACK_API_PATHS.openUrl(sessionId), { body: { url: pageUrl } });
     }
 
@@ -182,9 +164,9 @@ export default class AutomateBackend extends BaseBackend {
 
         delete this.sessions[id];
 
-        clearTimeout(session.interval);
-
-        await requestApi(BROWSERSTACK_API_PATHS.deleteSession(session.sessionId));
+        // Delete session whose sessionId is created
+        if (session.sessionId)
+            await requestApi(BROWSERSTACK_API_PATHS.deleteSession(session.sessionId));
     }
 
     async takeScreenshot (id, screenshotPath) {
