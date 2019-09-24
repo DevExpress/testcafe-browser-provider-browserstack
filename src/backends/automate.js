@@ -165,7 +165,7 @@ export default class AutomateBackend extends BaseBackend {
         delete this.sessions[id];
 
         // Delete session whose sessionId is created
-        if (session.sessionId)
+        if (session.sessionId && session.sessionId !== '')
             await requestApi(BROWSERSTACK_API_PATHS.deleteSession(session.sessionId));
     }
 

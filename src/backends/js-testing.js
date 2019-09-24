@@ -92,7 +92,7 @@ export default class JSTestingBackend extends BaseBackend {
         var workerId   = this.workers[id].id;
 
         // Return incase of invalid workerId
-        if (!workerId)
+        if (!workerId || workerId === '')
             return;
 
         await requestApi(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
