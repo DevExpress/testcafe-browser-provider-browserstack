@@ -142,13 +142,17 @@ BrowserStack Automate allows you to provide options for its internal Selenium Gr
  
 To specify BrowserStack capabilities via the TestCafe BrowserStack provider, use environment variables. This provider supports the following capabilities:
  
-Capability                 | Environment Variable
--------------------------- | --------------------
-`browserstack.debug`       | `BROWSERSTACK_DEBUG`
-`browserstack.console`     | `BROWSERSTACK_CONSOLE`
-`browserstack.networkLogs` | `BROWSERSTACK_NETWORK_LOGS`
-`browserstack.video`       | `BROWSERSTACK_VIDEO`
-`browserstack.timezone`    | `BROWSERSTACK_TIMEZONE`
+Capability                     | Environment Variable
+------------------------------ | --------------------
+`name`                         | `BROWSERSTACK_TEST_RUN_NAME`
+`browserstack.debug`           | `BROWSERSTACK_DEBUG`
+`browserstack.console`         | `BROWSERSTACK_CONSOLE`
+`browserstack.networkLogs`     | `BROWSERSTACK_NETWORK_LOGS`
+`browserstack.video`           | `BROWSERSTACK_VIDEO`
+`browserstack.timezone`        | `BROWSERSTACK_TIMEZONE`
+`browserstack.geoLocation`     | `BROWSERSTACK_GEO_LOCATION`
+`browserstack.customNetwork`   | `BROWSERSTACK_CUSTOM_NETWORK`
+`browserstack.networkProfile`  | `BROWSERSTACK_NETWORK_PROFILE`
  
 Refer to the [BrowserStack documentation](https://www.browserstack.com/automate/capabilities) for information about the values you can specify.
  

@@ -110,11 +110,15 @@ export default {
             ['build', process.env['BROWSERSTACK_BUILD_ID']],
             ['project', process.env['BROWSERSTACK_PROJECT_NAME']],
             ['resolution', process.env['BROWSERSTACK_DISPLAY_RESOLUTION']],
+            ['name', process.env['BROWSERSTACK_TEST_RUN_NAME']],
             ['browserstack.debug', process.env['BROWSERSTACK_DEBUG']],
             ['browserstack.console', process.env['BROWSERSTACK_CONSOLE']],
             ['browserstack.networkLogs', process.env['BROWSERSTACK_NETWORK_LOGS']],
             ['browserstack.video', process.env['BROWSERSTACK_VIDEO']],
             ['browserstack.timezone', process.env['BROWSERSTACK_TIMEZONE']],
+            ['browserstack.geoLocation', process.env['BROWSERSTACK_GEO_LOCATION']],
+            ['browserstack.customNetwork', process.env['BROWSERSTACK_CUSTOM_NETWORK']],
+            ['browserstack.networkProfile', process.env['BROWSERSTACK_NETWORK_PROFILE']]
         ];
 
         return capabilitiesFromEnvironment
@@ -176,7 +180,8 @@ export default {
             pageUrl = 'http://' + browserProxy.targetHost + ':' + browserProxy.proxyPort + parsedPageUrl.path;
         }
 
-        capabilities.name            = `TestCafe test run ${id}`;
+        if (!capabilities.name)
+            capabilities.name            = `TestCafe test run ${id}`;
 
         if (connector) {
             capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
