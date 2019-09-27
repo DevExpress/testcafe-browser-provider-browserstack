@@ -40,7 +40,5 @@ describe('Browserstack capabilities', function () {
             'browserstack.customNetwork':  '"1000", "1000", "100", "1"',
             'browserstack.networkProfile': '4g-lte-lossy'
         });
-
-
     });
 });
