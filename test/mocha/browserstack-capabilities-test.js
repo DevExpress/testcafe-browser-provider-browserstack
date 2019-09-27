@@ -3,6 +3,13 @@ var browserStackProvider = require('../../');
 
 
 describe('Browserstack capabilities', function () {
+    after(function () { 
+        delete process.env.BROWSERSTACK_TEST_RUN_NAME;
+        delete process.env.BROWSERSTACK_GEO_LOCATION;
+        delete process.env.BROWSERSTACK_CUSTOM_NETWORK;
+        delete process.env.BROWSERSTACK_NETWORK_PROFILE;
+    });
+
     it('Should add custom capabilities from environment variables', function () {
         process.env['BROWSERSTACK_BUILD_ID'] = 'build-1';
         process.env['BROWSERSTACK_PROJECT_NAME'] = 'project-1';
@@ -20,18 +27,20 @@ describe('Browserstack capabilities', function () {
         const output = browserStackProvider._getAdditionalCapabilities({});
 
         expect(output).to.deep.equal({
-            'build':                         'build-1',
-            'project':                       'project-1',
-            'resolution':                    '1024x768',
-            'name':                          'Testcafe test run 1',
-            'browserstack.debug':            'true',
-            'browserstack.console':          'errors',
-            'browserstack.networkLogs':      'true',
-            'browserstack.video':            'true',
-            'browserstack.timezone':         'Asia/Taipei',
-            'browserstack.geoLocation':      'ZA',
-            'browserstack.customNetwork':    '"1000", "1000", "100", "1"',
-            'browserstack.networkProfile':   '4g-lte-lossy'
+            'build':                       'build-1',
+            'project':                     'project-1',
+            'resolution':                  '1024x768',
+            'name':                        'Testcafe test run 1',
+            'browserstack.debug':          'true',
+            'browserstack.console':        'errors',
+            'browserstack.networkLogs':    'true',
+            'browserstack.video':          'true',
+            'browserstack.timezone':       'Asia/Taipei',
+            'browserstack.geoLocation':    'ZA',
+            'browserstack.customNetwork':  '"1000", "1000", "100", "1"',
+            'browserstack.networkProfile': '4g-lte-lossy'
         });
+
+
     });
 });
