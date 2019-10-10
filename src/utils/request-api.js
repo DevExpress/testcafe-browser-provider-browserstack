@@ -1,12 +1,9 @@
 import Promise from 'pinkie';
 import request from 'request-promise';
-import delay from './delay';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
 
-const API_REQUEST_DELAY = 100;
-
-let apiRequestPromise = Promise.resolve(null);
+const apiRequestPromise = Promise.resolve(null);
 
 export default function (apiPath, params = {}) {
     if (!process.env['BROWSERSTACK_USERNAME'] || !process.env['BROWSERSTACK_ACCESS_KEY'])
@@ -36,7 +33,7 @@ export default function (apiPath, params = {}) {
 
     const chainPromise = executeImmediately ? Promise.resolve(null) : apiRequestPromise;
 
-    let currentRequestPromise = chainPromise
+    const currentRequestPromise = chainPromise
         .then(() => request(url, opts))
         .catch(error => {
             if (error.statusCode === 401)
@@ -44,19 +41,6 @@ export default function (apiPath, params = {}) {
 
             throw error;
         });
-
-    if (executeImmediately) {
-        let result = null;
-
-        currentRequestPromise = currentRequestPromise
-            .then(promiseResult => {
-                result = promiseResult;
-            })
-            .then(() => delay(API_REQUEST_DELAY))
-            .then(() => result);
-    }
-    else
-        apiRequestPromise = currentRequestPromise.then(() => delay(API_REQUEST_DELAY));
 
     return currentRequestPromise;
 }

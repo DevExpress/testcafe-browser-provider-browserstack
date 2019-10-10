@@ -121,7 +121,7 @@ export default {
             .filter(nameValueTuple => nameValueTuple[1] !== void 0)
             .reduce((result, [name, value]) => {
                 result[name] = value;
-            
+
                 return result;
             }, {});
     },
