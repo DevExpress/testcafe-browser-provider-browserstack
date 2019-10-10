@@ -6,8 +6,26 @@ This plugin integrates [TestCafe](http://devexpress.github.io/testcafe) with the
 
 ## Install
 
-```sh
-npm install testcafe-browser-provider-browserstack
+Step 1: Clone the repo
+```bash
+git clone https://github.com/browserstack/testcafe-browser-provider-browserstack.git
+```
+
+Step 2: Go into the directory
+```bash
+cd testcafe-browser-provider-browserstack
+```
+Step 3: Install the dependencies
+```bash
+npm install (use lts version to avoid breaking changes)
+```
+Step 4: Gulp build the module
+```bash
+./node_modules/.bin/gulp build
+```
+Step 5: Link the package globally, for consumption by testcafe
+```bash
+npm link
 ```
 
 ## Usage
@@ -52,7 +70,7 @@ Proxy options can be passed via environment variables.
  - `BROWSERSTACK_LOCAL_PROXY` - a string that specifies a proxy for the local web server. It should have the following structure: `user:pass@proxyHostName:port`,
  - `BROWSERSTACK_FORCE_PROXY` - if it's not empty, forces all traffic of BrowserStack local binary to go through the proxy,
  - `BROWSERSTACK_FORCE_LOCAL` - if it's not empty, forces all traffic of BrowserStack local binary to go through the local machine
- - `BROWSERSTACK_NO_LOCAL` - If it's not empty, forces all traffic of BrowserStack to go over public internet 
+ - `BROWSERSTACK_NO_LOCAL` - If it's not empty, forces all traffic of BrowserStack to go over public internet
 
 Example:
 
@@ -137,11 +155,11 @@ testcafe browserstack:chrome test.js
 ```
 
 ## Other BrowserStack Options
- 
+
 BrowserStack Automate allows you to provide options for its internal Selenium Grid in the form of key-value pairs called [capabilities](https://www.browserstack.com/automate/capabilities).
- 
+
 To specify BrowserStack capabilities via the TestCafe BrowserStack provider, use environment variables. This provider supports the following capabilities:
- 
+
 Capability                 | Environment Variable
 -------------------------- | --------------------
 `browserstack.debug`       | `BROWSERSTACK_DEBUG`
@@ -149,11 +167,11 @@ Capability                 | Environment Variable
 `browserstack.networkLogs` | `BROWSERSTACK_NETWORK_LOGS`
 `browserstack.video`       | `BROWSERSTACK_VIDEO`
 `browserstack.timezone`    | `BROWSERSTACK_TIMEZONE`
- 
+
 Refer to the [BrowserStack documentation](https://www.browserstack.com/automate/capabilities) for information about the values you can specify.
- 
+
 **Example**
- 
+
 ```sh
 export BROWSERSTACK_DEBUG="true"
 export BROWSERSTACK_TIMEZONE="UTC"
