@@ -1,10 +1,7 @@
 import Promise from 'pinkie';
 import request from 'request-promise';
-// import delay from './delay';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
-
-// const API_REQUEST_DELAY = 100;
 
 const apiRequestPromise = Promise.resolve(null);
 
@@ -44,18 +41,6 @@ export default function (apiPath, params = {}) {
 
             throw error;
         });
-
-    // if (executeImmediately) {
-    //     let result = null;
-
-    //     currentRequestPromise = currentRequestPromise
-    //         .then(promiseResult => {
-    //             result = promiseResult;
-    //         })
-    //         .then(() => result);
-    // }
-    // else
-    //     apiRequestPromise = currentRequestPromise.then(() => delay(API_REQUEST_DELAY));
 
     return currentRequestPromise;
 }
