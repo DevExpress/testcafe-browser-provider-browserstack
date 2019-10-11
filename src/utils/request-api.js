@@ -19,7 +19,7 @@ export default function (apiPath, params = {}) {
         },
 
         headers: {
-            'user-agent': 'testcafe-browsersatck',
+            'user-agent': 'testcafe-browserstack',
         },
 
         qs: { ...queryParams },
