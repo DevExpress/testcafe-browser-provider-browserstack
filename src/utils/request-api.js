@@ -9,14 +9,17 @@ export default function (apiPath, params = {}) {
     if (!process.env['BROWSERSTACK_USERNAME'] || !process.env['BROWSERSTACK_ACCESS_KEY'])
         throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
 
-    var url = apiPath.url;
-
     var { body, executeImmediately, ...queryParams } = params;
 
     var opts = {
+        url:  apiPath.url,
         auth: {
             user: process.env['BROWSERSTACK_USERNAME'],
             pass: process.env['BROWSERSTACK_ACCESS_KEY'],
+        },
+
+        headers: {
+            'user-agent': 'testcafe-browsersatck',
         },
 
         qs: { ...queryParams },
@@ -34,7 +37,7 @@ export default function (apiPath, params = {}) {
     const chainPromise = executeImmediately ? Promise.resolve(null) : apiRequestPromise;
 
     const currentRequestPromise = chainPromise
-        .then(() => request(url, opts))
+        .then(() => request(opts))
         .catch(error => {
             if (error.statusCode === 401)
                 throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
