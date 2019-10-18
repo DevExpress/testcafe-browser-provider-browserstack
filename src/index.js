@@ -181,7 +181,7 @@ export default {
         }
 
         if (!capabilities.name)
-            capabilities.name            = `TestCafe test run ${id}`;
+            capabilities.name = `TestCafe test run ${id}`;
 
         if (connector) {
             capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
