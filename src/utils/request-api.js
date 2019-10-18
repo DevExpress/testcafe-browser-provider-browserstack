@@ -2,11 +2,8 @@ import Promise from 'pinkie';
 import request from 'request-promise';
 import delay from './delay';
 import * as ERROR_MESSAGES from '../templates/error-messages';
-import isEnvVarTrue from '../utils/is-env-var-true';
-
 
 const API_REQUEST_DELAY = 100;
-const isForcingProxyForApiRequests = () => isEnvVarTrue('BROWSERSTACK_FORCE_PROXY_FOR_API_REQUESTS');
 
 let apiRequestPromise = Promise.resolve(null);
 
@@ -27,14 +24,13 @@ export default function (apiPath, params = {}) {
         qs: { ...queryParams },
 
         method: apiPath.method || 'GET',
-        json:   apiPath.encoding === void 0,
-
-        ...process.env['BROWSERSTACK_PROXY'] && isForcingProxyForApiRequests()
-        ? {
-            proxy: `http://${process.env['BROWSERSTACK_PROXY']}`
-        }
-        : {}
+        json:   apiPath.encoding === void 0
     };
+
+    const proxy = process.env['BROWSERSTACK_PROXY'];
+
+    if (proxy)
+        opts.proxy = `http://${proxy}`;
 
     if (body)
         opts.body = body;

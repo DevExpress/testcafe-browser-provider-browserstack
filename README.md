@@ -51,7 +51,6 @@ Proxy options can be passed via environment variables.
  - `BROWSERSTACK_PROXY` - a string that specifies a proxy for the BrowserStack local binary. It should have the following structure: `user:pass@proxyHostName:port`,
  - `BROWSERSTACK_LOCAL_PROXY` - a string that specifies a proxy for the local web server. It should have the following structure: `user:pass@proxyHostName:port`,
  - `BROWSERSTACK_FORCE_PROXY` - if it's not empty, forces all traffic of BrowserStack local binary to go through the proxy,
- - `BROWSERSTACK_FORCE_PROXY_FOR_API_REQUESTS` - If it's not empty, forces all api calls to BrowserStack to go through the proxy,
  - `BROWSERSTACK_FORCE_LOCAL` - if it's not empty, forces all traffic of BrowserStack local binary to go through the local machine
  - `BROWSERSTACK_NO_LOCAL` - If it's not empty, forces all traffic of BrowserStack to go over public internet 
 
@@ -62,7 +61,6 @@ export BROWSERSTACK_PROXY="user:p@ssw0rd@proxy.com:8080"
 export BROWSERSTACK_LOCAL_PROXY="admin:12345678@192.168.0.2:8080"
 export BROWSERSTACK_FORCE_PROXY="1"
 export BROWSERSTACK_FORCE_LOCAL="1"
-export BROWSERSTACK_FORCE_PROXY_FOR_API_REQUESTS="1"
 testcafe browserstack:chrome test.js
 ```
 
