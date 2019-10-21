@@ -3,7 +3,6 @@ import request from 'request-promise';
 import delay from './delay';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
-
 const API_REQUEST_DELAY = 100;
 
 let apiRequestPromise = Promise.resolve(null);
@@ -27,6 +26,11 @@ export default function (apiPath, params = {}) {
         method: apiPath.method || 'GET',
         json:   apiPath.encoding === void 0
     };
+
+    const proxy = process.env['BROWSERSTACK_PROXY'];
+
+    if (proxy)
+        opts.proxy = `http://${proxy}`;
 
     if (body)
         opts.body = body;
