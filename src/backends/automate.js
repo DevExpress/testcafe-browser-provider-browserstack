@@ -165,7 +165,7 @@ export default class AutomateBackend extends BaseBackend {
         if (!session)
             return;
 
-        clearInterval(this.sessions[id].interval);
+        clearInterval(session.interval);
 
         delete this.sessions[id];
 
