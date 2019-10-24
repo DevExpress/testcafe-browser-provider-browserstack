@@ -6,6 +6,7 @@ import requestApiBase from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
+const API_POLLING_INTERVAL = 80000;
 
 const BROWSERSTACK_API_PATHS = {
     browserList: {
@@ -153,6 +154,8 @@ export default class AutomateBackend extends BaseBackend {
 
         var sessionId = this.sessions[id].sessionId;
 
+        this.sessions[id].interval = setInterval(() => requestApi(BROWSERSTACK_API_PATHS.getUrl(sessionId), { executeImmediately: true }), API_POLLING_INTERVAL);
+
         await requestApi(BROWSERSTACK_API_PATHS.openUrl(sessionId), { body: { url: pageUrl } });
     }
 
@@ -161,6 +164,8 @@ export default class AutomateBackend extends BaseBackend {
 
         if (!session)
             return;
+
+        clearInterval(this.sessions[id].interval);
 
         delete this.sessions[id];
 
