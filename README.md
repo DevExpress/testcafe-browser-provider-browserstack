@@ -6,26 +6,8 @@ This plugin integrates [TestCafe](http://devexpress.github.io/testcafe) with the
 
 ## Install
 
-Step 1: Clone the repo
-```bash
-git clone https://github.com/browserstack/testcafe-browser-provider-browserstack.git
-```
-
-Step 2: Go into the directory
-```bash
-cd testcafe-browser-provider-browserstack
-```
-Step 3: Install the dependencies
-```bash
-npm install (use lts version to avoid breaking changes)
-```
-Step 4: Gulp build the module
-```bash
-./node_modules/.bin/gulp build
-```
-Step 5: Link the package globally, for consumption by testcafe
-```bash
-npm link
+```sh
+npm i -g testcafe-browser-provider-browserstack
 ```
 
 ## Usage
