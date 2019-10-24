@@ -11,7 +11,7 @@ fixture `Screenshot`
     .after(() => del('.screenshots/*'));
 
 // TODO: Fix broken test
-xit('Take screenshot', async t => {
+test.skip('Take screenshot', async t => {
     var screenshotName = getTempFileName({ template: 'screenshot-XXXXXX.png' });
     var screenshotPath = path.join('.screenshots', screenshotName);
 
