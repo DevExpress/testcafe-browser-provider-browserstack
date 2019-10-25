@@ -10,12 +10,11 @@ fixture `Screenshot`
     .before(() => del('.screenshots/*'))
     .after(() => del('.screenshots/*'));
 
-// TODO: Fix broken test
 test.skip('Take screenshot', async t => {
     var screenshotName = getTempFileName({ template: 'screenshot-XXXXXX.png' });
     var screenshotPath = path.join('.screenshots', screenshotName);
 
-    await t.takeScreenshot(screenshotPath);
+    await t.takeScreenshot(screenshotName);
 
     expect(statSync(screenshotPath).isFile()).to.be.true;
 });
