@@ -167,7 +167,7 @@ When you run tests in multiple browsers or [concurrently](https://devexpress.git
 Assume your plan allows **2** parallel tests, and you run one of the following commands:
 
 ```sh
-testcafe 'browserstack:ie@11.0:Windows 10' 'browserstack:chrome@59.0:Windows 10' 'browserstack:safari@9.1:OS X El Capitan' tests/acceptance/
+testcafe 'browserstack:ie@11.0:Windows 10','browserstack:chrome@59.0:Windows 10','browserstack:safari@9.1:OS X El Capitan' tests/acceptance/
 ```
 
 ```sh
