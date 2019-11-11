@@ -10,7 +10,7 @@ fixture `Screenshot`
     .before(() => del('.screenshots/*'))
     .after(() => del('.screenshots/*'));
 
-test.skip('Take screenshot', async t => {
+test('Take screenshot', async t => {
     var screenshotName = getTempFileName({ template: 'screenshot-XXXXXX.png' });
     var screenshotPath = path.join('.screenshots', screenshotName);
 
