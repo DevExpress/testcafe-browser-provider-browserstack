@@ -4,7 +4,7 @@
   "description": "browserstack TestCafe browser provider plugin.",
   "repository": "https://github.com/DevExpress/testcafe-browser-provider-browserstack",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "homepage": "https://github.com/DevExpress/testcafe-browser-provider-browserstack",
   "author": {
@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "test": "gulp test",
-    "build": "gulp build",
+    "prepare": "gulp build",
     "publish-please": "publish-please",
     "prepublish": "publish-please guard"
   },
