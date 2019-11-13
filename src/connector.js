@@ -5,8 +5,6 @@ import nodeUrl from 'url';
 import tmp from 'tmp';
 
 
-const BROWSERSTACK_CONNECTOR_DELAY = 10000;
-
 const PROXY_AUTH_RE = /^([^:]*)(?::(.*))?$/;
 
 const identity = x => x;
@@ -89,11 +87,8 @@ export default class BrowserstackConnector {
                     return;
                 }
 
-                setTimeout(() => {
-                    this.connectorInstance = connector;
-
-                    resolve(connector);
-                }, BROWSERSTACK_CONNECTOR_DELAY);
+                this.connectorInstance = connector;
+                resolve(connector);
             });
         });
     }

@@ -6,7 +6,6 @@ import requestApiBase from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
-
 const API_POLLING_INTERVAL = 80000;
 
 const BROWSERSTACK_API_PATHS = {
@@ -68,7 +67,7 @@ function requestApi (path, params) {
             if (response.status) {
                 throw new Error(ERROR_MESSAGES.REMOTE_API_REQUEST_FAILED({
                     status:      response.status,
-                    apiResponse: response.value && response.value.message || inspect(response)    
+                    apiResponse: response.value && response.value.message || inspect(response)
                 }));
             }
 
@@ -166,11 +165,13 @@ export default class AutomateBackend extends BaseBackend {
         if (!session)
             return;
 
-        delete this.sessions[id];
-            
         clearInterval(session.interval);
 
-        await requestApi(BROWSERSTACK_API_PATHS.deleteSession(session.sessionId));
+        delete this.sessions[id];
+
+        // Delete session whose sessionId is created
+        if (session.sessionId && session.sessionId !== '')
+            await requestApi(BROWSERSTACK_API_PATHS.deleteSession(session.sessionId));
     }
 
     async takeScreenshot (id, screenshotPath) {
