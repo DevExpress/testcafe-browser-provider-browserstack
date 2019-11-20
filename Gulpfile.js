@@ -93,13 +93,13 @@ function testTestcafe (browsers) {
 function testTestcafeRest () {
     process.env.BROWSERSTACK_USE_AUTOMATE = '0';
 
-    return testTestcafe('browserstack:chrome:windows 10,browserstack:Safari@12');
+    return testTestcafe('browserstack:chrome:windows 10,browserstack:Safari@12.1');
 }
 
 function testTestcafeAutomate () {
     process.env.BROWSERSTACK_USE_AUTOMATE = '1';
 
-    return testTestcafe('browserstack:chrome:windows 10,browserstack:Google Pixel@7.1,browserstack:Safari@12');
+    return testTestcafe('browserstack:chrome:windows 10,browserstack:Google Pixel@7.1,browserstack:Safari@12.1');
 }
 
 exports.clean = clean;

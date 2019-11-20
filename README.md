@@ -7,7 +7,7 @@ This plugin integrates [TestCafe](http://devexpress.github.io/testcafe) with the
 ## Install
 
 ```sh
-npm install testcafe-browser-provider-browserstack
+npm i -g testcafe-browser-provider-browserstack
 ```
 
 ## Usage
@@ -52,7 +52,7 @@ Proxy options can be passed via environment variables.
  - `BROWSERSTACK_LOCAL_PROXY` - a string that specifies a proxy for the local web server. It should have the following structure: `user:pass@proxyHostName:port`,
  - `BROWSERSTACK_FORCE_PROXY` - if it's not empty, forces all traffic of BrowserStack local binary to go through the proxy,
  - `BROWSERSTACK_FORCE_LOCAL` - if it's not empty, forces all traffic of BrowserStack local binary to go through the local machine
- - `BROWSERSTACK_NO_LOCAL` - If it's not empty, forces all traffic of BrowserStack to go over public internet 
+ - `BROWSERSTACK_NO_LOCAL` - If it's not empty, forces all traffic of BrowserStack to go over public internet
 
 Example:
 
@@ -137,27 +137,27 @@ testcafe browserstack:chrome test.js
 ```
 
 ## Other BrowserStack Options
- 
+
 BrowserStack Automate allows you to provide options for its internal Selenium Grid in the form of key-value pairs called [capabilities](https://www.browserstack.com/automate/capabilities).
- 
+
 To specify BrowserStack capabilities via the TestCafe BrowserStack provider, use environment variables. This provider supports the following capabilities:
- 
-Capability                     | Environment Variable
------------------------------- | --------------------
-`name`                         | `BROWSERSTACK_TEST_RUN_NAME`
-`browserstack.debug`           | `BROWSERSTACK_DEBUG`
-`browserstack.console`         | `BROWSERSTACK_CONSOLE`
-`browserstack.networkLogs`     | `BROWSERSTACK_NETWORK_LOGS`
-`browserstack.video`           | `BROWSERSTACK_VIDEO`
-`browserstack.timezone`        | `BROWSERSTACK_TIMEZONE`
-`browserstack.geoLocation`     | `BROWSERSTACK_GEO_LOCATION`
-`browserstack.customNetwork`   | `BROWSERSTACK_CUSTOM_NETWORK`
-`browserstack.networkProfile`  | `BROWSERSTACK_NETWORK_PROFILE`
- 
+
+Capability                    | Environment Variable
+----------------------------- | --------------------
+`name`                        | `BROWSERSTACK_TEST_RUN_NAME`
+`browserstack.debug`          | `BROWSERSTACK_DEBUG`
+`browserstack.console`        | `BROWSERSTACK_CONSOLE`
+`browserstack.networkLogs`    | `BROWSERSTACK_NETWORK_LOGS`
+`browserstack.video`          | `BROWSERSTACK_VIDEO`
+`browserstack.timezone`       | `BROWSERSTACK_TIMEZONE`
+`browserstack.geoLocation`    | `BROWSERSTACK_GEO_LOCATION`
+`browserstack.customNetwork`  | `BROWSERSTACK_CUSTOM_NETWORK`
+`browserstack.networkProfile` | `BROWSERSTACK_NETWORK_PROFILE`
+
 Refer to the [BrowserStack documentation](https://www.browserstack.com/automate/capabilities) for information about the values you can specify.
- 
+
 **Example**
- 
+
 ```sh
 export BROWSERSTACK_DEBUG="true"
 export BROWSERSTACK_TIMEZONE="UTC"
@@ -171,7 +171,7 @@ When you run tests in multiple browsers or [concurrently](https://devexpress.git
 Assume your plan allows **2** parallel tests, and you run one of the following commands:
 
 ```sh
-testcafe 'browserstack:ie@11.0:Windows 10' 'browserstack:chrome@59.0:Windows 10' 'browserstack:safari@9.1:OS X El Capitan' tests/acceptance/
+testcafe 'browserstack:ie@11.0:Windows 10','browserstack:chrome@59.0:Windows 10','browserstack:safari@9.1:OS X El Capitan' tests/acceptance/
 ```
 
 ```sh

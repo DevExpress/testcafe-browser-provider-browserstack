@@ -1,15 +1,10 @@
 import jimp from 'jimp';
 import BaseBackend from './base';
 import requestApi from '../utils/request-api';
-import delay from '../utils/delay';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
 
 
 const TESTS_TIMEOUT = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
-
-const MINIMAL_WORKER_TIME        = 30000;
-const TESTCAFE_CLOSING_TIMEOUT   = 10000;
-const TOO_SMALL_TIME_FOR_WAITING = MINIMAL_WORKER_TIME - TESTCAFE_CLOSING_TIMEOUT;
 
 const BROWSERSTACK_API_PATHS = {
     browserList: {
@@ -94,17 +89,14 @@ export default class JSTestingBackend extends BaseBackend {
     }
 
     async closeBrowser (id) {
-        var workerTime = Date.now() - this.workers[id].started;
         var workerId   = this.workers[id].id;
 
-        if (workerTime < MINIMAL_WORKER_TIME) {
-            if (workerTime < TOO_SMALL_TIME_FOR_WAITING)
-                await requestApi(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
-
-            await delay(MINIMAL_WORKER_TIME - workerTime);
-        }
+        // Return incase of invalid workerId
+        if (!workerId || workerId === '')
+            return;
 
         await requestApi(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
+
     }
 
     async takeScreenshot (id, screenshotPath) {
