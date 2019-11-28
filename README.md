@@ -145,6 +145,7 @@ To specify BrowserStack capabilities via the TestCafe BrowserStack provider, use
 Capability                    | Environment Variable
 ----------------------------- | --------------------
 `name`                        | `BROWSERSTACK_TEST_RUN_NAME`
+`acceptSslCerts`              | `BROWSERSTACK_ACCEPT_SSL_CERTS`
 `browserstack.debug`          | `BROWSERSTACK_DEBUG`
 `browserstack.console`        | `BROWSERSTACK_CONSOLE`
 `browserstack.networkLogs`    | `BROWSERSTACK_NETWORK_LOGS`
