@@ -197,7 +197,7 @@ export default {
             capabilities.local           = true;
         }
         else {
-            // Can utilise already benefit of already running binary on
+            // Can utilise benefit of already running binary on
             // the system
             capabilities.local = true;
             capabilities.localIdentifier = localIdentifier;

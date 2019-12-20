@@ -12,7 +12,7 @@ import * as ERROR_MESSAGES from '../templates/error-messages';
 // send commands in the given amount of time
 const envAPIPoll = process.env['API_POLL'];
 const API_POLLING_INTERVAL = !isNaN(envAPIPoll) ?
-                            parseInt(process.env['API_POLL'], 10) :
+                            parseInt(envAPIPoll, 10) :
                             80000;
 
 const BROWSERSTACK_API_PATHS = {
