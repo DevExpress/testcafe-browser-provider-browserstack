@@ -171,8 +171,16 @@ export default {
     // Required - must be implemented
     // Browser control
     async openBrowser (id, pageUrl, browserName) {
-        var capabilities = { ...this._generateBasicCapabilities(browserName), ...this._getAdditionalCapabilities() };
-        var connector    = await this._getConnector();
+        var capabilities = {
+            ...this._generateBasicCapabilities(browserName),
+            ...this._getAdditionalCapabilities()
+        };
+        const localIdentifier = process.env['BROWSERSTACK_LOCAL_ID'];
+
+        let connector = null;
+
+        if (!localIdentifier)
+            connector    = await this._getConnector();
 
         if (capabilities.os.toLowerCase() === 'android') {
             const parsedPageUrl = parseUrl(pageUrl);
@@ -187,6 +195,12 @@ export default {
         if (connector) {
             capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
             capabilities.local           = true;
+        }
+        else {
+            // Can utilise already benefit of already running binary on
+            // the system
+            capabilities.local = true;
+            capabilities.localIdentifier = localIdentifier;
         }
 
         if (browserName.indexOf('chrome') !== -1 && process.env['BROWSERSTACK_CHROME_ARGS'] && process.env['BROWSERSTACK_CHROME_ARGS'].length > 0)
