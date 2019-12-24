@@ -6,6 +6,7 @@ import JSTestingBackend from './backends/js-testing';
 import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
 import isEnvVarTrue from './utils/is-env-var-true';
+import { log } from 'util';
 
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
@@ -122,13 +123,34 @@ export default {
             ['acceptSslCerts', process.env['BROWSERSTACK_ACCEPT_SSL_CERTS']]
         ];
 
-        return capabilitiesFromEnvironment
+        let sessionCaps = capabilitiesFromEnvironment
             .filter(nameValueTuple => nameValueTuple[1] !== void 0)
             .reduce((result, [name, value]) => {
                 result[name] = value;
 
                 return result;
             }, {});
+
+        const extraArgs = process.env['BS_EXTRA_ARGS'];
+
+        if (extraArgs) {
+            try {
+                const val = JSON.parse(extraArgs);
+
+                // Overriding and addition of capabilities
+                sessionCaps = {
+                    ...sessionCaps,
+                    ...val
+                };
+            }
+            catch (err) {
+                if (err)
+                    log('Error parsing the BS_EXTRA_ARGS. Skipping for now!!');
+
+            }
+        }
+
+        return sessionCaps;
     },
 
     _filterPlatformInfo (query) {
