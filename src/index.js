@@ -131,25 +131,6 @@ export default {
                 return result;
             }, {});
 
-        const extraArgs = process.env['BS_EXTRA_ARGS'];
-
-        if (extraArgs) {
-            try {
-                const val = JSON.parse(extraArgs);
-
-                // Overriding and addition of capabilities
-                sessionCaps = {
-                    ...sessionCaps,
-                    ...val
-                };
-            }
-            catch (err) {
-                if (err)
-                    log('Error parsing the BS_EXTRA_ARGS. Skipping for now!!');
-
-            }
-        }
-
         return sessionCaps;
     },
 
@@ -214,16 +195,14 @@ export default {
         if (!capabilities.name)
             capabilities.name = `TestCafe test run ${id}`;
 
-        if (connector) {
+        if (connector)
             capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
-            capabilities.local           = true;
-        }
         else {
             // Can utilise benefit of already running binary on
             // the system
-            capabilities.local = true;
             capabilities.localIdentifier = localIdentifier;
         }
+        capabilities.local = true;
 
         if (browserName.indexOf('chrome') !== -1 && process.env['BROWSERSTACK_CHROME_ARGS'] && process.env['BROWSERSTACK_CHROME_ARGS'].length > 0)
             capabilities.chromeOptions = { args: [process.env['BROWSERSTACK_CHROME_ARGS']] };

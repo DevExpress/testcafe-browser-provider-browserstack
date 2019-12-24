@@ -10,10 +10,16 @@ import * as ERROR_MESSAGES from '../templates/error-messages';
 // in automate sessions, as network can become bottleneck.
 // Try reducing the number in case network is unable to
 // send commands in the given amount of time
-const envAPIPoll = process.env['API_POLL'];
-const API_POLLING_INTERVAL = !isNaN(envAPIPoll) ?
-                            parseInt(envAPIPoll, 10) :
-                            80000;
+const envAPIPoll = parseInt(process.env['API_POLL'], 10);
+const API_POLLING_INTERVAL = envAPIPoll || 80000;
+
+const BROWSERSTACK_IDLE_TIMEOUT = 90000;
+
+if (envAPIPoll && envAPIPoll >= BROWSERSTACK_IDLE_TIMEOUT) {
+    process.emitWarning(`
+        Polling interval is greater than the idle timeout ${BROWSERSTACK_IDLE_TIMEOUT}
+    `);
+}
 
 const BROWSERSTACK_API_PATHS = {
     browserList: {
