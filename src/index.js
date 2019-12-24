@@ -123,7 +123,7 @@ export default {
             ['acceptSslCerts', process.env['BROWSERSTACK_ACCEPT_SSL_CERTS']]
         ];
 
-        let sessionCaps = capabilitiesFromEnvironment
+        const sessionCaps = capabilitiesFromEnvironment
             .filter(nameValueTuple => nameValueTuple[1] !== void 0)
             .reduce((result, [name, value]) => {
                 result[name] = value;
