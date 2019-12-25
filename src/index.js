@@ -6,7 +6,6 @@ import JSTestingBackend from './backends/js-testing';
 import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
 import isEnvVarTrue from './utils/is-env-var-true';
-import { log } from 'util';
 
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
