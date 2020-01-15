@@ -122,15 +122,13 @@ export default {
             ['acceptSslCerts', process.env['BROWSERSTACK_ACCEPT_SSL_CERTS']]
         ];
 
-        const sessionCaps = capabilitiesFromEnvironment
+        return capabilitiesFromEnvironment
             .filter(nameValueTuple => nameValueTuple[1] !== void 0)
             .reduce((result, [name, value]) => {
                 result[name] = value;
 
                 return result;
             }, {});
-
-        return sessionCaps;
     },
 
     _filterPlatformInfo (query) {

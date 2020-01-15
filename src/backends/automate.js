@@ -4,22 +4,11 @@ import jimp from 'jimp';
 import BaseBackend from './base';
 import requestApiBase from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
+import getAPIPollingInterval from '../utils/get-api-polling-interval';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
-// This is done to prevent idle timeout happening
-// in automate sessions, as network can become bottleneck.
-// Try reducing the number in case network is unable to
-// send commands in the given amount of time
-const envAPIPoll = parseInt(process.env['API_POLL'], 10);
-const API_POLLING_INTERVAL = envAPIPoll || 80000;
 
-const BROWSERSTACK_IDLE_TIMEOUT = 90000;
-
-if (envAPIPoll && envAPIPoll >= BROWSERSTACK_IDLE_TIMEOUT) {
-    process.emitWarning(`
-        Polling interval is greater than the idle timeout ${BROWSERSTACK_IDLE_TIMEOUT}
-    `);
-}
+const API_POLLING_INTERVAL = getAPIPollingInterval();
 
 const BROWSERSTACK_API_PATHS = {
     browserList: {
