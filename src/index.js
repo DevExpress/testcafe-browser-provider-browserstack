@@ -7,11 +7,11 @@ import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
 import isEnvVarTrue from './utils/is-env-var-true';
 
+
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
-
 const isAutomateEnabled = () => isEnvVarTrue('BROWSERSTACK_USE_AUTOMATE');
-const isLocalEnabled    = () => !isEnvVarTrue('BROWSERSTACK_NO_LOCAL');
+const isLocalEnabled    = () => !isEnvVarTrue('BROWSERSTACK_NO_LOCAL') && !!process.env.BROWSERSTACK_LOCAL_IDENTIFIER;
 
 export default {
     // Multiple browsers support
@@ -26,10 +26,10 @@ export default {
     platformsInfo: [],
     browserNames:  [],
 
-    _getConnector () {
+    _createConnector () {
         this.connectorPromise = this.connectorPromise
             .then(async connector => {
-                if (!connector && isLocalEnabled()) {
+                if (!connector) {
                     connector = new BrowserstackConnector(process.env['BROWSERSTACK_ACCESS_KEY']);
 
                     await connector.create();
@@ -171,16 +171,19 @@ export default {
     // Required - must be implemented
     // Browser control
     async openBrowser (id, pageUrl, browserName) {
-        var capabilities = {
+        const capabilities = {
             ...this._generateBasicCapabilities(browserName),
             ...this._getAdditionalCapabilities()
         };
-        const localIdentifier = process.env['BROWSERSTACK_LOCAL_ID'];
 
-        let connector = null;
+        capabilities.local           = isLocalEnabled();
+        capabilities.localIdentifier = process.env.BROWSERSTACK_LOCAL_IDENTIFIER;
 
-        if (!localIdentifier)
-            connector    = await this._getConnector();
+        if (capabilities.local && !capabilities.localIdentifier) {
+            const connector = await this._createConnector();
+
+            capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
+        }
 
         if (capabilities.os.toLowerCase() === 'android') {
             const parsedPageUrl = parseUrl(pageUrl);
@@ -191,15 +194,6 @@ export default {
 
         if (!capabilities.name)
             capabilities.name = `TestCafe test run ${id}`;
-
-        if (connector)
-            capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
-        else {
-            // Can utilise benefit of already running binary on
-            // the system
-            capabilities.localIdentifier = localIdentifier;
-        }
-        capabilities.local = true;
 
         if (browserName.indexOf('chrome') !== -1 && process.env['BROWSERSTACK_CHROME_ARGS'] && process.env['BROWSERSTACK_CHROME_ARGS'].length > 0)
             capabilities.chromeOptions = { args: [process.env['BROWSERSTACK_CHROME_ARGS']] };
