@@ -226,5 +226,6 @@ or some request can fail without consequences for your build.
 export TESTCAFE_BROWSERSTACK_API_POLLING_INTERVAL="40000"
 testcafe browserstack:chrome test.js
 ```
+
 ## Author
 Developer Express Inc. (https://devexpress.com)
