@@ -216,7 +216,7 @@ due to a network problem, the next request can succeed and prevent your test ses
 
 You can use the `TESTCAFE_BROWSERSTACK_API_POLLING_INTERVAL` environment variable to control this interval.
 It specifies the milliseconds that passes until an additional request triggering an artificial WebDriver command is sent to the BrowserStack WebDriver server.
-It's default value is `80000`. If the BrowserStack idle timeout is 90 seconds (equivalent to `90000` milliseconds), at least an one request will be processed
+Its default value is `80000`. If the BrowserStack idle timeout is 90 seconds (equivalent to `90000` milliseconds), at least an one request will be processed
 by the BrowserStack server in normal network conditions. If you set it to `40000`, a two requests can be processed by the WebDriver server if your network is perfect,
 or some request can fail without consequences for your build.
 
