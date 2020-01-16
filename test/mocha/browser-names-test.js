@@ -32,7 +32,7 @@ describe('Browser names', function () {
             'iPhone XR@12.1',
             'Google Nexus 6@6.0'
         ];
-        
+
         const AUTOMATE_BROWSER_NAMES = [
             'chrome@51.0:OS X Mavericks',
             'firefox@45.0:OS X Yosemite',

@@ -11,7 +11,7 @@ import isEnvVarTrue from './utils/is-env-var-true';
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
 const isAutomateEnabled = () => isEnvVarTrue('BROWSERSTACK_USE_AUTOMATE');
-const isLocalEnabled    = () => !isEnvVarTrue('BROWSERSTACK_NO_LOCAL') && !!process.env.BROWSERSTACK_LOCAL_IDENTIFIER;
+const isLocalEnabled    = () => !isEnvVarTrue('BROWSERSTACK_NO_LOCAL');
 
 export default {
     // Multiple browsers support
@@ -177,6 +177,8 @@ export default {
         };
 
         capabilities.local           = isLocalEnabled();
+
+        // Give preference to the already running local identifier
         capabilities.localIdentifier = process.env.BROWSERSTACK_LOCAL_IDENTIFIER;
 
         if (capabilities.local && !capabilities.localIdentifier) {
