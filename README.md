@@ -53,8 +53,7 @@ Proxy options can be passed via environment variables.
  - `BROWSERSTACK_FORCE_PROXY` - if it's not empty, forces all traffic of BrowserStack local binary to go through the proxy,
  - `BROWSERSTACK_FORCE_LOCAL` - if it's not empty, forces all traffic of BrowserStack local binary to go through the local machine
  - `BROWSERSTACK_NO_LOCAL` - If it's not empty, forces all traffic of BrowserStack to go over public internet
- - `BROWSERSTACK_LOCAL_IDENTIFIER` - a string that is an identifier of an opened BrowserStack local tunnel. If it's not empty, disables automatic local tunnel creation
- and forces re-using an existing local tunnel with the specified identifier.
+ - `BROWSERSTACK_LOCAL_IDENTIFIER` - a string identifier of an open BrowserStack local tunnel. If it's not empty, a new local tunnel is not created. Instead, the browser provider uses an existing local tunnel with the specified identifier.
 
 Example:
 
@@ -200,25 +199,15 @@ done
 
 ## Configuring the API Polling Interval for BrowserStack Automate
 
-BrowserStack Automate is a WebDriver-based solution and has an [idle timeout](https://www.browserstack.com/automate/timeouts), that forcefully shutdowns inactive test sessions. Normally it's not a problem for WebDriver-users,
-since each page action (clicks, typings, etc.) triggers a corresponding WebDriver command and thus resetting the idle timeout counter.
+BrowserStack Automate is based on WebDriver, which forcefully shuts down inactive sessions after an [idle timeout](https://www.browserstack.com/automate/timeouts) expires. This works for WebDriver users, since each page action (clicks, types, etc.) triggers a WebDriver command and thus resets the idle timer.
 
-However TestCafe is not WebDriver-based and has its own way to simulate page actions, that doesn't trigger any WebDriver command. It means that TestCafe has to periodically trigger
-an artificial WebDriver command to prevent test session be kicked due to inactivity by the BrowserStack WebDriver server.
+However, TestCafe is not WebDriver-based. It simulates page actions in a different way and it doesn't trigger WebDriver commands. To prevent test session from being terminated by the BrowserStack WebDriver server due to inactivity, TestCafe triggers a dummy WebDriver command once in a while.
 
-Usually you don't even need to know about this periodically triggered command. However, if your network connection is unstable,
-a request that triggers the command can fail. In this situation, the BrowserStack WebDriver server doesn't receive the command before the idle timeout expires,
-and your test session can be terminated by BrowserStack due to inactivity.
+However, if the network connection is unstable, a request that triggers this dummy command can fail. In this instance, the BrowserStack WebDriver server doesn't receive the command before the idle timeout expires, and the test session can be terminated due to inactivity.
 
-It means that if your BrowserStack builds are frequently terminated due to the idle timeout, you can try to decrease
-the time delay before an additional artificial WebDriver command is triggered. So if the first request fails to trigger the command
-due to a network problem, the next request can succeed and prevent your test session from being terminated.
+If your BrowserStack builds are terminated due to the idle timeout frequently, you can try to decrease the delay before the dummy WebDriver command is sent. In case the first request fails to trigger the command due to a network problem, the next may succeed and thus prevent your test session from being terminated.
 
-You can use the `TESTCAFE_BROWSERSTACK_API_POLLING_INTERVAL` environment variable to control this interval.
-It specifies the milliseconds that passes until an additional request triggering an artificial WebDriver command is sent to the BrowserStack WebDriver server.
-Its default value is `80000`. If the BrowserStack idle timeout is 90 seconds (equivalent to `90000` milliseconds), at least an one request will be processed
-by the BrowserStack server in normal network conditions. If you set it to `40000`, a two requests can be processed by the WebDriver server if your network is perfect,
-or some request can fail without consequences for your build.
+Use the `TESTCAFE_BROWSERSTACK_API_POLLING_INTERVAL` environment variable to control this delay. This variable specifies time (in millisecinds) to pass until an additional request that triggers an dummy WebDriver command is sent to the BrowserStack WebDriver server. The default delay is `80000` millisecinds. If the BrowserStack idle timeout is `90` seconds (or `90000` milliseconds), at least one request is processed by the BrowserStack server in normal network conditions. If you set it to `40000`, two requests are processed by the WebDriver server if your network is good. In case of network issues, either request may fail without breaking the build.
 
 **Example**
 
