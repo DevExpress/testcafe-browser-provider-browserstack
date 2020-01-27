@@ -11,7 +11,7 @@ import isEnvVarTrue from './utils/is-env-var-true';
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
 const isAutomateEnabled = () => isEnvVarTrue('BROWSERSTACK_USE_AUTOMATE');
-const isLocalEnabled    = () => !isEnvVarTrue('BROWSERSTACK_NO_LOCAL');
+const isLocalEnabled    = () => !!process.env.BROWSERSTACK_LOCAL_IDENTIFIER || !isEnvVarTrue('BROWSERSTACK_NO_LOCAL');
 
 export default {
     // Multiple browsers support
