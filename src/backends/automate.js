@@ -4,9 +4,11 @@ import jimp from 'jimp';
 import BaseBackend from './base';
 import requestApiBase from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
+import getAPIPollingInterval from '../utils/get-api-polling-interval';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
-const API_POLLING_INTERVAL = 80000;
+
+const API_POLLING_INTERVAL = getAPIPollingInterval();
 
 const BROWSERSTACK_API_PATHS = {
     browserList: {

@@ -27,12 +27,11 @@ describe('Browser names', function () {
             'ie@10.0:Windows 8',
             'ie@11.0:Windows 8.1',
             'edge@15.0:Windows 10',
-            'iPhone 7@10.3',
-            'iPhone SE@11.2',
-            'iPhone XR@12.1',
+            'iPhone SE@11',
+            'iPhone XR@12',
             'Google Nexus 6@6.0'
         ];
-        
+
         const AUTOMATE_BROWSER_NAMES = [
             'chrome@51.0:OS X Mavericks',
             'firefox@45.0:OS X Yosemite',
