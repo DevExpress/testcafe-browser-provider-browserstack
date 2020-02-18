@@ -148,6 +148,8 @@ export default {
                 return result;
             }, {});
 
+        // Reloding capabilities from an external config file.
+        // Given preference to external config over environment variables.
         let externalData = {};
 
         if (isExternalConfig()) {
