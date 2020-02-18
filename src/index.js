@@ -6,12 +6,30 @@ import JSTestingBackend from './backends/js-testing';
 import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
 import isEnvVarTrue from './utils/is-env-var-true';
-
+import * as fs from 'fs';
 
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
 const isAutomateEnabled = () => isEnvVarTrue('BROWSERSTACK_USE_AUTOMATE');
 const isLocalEnabled    = () => !!process.env.BROWSERSTACK_LOCAL_IDENTIFIER || !isEnvVarTrue('BROWSERSTACK_NO_LOCAL');
+
+// Utilities related to external config
+const externalConfigValue = process.env.BROWSERSTACK_EXTERNAL_CONFIG;
+const isExternalConfig = () => !!externalConfigValue;
+
+const readExternalConfig = (filename) => {
+    let data = null;
+
+    try {
+        const fileData = fs.readFileSync(filename);
+
+        data = JSON.parse(fileData);
+    }
+    catch (err) {
+        process.emitWarning('Bad JSON file supplied');
+    }
+    return data;
+};
 
 export default {
     // Multiple browsers support
@@ -122,13 +140,25 @@ export default {
             ['acceptSslCerts', process.env['BROWSERSTACK_ACCEPT_SSL_CERTS']]
         ];
 
-        return capabilitiesFromEnvironment
+        const capabilities = capabilitiesFromEnvironment
             .filter(nameValueTuple => nameValueTuple[1] !== void 0)
             .reduce((result, [name, value]) => {
                 result[name] = value;
 
                 return result;
             }, {});
+
+        let externalData = {};
+
+        if (isExternalConfig()) {
+            const externalJSONData = readExternalConfig(externalConfigValue);
+
+            if (!externalJSONData)
+                process.emitWarning('Using default capabilities as JSON file path is incorrect');
+
+            externalData = externalJSONData || {};
+        }
+        return { ...capabilities, ...externalData };
     },
 
     _filterPlatformInfo (query) {
