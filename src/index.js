@@ -1,4 +1,5 @@
 import { parse as parseUrl } from 'url';
+import { promisify } from 'util';
 import Promise from 'pinkie';
 import parseCapabilities from 'desired-capabilities';
 import BrowserstackConnector from './connector';
@@ -17,11 +18,21 @@ const isLocalEnabled    = () => !!process.env.BROWSERSTACK_LOCAL_IDENTIFIER || !
 const externalConfigValue = process.env.BROWSERSTACK_EXTERNAL_CONFIG;
 const isExternalConfig = () => !!externalConfigValue;
 
-const readExternalConfig = (filename) => {
+const promisifyReadFile = promisify(fs.readFile);
+const promisifyExistsFile = promisify(fs.exists);
+
+const readExternalConfig = async (filename) => {
     let data = null;
 
     try {
-        const fileData = fs.readFileSync(filename);
+        const isExists = await promisifyExistsFile(filename);
+
+        if (!isExists) {
+            process.emitWarning('Filepath supplied does not exists');
+            return data;
+        }
+
+        const fileData = await promisifyReadFile(filename);
 
         data = JSON.parse(fileData);
     }
@@ -121,7 +132,7 @@ export default {
         return this._filterPlatformInfo(this._createQuery(browserName))[0];
     },
 
-    _getAdditionalCapabilities () {
+    async _getAdditionalCapabilities () {
         // NOTE: This function maps env vars to browserstack capabilities.
         // For the full list of capabilities, see https://www.browserstack.com/automate/capabilities
         const capabilitiesFromEnvironment = [
@@ -153,9 +164,9 @@ export default {
         let externalData = {};
 
         if (isExternalConfig()) {
-            const externalJSONData = readExternalConfig(externalConfigValue);
+            const externalJSONData = await readExternalConfig(externalConfigValue);
 
-            if (!externalJSONData)
+            if (externalJSONData === null)
                 process.emitWarning('Using default capabilities as JSON file path is incorrect');
 
             externalData = externalJSONData || {};
@@ -203,9 +214,11 @@ export default {
     // Required - must be implemented
     // Browser control
     async openBrowser (id, pageUrl, browserName) {
+        const additionalCaps = await this._getAdditionalCapabilities();
+
         const capabilities = {
             ...this._generateBasicCapabilities(browserName),
-            ...this._getAdditionalCapabilities()
+            ...additionalCaps
         };
 
         capabilities.local           = isLocalEnabled();
