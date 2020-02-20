@@ -95,14 +95,15 @@ export default class BrowserstackConnector {
 
     destroy () {
         return new Promise((resolve, reject) => {
-            this.connectorInstance.stop(err => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-
-                resolve();
-            });
+            setTimeout(() => {
+                this.connectorInstance.stop(err => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve();
+                });
+            }, 1000);
         });
     }
 }
