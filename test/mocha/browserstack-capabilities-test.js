@@ -3,7 +3,7 @@ var browserStackProvider = require('../../');
 
 
 describe('Browserstack capabilities', function () {
-    after(function () { 
+    after(function () {
         delete process.env.BROWSERSTACK_TEST_RUN_NAME;
         delete process.env.BROWSERSTACK_GEO_LOCATION;
         delete process.env.BROWSERSTACK_CUSTOM_NETWORK;
@@ -24,21 +24,23 @@ describe('Browserstack capabilities', function () {
         process.env['BROWSERSTACK_CUSTOM_NETWORK'] = '"1000", "1000", "100", "1"';
         process.env['BROWSERSTACK_NETWORK_PROFILE'] = '4g-lte-lossy';
 
-        const output = browserStackProvider._getAdditionalCapabilities({});
+        browserStackProvider._getAdditionalCapabilities()
+            .then(output => {
+                expect(output).to.deep.equal({
+                    'build':                       'build-1',
+                    'project':                     'project-1',
+                    'resolution':                  '1024x768',
+                    'name':                        'Testcafe test run 1',
+                    'browserstack.debug':          'true',
+                    'browserstack.console':        'errors',
+                    'browserstack.networkLogs':    'true',
+                    'browserstack.video':          'true',
+                    'browserstack.timezone':       'Asia/Taipei',
+                    'browserstack.geoLocation':    'ZA',
+                    'browserstack.customNetwork':  '"1000", "1000", "100", "1"',
+                    'browserstack.networkProfile': '4g-lte-lossy'
+                });
+            });
 
-        expect(output).to.deep.equal({
-            'build':                       'build-1',
-            'project':                     'project-1',
-            'resolution':                  '1024x768',
-            'name':                        'Testcafe test run 1',
-            'browserstack.debug':          'true',
-            'browserstack.console':        'errors',
-            'browserstack.networkLogs':    'true',
-            'browserstack.video':          'true',
-            'browserstack.timezone':       'Asia/Taipei',
-            'browserstack.geoLocation':    'ZA',
-            'browserstack.customNetwork':  '"1000", "1000", "100", "1"',
-            'browserstack.networkProfile': '4g-lte-lossy'
-        });
     });
 });
