@@ -1,5 +1,6 @@
 import { parse as parseUrl } from 'url';
 import Promise from 'pinkie';
+import { promisify } from 'util';
 import parseCapabilities from 'desired-capabilities';
 import BrowserstackConnector from './connector';
 import JSTestingBackend from './backends/js-testing';
@@ -196,7 +197,7 @@ export default {
         profile.setPreference('browser.helperApps.neverAsk.saveToDisk', getMimeTypes());
         profile.updatePreferences();
 
-        capabilities['firefox_profile'] = await this._encodeFirefoxProfile(profile);
+        capabilities['firefox_profile'] = await promisify(profile.encoded).bind(profile)();
     },
 
     async _encodeFirefoxProfile (profile) {
@@ -239,10 +240,10 @@ export default {
         if (!capabilities.name)
             capabilities.name = `TestCafe test run ${id}`;
 
-        if (browserName.indexOf('chrome') !== -1)
+        if (browserName.includes('chrome'))
             this._prepareChromeCapabilities(capabilities);
 
-        if (browserName.indexOf('firefox') !== -1)
+        if (browserName.includes('firefox'))
             await this._prepareFirefoxCapabilities(capabilities);
 
         await this.backend.openBrowser(id, pageUrl, capabilities);
