@@ -191,6 +191,8 @@ export default {
         const FirefoxProfile = require('firefox-profile');
         const profile        = new FirefoxProfile();
 
+        profile.defaultPreferences = {};
+
         profile.setPreference('browser.helperApps.neverAsk.saveToDisk', getMimeTypes());
         profile.updatePreferences();
 
