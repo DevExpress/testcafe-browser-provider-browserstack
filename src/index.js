@@ -1,5 +1,4 @@
 import { parse as parseUrl } from 'url';
-import { promisify } from 'util';
 import Promise from 'pinkie';
 import parseCapabilities from 'desired-capabilities';
 import BrowserstackConnector from './connector';
@@ -7,7 +6,7 @@ import JSTestingBackend from './backends/js-testing';
 import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
 import isEnvVarTrue from './utils/is-env-var-true';
-import * as fs from 'fs';
+import { getExternalConfigContent } from './utils/detectExternalFile';
 
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
@@ -16,31 +15,7 @@ const isLocalEnabled    = () => !!process.env.BROWSERSTACK_LOCAL_IDENTIFIER || !
 
 // Utilities related to external config
 const externalConfigValue = process.env.BROWSERSTACK_EXTERNAL_CONFIG;
-const isExternalConfig = () => !!externalConfigValue;
-
-const promisifyReadFile = promisify(fs.readFile);
-const promisifyExistsFile = promisify(fs.exists);
-
-const readExternalConfig = async (filename) => {
-    let data = null;
-
-    try {
-        const isExists = await promisifyExistsFile(filename);
-
-        if (!isExists) {
-            process.emitWarning('Filepath supplied does not exists');
-            return data;
-        }
-
-        const fileData = await promisifyReadFile(filename);
-
-        data = JSON.parse(fileData);
-    }
-    catch (err) {
-        process.emitWarning('Bad JSON file supplied');
-    }
-    return data;
-};
+const isExternalConfig = !!externalConfigValue;
 
 export default {
     // Multiple browsers support
@@ -163,13 +138,15 @@ export default {
         // Given preference to external config over environment variables.
         let externalData = {};
 
-        if (isExternalConfig()) {
-            const externalJSONData = await readExternalConfig(externalConfigValue);
+        if (isExternalConfig) {
+            try {
+                const externalJSONData = await getExternalConfigContent(externalConfigValue);
 
-            if (externalJSONData === null)
+                externalData = externalJSONData;
+            }
+            catch (err) {
                 process.emitWarning('Using default capabilities as JSON file path is incorrect');
-
-            externalData = externalJSONData || {};
+            }
         }
         return { ...capabilities, ...externalData };
     },
