@@ -1,5 +1,6 @@
 import { parse as parseUrl } from 'url';
 import Promise from 'pinkie';
+import { promisify } from 'util';
 import parseCapabilities from 'desired-capabilities';
 import BrowserstackConnector from './connector';
 import JSTestingBackend from './backends/js-testing';
@@ -7,6 +8,7 @@ import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
 import isEnvVarTrue from './utils/is-env-var-true';
 import { getExternalConfigContent } from './utils/detectExternalFile';
+import db from 'mime-db';
 
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
@@ -16,6 +18,16 @@ const isLocalEnabled    = () => !!process.env.BROWSERSTACK_LOCAL_IDENTIFIER || !
 // Utilities related to external config
 const externalConfigValue = process.env.BROWSERSTACK_EXTERNAL_CONFIG;
 const isExternalConfig = !!externalConfigValue;
+
+function getMimeTypes () {
+    const mimeTypes = Object.keys(db);
+
+    return mimeTypes.filter(mimeType => {
+        const { extensions } = db[mimeType];
+
+        return extensions && extensions.length;
+    }).join(',');
+}
 
 export default {
     // Multiple browsers support
@@ -188,6 +200,37 @@ export default {
             });
     },
 
+    _prepareChromeCapabilities (capabilities) {
+        if (process.env['BROWSERSTACK_CHROME_ARGS'] && process.env['BROWSERSTACK_CHROME_ARGS'].length > 0)
+            capabilities.chromeOptions = { args: [process.env['BROWSERSTACK_CHROME_ARGS']] };
+    },
+
+    async _prepareFirefoxCapabilities (capabilities) {
+        if (!process.env['BROWSERSTACK_USE_AUTOMATE'])
+            return;
+
+        const FirefoxProfile = require('firefox-profile');
+        const profile        = new FirefoxProfile();
+
+        profile.defaultPreferences = {};
+
+        profile.setPreference('browser.helperApps.neverAsk.saveToDisk', getMimeTypes());
+        profile.updatePreferences();
+
+        capabilities['firefox_profile'] = await promisify(profile.encoded).bind(profile)();
+    },
+
+    async _encodeFirefoxProfile (profile) {
+        return new Promise((resolve, reject) => {
+            profile.encoded(function (err, encodedProfile) {
+                if (err)
+                    reject(err);
+                else
+                    resolve(encodedProfile);
+            });
+        });
+    },
+
     // Required - must be implemented
     // Browser control
     async openBrowser (id, pageUrl, browserName) {
@@ -219,8 +262,11 @@ export default {
         if (!capabilities.name)
             capabilities.name = `TestCafe test run ${id}`;
 
-        if (browserName.indexOf('chrome') !== -1 && process.env['BROWSERSTACK_CHROME_ARGS'] && process.env['BROWSERSTACK_CHROME_ARGS'].length > 0)
-            capabilities.chromeOptions = { args: [process.env['BROWSERSTACK_CHROME_ARGS']] };
+        if (browserName.includes('chrome'))
+            this._prepareChromeCapabilities(capabilities);
+
+        if (browserName.includes('firefox'))
+            await this._prepareFirefoxCapabilities(capabilities);
 
         await this.backend.openBrowser(id, pageUrl, capabilities);
 
