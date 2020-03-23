@@ -1,0 +1,14 @@
+{
+    "build":                       "build-1",
+    "project":                     "project-1",
+    "resolution":                  "1024x768",
+    "name":                        "Testcafe test run 1",
+    "browserstack.debug":          "true",
+    "browserstack.console":        "errors",
+    "browserstack.networkLogs":    "true",
+    "browserstack.video":          "true",
+    "browserstack.timezone":       "Asia/Taipei",
+    "browserstack.geoLocation":    "ZA",
+    "browserstack.customNetwork":  "\"1000\", \"1000\", \"100\", \"1\"",
+    "browserstack.networkProfile": "4g-lte-lossy"
+}

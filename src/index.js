@@ -2,13 +2,13 @@ import { parse as parseUrl } from 'url';
 import Promise from 'pinkie';
 import { promisify } from 'util';
 import parseCapabilities from 'desired-capabilities';
+import { filter } from 'lodash';
 import BrowserstackConnector from './connector';
 import JSTestingBackend from './backends/js-testing';
 import AutomateBackend from './backends/automate';
 import BrowserProxy from './browser-proxy';
 import isEnvVarTrue from './utils/is-env-var-true';
 import db from 'mime-db';
-
 
 const ANDROID_PROXY_RESPONSE_DELAY = 500;
 
@@ -115,32 +115,40 @@ export default {
         return this._filterPlatformInfo(this._createQuery(browserName))[0];
     },
 
-    _getAdditionalCapabilities () {
+    _getCapabilitiesFromEnvironment () {
         // NOTE: This function maps env vars to browserstack capabilities.
         // For the full list of capabilities, see https://www.browserstack.com/automate/capabilities
-        const capabilitiesFromEnvironment = [
-            ['build', process.env['BROWSERSTACK_BUILD_ID']],
-            ['project', process.env['BROWSERSTACK_PROJECT_NAME']],
-            ['resolution', process.env['BROWSERSTACK_DISPLAY_RESOLUTION']],
-            ['name', process.env['BROWSERSTACK_TEST_RUN_NAME']],
-            ['browserstack.debug', process.env['BROWSERSTACK_DEBUG']],
-            ['browserstack.console', process.env['BROWSERSTACK_CONSOLE']],
-            ['browserstack.networkLogs', process.env['BROWSERSTACK_NETWORK_LOGS']],
-            ['browserstack.video', process.env['BROWSERSTACK_VIDEO']],
-            ['browserstack.timezone', process.env['BROWSERSTACK_TIMEZONE']],
-            ['browserstack.geoLocation', process.env['BROWSERSTACK_GEO_LOCATION']],
-            ['browserstack.customNetwork', process.env['BROWSERSTACK_CUSTOM_NETWORK']],
-            ['browserstack.networkProfile', process.env['BROWSERSTACK_NETWORK_PROFILE']],
-            ['acceptSslCerts', process.env['BROWSERSTACK_ACCEPT_SSL_CERTS']]
-        ];
 
-        return capabilitiesFromEnvironment
-            .filter(nameValueTuple => nameValueTuple[1] !== void 0)
-            .reduce((result, [name, value]) => {
-                result[name] = value;
+        return {
+            'build':                       process.env['BROWSERSTACK_BUILD_ID'],
+            'project':                     process.env['BROWSERSTACK_PROJECT_NAME'],
+            'resolution':                  process.env['BROWSERSTACK_DISPLAY_RESOLUTION'],
+            'name':                        process.env['BROWSERSTACK_TEST_RUN_NAME'],
+            'browserstack.debug':          process.env['BROWSERSTACK_DEBUG'],
+            'browserstack.console':        process.env['BROWSERSTACK_CONSOLE'],
+            'browserstack.networkLogs':    process.env['BROWSERSTACK_NETWORK_LOGS'],
+            'browserstack.video':          process.env['BROWSERSTACK_VIDEO'],
+            'browserstack.timezone':       process.env['BROWSERSTACK_TIMEZONE'],
+            'browserstack.geoLocation':    process.env['BROWSERSTACK_GEO_LOCATION'],
+            'browserstack.customNetwork':  process.env['BROWSERSTACK_CUSTOM_NETWORK'],
+            'browserstack.networkProfile': process.env['BROWSERSTACK_NETWORK_PROFILE'],
+            'acceptSslCerts':              process.env['BROWSERSTACK_ACCEPT_SSL_CERTS']
+        };
+    },
 
-                return result;
-            }, {});
+    _getCapabilitiesFromConfig () {
+        const configPath = process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH;
+
+        if (!configPath)
+            return {};
+
+        return require(configPath);
+    },
+
+    _getAdditionalCapabilities () {
+        const capabilitiesFromEnvironment = filter(this._getCapabilitiesFromEnvironment(), value => value !== void 0);
+
+        return { ...this._getCapabilitiesFromConfig(), ...capabilitiesFromEnvironment };
     },
 
     _filterPlatformInfo (query) {
