@@ -8,6 +8,7 @@ describe('Browserstack capabilities', function () {
         delete process.env.BROWSERSTACK_GEO_LOCATION;
         delete process.env.BROWSERSTACK_CUSTOM_NETWORK;
         delete process.env.BROWSERSTACK_NETWORK_PROFILE;
+        delete process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH;
     });
 
     it('Should add custom capabilities from environment variables', function () {
@@ -24,23 +25,42 @@ describe('Browserstack capabilities', function () {
         process.env['BROWSERSTACK_CUSTOM_NETWORK'] = '"1000", "1000", "100", "1"';
         process.env['BROWSERSTACK_NETWORK_PROFILE'] = '4g-lte-lossy';
 
-        browserStackProvider._getAdditionalCapabilities()
-            .then(output => {
-                expect(output).to.deep.equal({
-                    'build':                       'build-1',
-                    'project':                     'project-1',
-                    'resolution':                  '1024x768',
-                    'name':                        'Testcafe test run 1',
-                    'browserstack.debug':          'true',
-                    'browserstack.console':        'errors',
-                    'browserstack.networkLogs':    'true',
-                    'browserstack.video':          'true',
-                    'browserstack.timezone':       'Asia/Taipei',
-                    'browserstack.geoLocation':    'ZA',
-                    'browserstack.customNetwork':  '"1000", "1000", "100", "1"',
-                    'browserstack.networkProfile': '4g-lte-lossy'
-                });
-            });
+        const capabilities = browserStackProvider._getAdditionalCapabilities();
 
+        expect(capabilities).to.deep.equal({
+            'build':                       'build-1',
+            'project':                     'project-1',
+            'resolution':                  '1024x768',
+            'name':                        'Testcafe test run 1',
+            'browserstack.debug':          'true',
+            'browserstack.console':        'errors',
+            'browserstack.networkLogs':    'true',
+            'browserstack.video':          'true',
+            'browserstack.timezone':       'Asia/Taipei',
+            'browserstack.geoLocation':    'ZA',
+            'browserstack.customNetwork':  '"1000", "1000", "100", "1"',
+            'browserstack.networkProfile': '4g-lte-lossy'
+        });
+    });
+
+    it.only('Should read aditional capabilities from a config file', () => {
+        process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH = require.resolve('./data/capabilities-config.json');
+
+        const capabilities = browserStackProvider._getAdditionalCapabilities();
+
+        expect(capabilities).to.deep.equal({
+            'build':                       'build-1',
+            'project':                     'project-1',
+            'resolution':                  '1024x768',
+            'name':                        'Testcafe test run 1',
+            'browserstack.debug':          'true',
+            'browserstack.console':        'errors',
+            'browserstack.networkLogs':    'true',
+            'browserstack.video':          'true',
+            'browserstack.timezone':       'Asia/Taipei',
+            'browserstack.geoLocation':    'ZA',
+            'browserstack.customNetwork':  '"1000", "1000", "100", "1"',
+            'browserstack.networkProfile': '4g-lte-lossy'
+        });
     });
 });
