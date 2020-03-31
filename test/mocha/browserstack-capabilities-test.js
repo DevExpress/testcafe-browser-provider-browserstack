@@ -84,4 +84,29 @@ describe('Browserstack capabilities', function () {
             'browserstack.networkProfile': '4g-lte-lossy'
         });
     });
+    it('should merge file and env capabilities, giving priority to env capabilities', () => {
+        process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH = require.resolve('./data/partial-capabilities-config.json');
+        process.env.BROWSERSTACK_BUILD_ID = 'build-2';
+        process.env.BROWSERSTACK_PROJECT_NAME = 'project-2';
+        process.env.BROWSERSTACK_DISPLAY_RESOLUTION = '800x600';
+        const capabilities = browserStackProvider._getAdditionalCapabilities();
+
+        expect(capabilities).to.deep.equal(
+            {
+                'build':                    'build-2',
+                'project':                  'project-2',
+                'resolution':               '800x600',
+                'browserstack.console':     'errors',
+                'browserstack.debug':       'true',
+                'browserstack.networkLogs': 'true'
+            }
+        );
+    });
+    it('should return no capabilities if given file doesn\'t exist', () => {
+        process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH = './wrong-path/to/file.json';
+        expect(browserStackProvider._getAdditionalCapabilities()).to.deep.equal({});
+    });
+    it("should try to use 'browserstackConfig.js' no BROWSERSTACK_CAPABILITIES_CONFIG_PATH is given", () => {
+        expect(browserStackProvider._getAdditionalCapabilities()).to.deep.equal({});
+    });
 });

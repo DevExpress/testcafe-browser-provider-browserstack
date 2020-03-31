@@ -137,6 +137,36 @@ export BROWSERSTACK_CHROME_ARGS="--start-maximized --autoplay-policy=no-user-ges
 testcafe browserstack:chrome test.js
 ```
 
+## Using a config file
+By default this browser provider try to locate a `browserstackConfig.js` on the root of your project to get the settings from. You can specify a
+custom path with the env var `BROWSERSTACK_CAPABILITIES_CONFIG_PATH`, it can be a json or a js file with a default export to a object.
+
+**Example**
+```javascript
+// customConfig.js
+
+module.exports = {
+   "build":                       "build-1",
+   "project":                     "project-1",
+   "resolution":                  "1024x768",
+   "name":                        "Testcafe test run 1",
+   "browserstack.debug":          "true",
+   "browserstack.console":        "errors",
+   "browserstack.networkLogs":    "true",
+   "browserstack.video":          "true",
+   "browserstack.timezone":       "Asia/Taipei",
+   "browserstack.geoLocation":    "ZA",
+   "browserstack.customNetwork":  "\"1000\", \"1000\", \"100\", \"1\"",
+   "browserstack.networkProfile": "4g-lte-lossy"
+}
+```
+and then:
+```sh
+export BROWSERSTACK_CAPABILITIES_CONFIG_PATH="./customConfig.js"
+testcafe browserstack:chrome test.js
+```
+**Please notice that env var overwrites file configs**
+
 ## Other BrowserStack Options
 
 BrowserStack Automate allows you to provide options for its internal Selenium Grid in the form of key-value pairs called [capabilities](https://www.browserstack.com/automate/capabilities).

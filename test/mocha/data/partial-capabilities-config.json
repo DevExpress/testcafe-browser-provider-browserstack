@@ -1,0 +1,8 @@
+{
+  "build": "build-1",
+  "project": "project-1",
+  "resolution": "1024x768",
+  "browserstack.debug": "true",
+  "browserstack.console": "errors",
+  "browserstack.networkLogs": "true"
+}

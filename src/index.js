@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { parse as parseUrl } from 'url';
 import Promise from 'pinkie';
 import { promisify } from 'util';
@@ -137,12 +138,17 @@ export default {
     },
 
     _getCapabilitiesFromConfig () {
-        const configPath = process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH;
+        var defaultConfigPath = './browserstackConfig.js';
+        var configPath = process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH || defaultConfigPath;
 
-        if (!configPath)
-            return {};
+        if (fs.existsSync(configPath))
+            return require(fs.realpathSync(configPath));
+        else if (configPath !== defaultConfigPath) {
+            // eslint-disable-next-line
+            console.warn('Could not find the file:', configPath);
+        }
 
-        return require(configPath);
+        return {};
     },
 
     _getAdditionalCapabilities () {
