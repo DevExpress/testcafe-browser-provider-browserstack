@@ -1,11 +1,12 @@
-var path        = require('path');
-const { spawn } = require('child_process');
-var gulp        = require('gulp');
-var del         = require('del');
+const path        = require('path');
+const { spawn }   = require('child_process');
+const gulp        = require('gulp');
+const eslint      = require('gulp-eslint');
+const del         = require('del');
 
 
-var PACKAGE_PARENT_DIR  = path.join(__dirname, '../');
-var PACKAGE_SEARCH_PATH = (process.env.NODE_PATH ? process.env.NODE_PATH + path.delimiter : '') + PACKAGE_PARENT_DIR;
+const PACKAGE_PARENT_DIR  = path.join(__dirname, '../');
+const PACKAGE_SEARCH_PATH = (process.env.NODE_PATH ? process.env.NODE_PATH + path.delimiter : '') + PACKAGE_PARENT_DIR;
 
 
 function clean () {
@@ -13,7 +14,6 @@ function clean () {
 }
 
 function lint () {
-    var eslint = require('gulp-eslint');
 
     return gulp
         .src([
@@ -40,7 +40,7 @@ function ensureAuthCredentials () {
 function testMocha () {
     ensureAuthCredentials();
 
-    var mochaOpts = [
+    const mochaOpts = [
         '--ui', 'bdd',
         '--reporter', 'spec',
         '--timeout', typeof v8debug === 'undefined' ? 2000 : Infinity,
@@ -69,7 +69,7 @@ function testMochaAutomate () {
 function testTestcafe (browsers) {
     ensureAuthCredentials();
 
-    var testCafeOpts = [
+    const testCafeOpts = [
         browsers,
         'test/testcafe/**/*test.js',
         '-s', '.screenshots'
