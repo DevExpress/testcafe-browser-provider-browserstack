@@ -14,7 +14,7 @@ npm i -g testcafe-browser-provider-browserstack
 
 Before using this plugin, save the BrowserStack username and access key to environment variables `BROWSERSTACK_USERNAME` and `BROWSERSTACK_ACCESS_KEY`.
 
-Project name and build name will be displayed in BrowserStack if you set the environment variables `BROWSERSTACK_PROJECT_NAME` and `BROWSERSTACK_BUILD_ID`.
+Project name and build name will be displayed in BrowserStack if you set the `BROWSERSTACK_PROJECT_NAME` and `BROWSERSTACK_BUILD_ID` environment variables, or the `project` and `build` properties in the [configuration file](#configuration-file).
 
 If you have troubles starting multiple browsers at once, or get `browserstack-local` related errors like [#27](https://github.com/DevExpress/testcafe-browser-provider-browserstack/issues/27),
 try setting the `BROWSERSTACK_PARALLEL_RUNS` environment variable to the number of browsers you want to run simultaneously, or to 1 if you want to run just one browser.
@@ -30,7 +30,6 @@ If you run tests from the command line, use the alias when specifying browsers:
 ```sh
 testcafe "browserstack:Chrome@53.0:Windows 10" "path/to/test/file.js"
 ```
-
 
 When you use API, pass the alias to the `browsers()` method:
 
@@ -48,12 +47,12 @@ Tip: you can skip version (`@53.0`) or/and OS name (`:Windows 10`).
 
 Proxy options can be passed via environment variables.
 
- - `BROWSERSTACK_PROXY` - a string that specifies a proxy for the BrowserStack local binary. It should have the following structure: `user:pass@proxyHostName:port`,
- - `BROWSERSTACK_LOCAL_PROXY` - a string that specifies a proxy for the local web server. It should have the following structure: `user:pass@proxyHostName:port`,
- - `BROWSERSTACK_FORCE_PROXY` - if it's not empty, forces all traffic of BrowserStack local binary to go through the proxy,
- - `BROWSERSTACK_FORCE_LOCAL` - if it's not empty, forces all traffic of BrowserStack local binary to go through the local machine
- - `BROWSERSTACK_NO_LOCAL` - If it's not empty, forces all traffic of BrowserStack to go over public internet
- - `BROWSERSTACK_LOCAL_IDENTIFIER` - a string identifier of an open BrowserStack local tunnel. If it's not empty, a new local tunnel is not created. Instead, the browser provider uses an existing local tunnel with the specified identifier.
+- `BROWSERSTACK_PROXY` - a string that specifies a proxy for the BrowserStack local binary. It should have the following structure: `user:pass@proxyHostName:port`,
+- `BROWSERSTACK_LOCAL_PROXY` - a string that specifies a proxy for the local web server. It should have the following structure: `user:pass@proxyHostName:port`,
+- `BROWSERSTACK_FORCE_PROXY` - if it's not empty, forces all traffic of BrowserStack local binary to go through the proxy,
+- `BROWSERSTACK_FORCE_LOCAL` - if it's not empty, forces all traffic of BrowserStack local binary to go through the local machine
+- `BROWSERSTACK_NO_LOCAL` - If it's not empty, forces all traffic of BrowserStack to go over public internet
+- `BROWSERSTACK_LOCAL_IDENTIFIER` - a string identifier of an open BrowserStack local tunnel. If it's not empty, a new local tunnel is not created. Instead, the browser provider uses an existing local tunnel with the specified identifier.
 
 Example:
 
@@ -87,16 +86,17 @@ testcafe browserstack:chrome test.js
 ## BrowserStack JS Testing and BrowserStack Automate
 
 BrowserStack offers two APIs for browser testing:
- - [BrowserStack JS Testing](https://www.browserstack.com/javascript-testing-api)
- - [BrowserStack Automate](https://www.browserstack.com/automate)
 
- JS testing supports more types of devices (compare: [JS Testing Devices](https://www.browserstack.com/list-of-browsers-and-platforms?product=js_testing)
- vs [Automate Devices](https://www.browserstack.com/list-of-browsers-and-platforms?product=automate)),
- while Automate allows for much longer tests ([2 hours](https://www.browserstack.com/automate/timeouts) vs [30 minutes](https://github.com/browserstack/api#timeout300))
- and provides some additional features (like the window resizing functionality).
+- [BrowserStack JS Testing](https://www.browserstack.com/javascript-testing-api)
+- [BrowserStack Automate](https://www.browserstack.com/automate)
 
- TestCafe uses the JS Testing API by default. In order to use BrowserStack Automate,
- set the `BROWSERSTACK_USE_AUTOMATE` environment variable to `1`.
+JS testing supports more types of devices (compare: [JS Testing Devices](https://www.browserstack.com/list-of-browsers-and-platforms?product=js_testing)
+vs [Automate Devices](https://www.browserstack.com/list-of-browsers-and-platforms?product=automate)),
+while Automate allows for much longer tests ([2 hours](https://www.browserstack.com/automate/timeouts) vs [30 minutes](https://github.com/browserstack/api#timeout300))
+and provides some additional features (like the window resizing functionality).
+
+TestCafe uses the JS Testing API by default. In order to use BrowserStack Automate,
+set the `BROWSERSTACK_USE_AUTOMATE` environment variable to `1`.
 
 Example:
 
@@ -107,7 +107,7 @@ testcafe browserstack:chrome test.js
 
 ## Setting Display Resolution
 
-To set the display resolution, use the `BROWSERSTACK_DISPLAY_RESOLUTION` environment variable.
+To set the display resolution, use the `BROWSERSTACK_DISPLAY_RESOLUTION` environment variable or the `resolution` property in the [configuration file](#configuration-file).
 Valid resolutions can be found [here](https://github.com/browserstack/api#resolution).
 
 Remember that this only sets the display resolution and does not resize the browser window. You'll still need to use TestCafe's [window resizing API](https://devexpress.github.io/testcafe/documentation/test-api/actions/resize-window.html) to do so.
@@ -141,10 +141,13 @@ testcafe browserstack:chrome test.js
 
 BrowserStack Automate allows you to provide options for its internal Selenium Grid in the form of key-value pairs called [capabilities](https://www.browserstack.com/automate/capabilities).
 
-To specify BrowserStack capabilities via the TestCafe BrowserStack provider, use environment variables. This provider supports the following capabilities:
+To specify BrowserStack capabilities via the TestCafe BrowserStack provider, use environment variables or the [configuration file](#configuration-file). This provider supports the following capabilities:
 
 Capability                    | Environment Variable
------------------------------ | --------------------
+----------------------------- | ---------------------------------
+`project`                     | `BROWSERSTACK_PROJECT_NAME`
+`build`                       | `BROWSERSTACK_BUILD_ID`
+`resolution`                  | `BROWSERSTACK_DISPLAY_RESOLUTION`
 `name`                        | `BROWSERSTACK_TEST_RUN_NAME`
 `acceptSslCerts`              | `BROWSERSTACK_ACCEPT_SSL_CERTS`
 `browserstack.debug`          | `BROWSERSTACK_DEBUG`
@@ -164,6 +167,31 @@ Refer to the [BrowserStack documentation](https://www.browserstack.com/automate/
 export BROWSERSTACK_DEBUG="true"
 export BROWSERSTACK_TIMEZONE="UTC"
 testcafe browserstack:chrome test.js
+```
+
+### Configuration File
+
+You can specify BrowserStack [capability](https://www.browserstack.com/automate/capabilities) options in a JSON configuration file as an alternative to environment variables. Use [capability names](https://www.browserstack.com/automate/capabilities) for configuration file properties. If an option is set in both the configuration file and an environment variable, the environment variable setting takes priority.
+
+To use a configuration file, pass the file path in the `BROWSERSTACK_CAPABILITIES_CONFIG_PATH` environment variable:
+
+```sh
+export BROWSERSTACK_CAPABILITIES_CONFIG_PATH="./data/browserstack-config.json"
+testcafe browserstack:chrome test.js
+```
+
+**browserstack-config.json**
+
+```json
+{
+    "build":                       "build-1",
+    "project":                     "my-project",
+    "resolution":                  "1024x768",
+    "name":                        "Run 1",
+    "browserstack.debug":          true,
+    "browserstack.console":        "errors",
+    "browserstack.networkLogs":    true
+}
 ```
 
 ## Exceeding the Parallel Test Limit
@@ -217,4 +245,5 @@ testcafe browserstack:chrome test.js
 ```
 
 ## Author
+
 Developer Express Inc. (https://devexpress.com)
