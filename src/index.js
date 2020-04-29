@@ -2,7 +2,7 @@ import { parse as parseUrl } from 'url';
 import Promise from 'pinkie';
 import { promisify } from 'util';
 import parseCapabilities from 'desired-capabilities';
-import { filter } from 'lodash';
+import { pickBy } from 'lodash';
 import BrowserstackConnector from './connector';
 import JSTestingBackend from './backends/js-testing';
 import AutomateBackend from './backends/automate';
@@ -25,7 +25,7 @@ function getMimeTypes () {
     }).join(',');
 }
 
-export default {
+module.exports = {
     // Multiple browsers support
     isMultiBrowser: true,
 
@@ -146,7 +146,7 @@ export default {
     },
 
     _getAdditionalCapabilities () {
-        const capabilitiesFromEnvironment = filter(this._getCapabilitiesFromEnvironment(), value => value !== void 0);
+        const capabilitiesFromEnvironment = pickBy(this._getCapabilitiesFromEnvironment(), value => value !== void 0);
 
         return { ...this._getCapabilitiesFromConfig(), ...capabilitiesFromEnvironment };
     },

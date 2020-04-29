@@ -1,8 +1,7 @@
 var path        = require('path');
+const { spawn } = require('child_process');
 var gulp        = require('gulp');
-var babel       = require('gulp-babel');
 var del         = require('del');
-var execa       = require('execa');
 
 
 var PACKAGE_PARENT_DIR  = path.join(__dirname, '../');
@@ -28,10 +27,7 @@ function lint () {
 }
 
 function build () {
-    return gulp
-        .src('src/**/*.js')
-        .pipe(babel())
-        .pipe(gulp.dest('lib'));
+    return spawn('npx tsc -p src/tsconfig.json', { stdio: 'inherit', shell: true });
 }
 
 function ensureAuthCredentials () {
@@ -44,8 +40,6 @@ function ensureAuthCredentials () {
 function testMocha () {
     ensureAuthCredentials();
 
-    var mochaCmd = path.join(__dirname, 'node_modules/.bin/mocha');
-
     var mochaOpts = [
         '--ui', 'bdd',
         '--reporter', 'spec',
@@ -57,7 +51,7 @@ function testMocha () {
     // to find the plugin. So this function starts mocha with proper NODE_PATH.
     process.env.NODE_PATH = PACKAGE_SEARCH_PATH;
 
-    return execa(mochaCmd, mochaOpts, { stdio: 'inherit' });
+    return spawn(`npx mocha ${mochaOpts.join(' ')}`, { stdio: 'inherit', shell: true });
 }
 
 function testMochaRest () {
@@ -75,8 +69,6 @@ function testMochaAutomate () {
 function testTestcafe (browsers) {
     ensureAuthCredentials();
 
-    var testCafeCmd = path.join(__dirname, 'node_modules/.bin/testcafe');
-
     var testCafeOpts = [
         browsers,
         'test/testcafe/**/*test.js',
@@ -87,7 +79,7 @@ function testTestcafe (browsers) {
     // to find the plugin. So this function starts testcafe with proper NODE_PATH.
     process.env.NODE_PATH = PACKAGE_SEARCH_PATH;
 
-    return execa(testCafeCmd, testCafeOpts, { stdio: 'inherit' });
+    return spawn(`npx testcafe ${testCafeOpts.join(' ')}`, { stdio: 'inherit', shell: true });
 }
 
 function testTestcafeRest () {
@@ -105,6 +97,10 @@ function testTestcafeAutomate () {
 exports.clean = clean;
 exports.lint  = lint;
 exports.build = gulp.parallel(gulp.series(clean, build), lint);
-exports.test  = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeAutomate);
-exports.testTestcafeRest = gulp.series(exports.build, testTestcafeRest);
+
+exports.testMochaRest        = testMochaRest;
+exports.testMochaAutomate    = testMochaAutomate;
+exports.testTestcafeRest     = gulp.series(exports.build, testTestcafeRest);
 exports.testTestcafeAutomate = gulp.series(exports.build, testTestcafeAutomate);
+
+exports.test  = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeRest, testTestcafeAutomate);
