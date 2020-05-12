@@ -1,5 +1,4 @@
 import { inspect } from 'util';
-import Promise from 'pinkie';
 import jimp from 'jimp';
 import BaseBackend from './base';
 import requestApiBase from '../utils/request-api';
@@ -177,15 +176,12 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async takeScreenshot (id, screenshotPath) {
-        return new Promise(async (resolve, reject) => {
-            var base64Data = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
-            var buffer     = Buffer.from(base64Data.value, 'base64');
+        var base64Data = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
+        var buffer     = Buffer.from(base64Data.value, 'base64');
 
-            jimp
-                .read(buffer)
-                .then(image => image.write(screenshotPath, resolve))
-                .catch(reject);
-        });
+        const image = await jimp.read(buffer);
+
+        await image.write(screenshotPath);
     }
 
     async resizeWindow (id, width, height, currentWidth, currentHeight) {

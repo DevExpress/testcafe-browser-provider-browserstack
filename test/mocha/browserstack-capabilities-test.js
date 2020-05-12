@@ -43,7 +43,7 @@ describe('Browserstack capabilities', function () {
         });
     });
 
-    it.only('Should read aditional capabilities from a config file', () => {
+    it('Should read aditional capabilities from a config file', () => {
         process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH = require.resolve('./data/capabilities-config.json');
 
         const capabilities = browserStackProvider._getAdditionalCapabilities();
