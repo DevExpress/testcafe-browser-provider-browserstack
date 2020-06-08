@@ -5,6 +5,7 @@ import requestApiBase from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
 import getAPIPollingInterval from '../utils/get-api-polling-interval';
 import * as ERROR_MESSAGES from '../templates/error-messages';
+import filterBrowsers from '../utils/filter-browsers';
 
 
 const API_POLLING_INTERVAL = getAPIPollingInterval();
@@ -126,8 +127,8 @@ export default class AutomateBackend extends BaseBackend {
 
     async getBrowsersList () {
         var platformsInfo = await requestApiBase(BROWSERSTACK_API_PATHS.browserList);
-
-        return platformsInfo.reverse();
+        
+        return filterBrowsers(platformsInfo.reverse());
     }
 
     getSessionUrl (id) {

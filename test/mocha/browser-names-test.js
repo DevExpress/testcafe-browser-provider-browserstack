@@ -20,8 +20,8 @@ describe('Browser names', function () {
         const IS_AUTOMATE = process.env['BROWSERSTACK_USE_AUTOMATE'] && process.env['BROWSERSTACK_USE_AUTOMATE'] !== '0';
 
         const REST_BROWSER_NAMES = [
-            'chrome@51.0:OS X Mavericks',
-            'firefox@45.0:OS X Yosemite',
+            'chrome@54.0:OS X Mavericks',
+            'firefox@54.0:OS X Yosemite',
             'safari@9.1:OS X El Capitan',
             'ie@9.0:Windows 7',
             'ie@10.0:Windows 8',
@@ -33,8 +33,8 @@ describe('Browser names', function () {
         ];
 
         const AUTOMATE_BROWSER_NAMES = [
-            'chrome@51.0:OS X Mavericks',
-            'firefox@45.0:OS X Yosemite',
+            'chrome@54.0:OS X Mavericks',
+            'firefox@54.0:OS X Yosemite',
             'safari@9.1:OS X El Capitan',
             'ie@9.0:Windows 7',
             'ie@10.0:Windows 8',
