@@ -155,8 +155,6 @@ export default class AutomateBackend extends BaseBackend {
 
         var sessionId = this.sessions[id].sessionId;
 
-        this.sessions[id].interval = setInterval(() => requestApi(BROWSERSTACK_API_PATHS.getUrl(sessionId), { executeImmediately: true }), API_POLLING_INTERVAL);
-
         await requestApi(BROWSERSTACK_API_PATHS.openUrl(sessionId), { body: { url: pageUrl } });
     }
 
@@ -165,8 +163,6 @@ export default class AutomateBackend extends BaseBackend {
 
         if (!session)
             return;
-
-        clearInterval(session.interval);
 
         delete this.sessions[id];
 

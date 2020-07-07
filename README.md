@@ -158,6 +158,7 @@ Capability                    | Environment Variable
 `browserstack.geoLocation`    | `BROWSERSTACK_GEO_LOCATION`
 `browserstack.customNetwork`  | `BROWSERSTACK_CUSTOM_NETWORK`
 `browserstack.networkProfile` | `BROWSERSTACK_NETWORK_PROFILE`
+`browserstack.idleTimeout`    | `BROWSERSTACK_IDLE_TIMEOUT`
 
 Refer to the [BrowserStack documentation](https://www.browserstack.com/automate/capabilities) for information about the values you can specify.
 

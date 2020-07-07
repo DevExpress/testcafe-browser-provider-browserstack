@@ -132,7 +132,8 @@ module.exports = {
             'browserstack.geoLocation':    process.env['BROWSERSTACK_GEO_LOCATION'],
             'browserstack.customNetwork':  process.env['BROWSERSTACK_CUSTOM_NETWORK'],
             'browserstack.networkProfile': process.env['BROWSERSTACK_NETWORK_PROFILE'],
-            'acceptSslCerts':              process.env['BROWSERSTACK_ACCEPT_SSL_CERTS']
+            'acceptSslCerts':              process.env['BROWSERSTACK_ACCEPT_SSL_CERTS'],
+            'browserstack.idleTimeout':    process.env['BROWSERSTACK_IDLE_TIMEOUT']
         };
     },
 
