@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/DevExpress/testcafe-browser-provider-browserstack.svg)](https://travis-ci.org/DevExpress/testcafe-browser-provider-browserstack)
 
 This plugin integrates [TestCafe](http://devexpress.github.io/testcafe) with the [BrowserStack Testing Cloud](https://browserstack.com/).
+You can visit [BrowserStack TestCafe documentation](https://www.browserstack.com/docs/automate/selenium/getting-started/nodejs/testcafe) for a detailed step-by-step guide to start executing your TestCafe tests on BrowserStack device cloud.
 
 ## Install
 
