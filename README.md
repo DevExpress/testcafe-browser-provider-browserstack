@@ -244,6 +244,10 @@ export TESTCAFE_BROWSERSTACK_API_POLLING_INTERVAL="40000"
 testcafe browserstack:chrome test.js
 ```
 
+## See Also
+
+You can also refer to the [BrowserStack documentation](https://www.browserstack.com/docs/automate/selenium/getting-started/nodejs/testcafe) for a detailed step-by-step guide that explains how to run TestCafe tests on BrowserStack.
+
 ## Author
 
 Developer Express Inc. (https://devexpress.com)
