@@ -181,7 +181,7 @@ export default class AutomateBackend extends BaseBackend {
 
         const image = await jimp.read(buffer);
 
-        await image.write(screenshotPath);
+        await image.writeAsync(screenshotPath);
     }
 
     async resizeWindow (id, width, height, currentWidth, currentHeight) {
