@@ -183,9 +183,8 @@ export default class AutomateBackend extends BaseBackend {
         const image = await jimp.read(buffer);
 
         // if using device in landscape orientation rotate screenshot 90 degrees
-        if (session.value.orientation === 'LANDSCAPE') {
+        if (session.value.orientation === 'LANDSCAPE')
             await image.rotate(90);
-        }
 
         await image.writeAsync(screenshotPath);
     }
