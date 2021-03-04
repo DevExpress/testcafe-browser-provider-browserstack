@@ -176,10 +176,16 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async takeScreenshot (id, screenshotPath) {
-        var base64Data = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
+        const session = this.sessions[id];
+        var base64Data = await requestApi(BROWSERSTACK_API_PATHS.screenshot(session.sessionId));
         var buffer     = Buffer.from(base64Data.value, 'base64');
 
         const image = await jimp.read(buffer);
+
+        // if using device in landscape orientation rotate screenshot 90 degrees
+        if (session.value.orientation === 'LANDSCAPE') {
+            await image.rotate(90);
+        }
 
         await image.writeAsync(screenshotPath);
     }
