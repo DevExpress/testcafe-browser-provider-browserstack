@@ -238,13 +238,6 @@ module.exports = {
             capabilities.localIdentifier = connector.connectorInstance.localIdentifierFlag;
         }
 
-        if (capabilities.os.toLowerCase() === 'android') {
-            const parsedPageUrl = parseUrl(pageUrl);
-            const browserProxy  = await this._getBrowserProxy(parsedPageUrl.hostname, parsedPageUrl.port);
-
-            pageUrl = 'http://' + browserProxy.targetHost + ':' + browserProxy.proxyPort + parsedPageUrl.path;
-        }
-
         if (!capabilities.name)
             capabilities.name = `TestCafe test run ${id}`;
 
