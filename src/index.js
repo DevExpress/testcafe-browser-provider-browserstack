@@ -158,7 +158,7 @@ module.exports = {
                 var deviceNameMatched  = info['device'] && info['device'].toLowerCase() === query.name;
 
                 var browserVersionMatched  = info['browser_version'] && Number(info['browser_version']) === Number(query.version);
-                var platformVersionMatched = info['os_version'] && Number(info['os_version']) === Number(query.version);
+                var platformVersionMatched = info['os_version'] && String(info['os_version']).toLowerCase() === String(query.version);
                 var platformNameMatched    = info['os'].toLowerCase() === query.platform ||
                     `${info['os'].toLowerCase()} ${info['os_version'].toLowerCase()}` === query.platform;
 
