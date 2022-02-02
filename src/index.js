@@ -155,10 +155,11 @@ module.exports = {
         return this.platformsInfo
             .filter(info => {
                 var browserNameMatched = info['browser'] && info['browser'].toLowerCase() === query.name;
-                var deviceNameMatched  = info['device'] && info['device'].toLowerCase() === query.name;
+                var deviceNameMatched = info['device'] && info['device'].toLowerCase() === query.platform.split('@')[0];
 
                 var browserVersionMatched  = info['browser_version'] && String(info['browser_version']) === String(query.version);
-                var platformVersionMatched = info['os_version'] && String(info['os_version']).toLowerCase() === String(query.version);
+                var platformVersionMatched = info['os_version'] && Number(info['os_version']) === Number(query.platform.split('@')[1]);
+                var mobileBrowserNameMatched = info['browser'] && info['browser'].toLowerCase() === query.name;
                 var platformNameMatched    = info['os'].toLowerCase() === query.platform ||
                     `${info['os'].toLowerCase()} ${info['os_version'].toLowerCase()}` === query.platform;
 
@@ -170,7 +171,8 @@ module.exports = {
                     (platformNameMatched || isAnyPlatform);
 
                 var mobileBrowserMatched = deviceNameMatched &&
-                    (platformVersionMatched || isAnyVersion);
+                    platformVersionMatched &&
+                    mobileBrowserNameMatched;
 
                 return desktopBrowserMatched || mobileBrowserMatched;
             });
@@ -180,11 +182,11 @@ module.exports = {
         this.browserNames = this.platformsInfo
             .map(info => {
                 var isDesktop = !info['device'];
-                var name      = isDesktop ? info['browser'] : info['device'];
-                var version   = isDesktop ? info['browser_version'] : info['os_version'];
-                var platform  = isDesktop ? `${info['os']} ${info['os_version']}` : '';
+                var name      = info['browser'];
+                var version   = isDesktop ? info['browser_version'] : '';
+                var platform  = isDesktop ? `${info['os']} ${info['os_version']}` : `${info['device']}@${info['os_version']}`;
 
-                return `${name}@${version}${platform ? ':' + platform : ''}`;
+                return `${name}${version ? '@' + version : ''}:${platform}`;
             });
     },
 
