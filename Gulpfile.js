@@ -14,7 +14,6 @@ function clean () {
 }
 
 function lint () {
-
     return gulp
         .src([
             'src/**/*.js',

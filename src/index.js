@@ -152,7 +152,7 @@ module.exports = {
     },
 
     _filterPlatformInfo (query) {
-        return this.platformsInfo
+        let filteredPlatformInfo = this.platformsInfo
             .filter(info => {
                 var browserNameMatched = info['browser'] && info['browser'].toLowerCase() === query.name;
                 var deviceNameMatched  = info['device'] && info['device'].toLowerCase() === query.name;
@@ -174,6 +174,16 @@ module.exports = {
 
                 return desktopBrowserMatched || mobileBrowserMatched;
             });
+
+        if (filteredPlatformInfo.length && query.version === 'any') {
+            filteredPlatformInfo = filteredPlatformInfo.filter(info => {
+                const browserVersion = info['browser_version'] || '';
+
+                return !browserVersion.includes('beta');
+            });
+        }
+
+        return filteredPlatformInfo;
     },
 
     _generateBrowserNames () {
