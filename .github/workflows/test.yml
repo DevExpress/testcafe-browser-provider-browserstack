@@ -24,6 +24,9 @@ jobs:
       - uses: DevExpress/testcafe-build-system/actions/prepare@main
       
       - uses: DevExpress/testcafe-build-system/actions/test-npm@main
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         with:
           task: test
  
