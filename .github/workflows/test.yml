@@ -1,0 +1,20 @@
+name: Tests
+
+on:
+  push:
+    branches:
+     - main
+  pull_request_target:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: DevExpress/testcafe-build-system/actions/prepare@main
+      
+      - uses: DevExpress/testcafe-build-system/actions/build@main
+      
+      - uses: DevExpress/testcafe-build-system/actions/test-npm@main
+        with:
+          task: test
