@@ -31,7 +31,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "browserstack-local": "^1.3.6",
+    "browserstack-local": "^1.4.9",
     "dedent": "^0.7.0",
     "desired-capabilities": "^0.1.0",
     "firefox-profile": "^1.3.1",
