@@ -73,7 +73,7 @@ describe('TestCafe integration', function () {
 
     it('Should add a correct Windows OS version in report - Windows 11', function () {
         const testEnv    = 'browserstack:Chrome@101.0:Windows 11';
-        const expectedOS = 'Windows 10';
+        const expectedOS = 'Windows 11';
 
         return testOSVersion(testEnv, expectedOS);
     });
