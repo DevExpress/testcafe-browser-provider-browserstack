@@ -37,4 +37,8 @@ export default class BaseBackend {
     getSessionUrl (/*id*/) {
         throw new Error(ERROR_MESSAGES.API_METHOD_NOT_IMPLEMENTED());
     }
+
+    async getOSInfo (/*id*/) {
+        throw new Error(ERROR_MESSAGES.API_METHOD_NOT_IMPLEMENTED());
+    }
 }

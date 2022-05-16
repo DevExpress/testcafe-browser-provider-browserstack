@@ -8,32 +8,32 @@ const TESTS_TIMEOUT = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
 
 const BROWSERSTACK_API_PATHS = {
     browserList: {
-        url: 'https://api.browserstack.com/4/browsers?flat=true'
+        url: 'https://api.browserstack.com/4/browsers?flat=true',
     },
 
     newWorker: {
         url:    'https://api.browserstack.com/4/worker',
-        method: 'POST'
+        method: 'POST',
     },
 
     getWorkerInfo: id => ({
-        url: `https://api.browserstack.com/4/worker/${id}`
+        url: `https://api.browserstack.com/4/worker/${ id }`,
     }),
 
     deleteWorker: id => ({
-        url:    `https://api.browserstack.com/4/worker/${id}`,
-        method: 'DELETE'
+        url:    `https://api.browserstack.com/4/worker/${ id }`,
+        method: 'DELETE',
     }),
 
     screenshot: id => ({
-        url:      `https://api.browserstack.com/4/worker/${id}/screenshot.png`,
-        encoding: null
+        url:      `https://api.browserstack.com/4/worker/${ id }/screenshot.png`,
+        encoding: null,
     }),
 
     setStatus: id => ({
-        url:    `https://api.browserstack.com/automate/sessions/${id}.json`,
-        method: 'PUT'
-    })
+        url:    `https://api.browserstack.com/automate/sessions/${ id }.json`,
+        method: 'PUT',
+    }),
 };
 
 export default class JSTestingBackend extends BaseBackend {
@@ -43,10 +43,8 @@ export default class JSTestingBackend extends BaseBackend {
         this.workers = {};
     }
 
-    async _requestSessionUrl (id) {
-        var workerInfo = await requestApi(BROWSERSTACK_API_PATHS.getWorkerInfo(this.workers[id].id));
-
-        return workerInfo['browser_url'];
+    async _requestSessionInfo (id) {
+        return await requestApi(BROWSERSTACK_API_PATHS.getWorkerInfo(this.workers[id].id));
     }
 
     async _getSessionId (id) {
@@ -65,6 +63,13 @@ export default class JSTestingBackend extends BaseBackend {
         return this.workers[id] ? this.workers[id].sessionUrl : '';
     }
 
+    async getOSInfo (id) {
+        if (this.workers[id])
+            return this.workers[id].osInfo;
+
+        return null;
+    }
+
     async openBrowser (id, pageUrl, capabilities) {
         var { local, ...restCapabilities } = capabilities;
 
@@ -74,22 +79,29 @@ export default class JSTestingBackend extends BaseBackend {
             timeout: TESTS_TIMEOUT,
             url:     pageUrl,
 
-            ...restCapabilities
+            ...restCapabilities,
         };
 
         this.workers[id] = await requestApi(BROWSERSTACK_API_PATHS.newWorker, {
             executeImmediately: true,
 
-            ...capabilities
+            ...capabilities,
         });
 
+        const sessionInfo = await this._requestSessionInfo(id);
+        const osInfo      = {
+            name:    sessionInfo['os'] || '',
+            version: sessionInfo['os_version'] || ''
+        };
+
         this.workers[id].started    = Date.now();
-        this.workers[id].sessionUrl = await this._requestSessionUrl(id);
+        this.workers[id].sessionUrl = sessionInfo['browser_url'];
+        this.workers[id].osInfo     = osInfo;
         this.workers[id].sessionId  = await this._getSessionId(id);
     }
 
     async closeBrowser (id) {
-        var workerId   = this.workers[id].id;
+        var workerId = this.workers[id].id;
 
         // Return incase of invalid workerId
         if (!workerId || workerId === '')
@@ -101,7 +113,7 @@ export default class JSTestingBackend extends BaseBackend {
 
     async takeScreenshot (id, screenshotPath) {
         var buffer = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.workers[id].id));
-        var image = await jimp.read(buffer);
+        var image  = await jimp.read(buffer);
 
         await image.writeAsync(screenshotPath);
     }

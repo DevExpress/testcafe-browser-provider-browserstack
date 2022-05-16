@@ -52,6 +52,6 @@
     "gulp-eslint": "^6.0.0",
     "mocha": "^7.1.1",
     "publish-please": "^5.4.3",
-    "testcafe": "latest"
+    "testcafe": "file:testcafe-1.19.0-alpha.2.tgz"
   }
 }

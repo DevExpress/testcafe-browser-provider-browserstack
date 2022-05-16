@@ -317,5 +317,9 @@ module.exports = {
 
     async reportJobResult (id, jobResult, jobData) {
         await this.backend.reportJobResult(id, jobResult, jobData, this.JOB_RESULT);
+    },
+
+    async getOSInfo (id) {
+        return await this.backend.getOSInfo(id);
     }
 };

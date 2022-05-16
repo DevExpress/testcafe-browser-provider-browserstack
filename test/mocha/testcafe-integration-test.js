@@ -1,5 +1,6 @@
-var expect  = require('chai').expect;
+var expect         = require('chai').expect;
 var createTestCafe = require('testcafe');
+
 
 describe('TestCafe integration', function () {
     this.timeout(2 * 60 * 1000);
@@ -30,7 +31,7 @@ describe('TestCafe integration', function () {
                 },
                 end: function (data) {
                     report += data;
-                }
+                },
             })
             .run()
             .then(function (failedCount) {
@@ -56,7 +57,7 @@ describe('TestCafe integration', function () {
                     },
                     end: function (data) {
                         report += data;
-                    }
+                    },
                 })
                 .run()
                 .then(function () {
@@ -80,7 +81,7 @@ describe('TestCafe integration', function () {
                     },
                     end: function (data) {
                         report += data;
-                    }
+                    },
                 })
                 .run()
                 .then(function () {
@@ -91,4 +92,47 @@ describe('TestCafe integration', function () {
                 });
         });
     }
+
+    const testOSVersion = (browserName, expectedOSName) => {
+        var report = '';
+        var runner = testcafe.createRunner();
+
+        return runner
+            .browsers(browserName)
+            .src('test/mocha/data/sample-fixture.js')
+            .reporter('json', {
+                write: function (data) {
+                    report += data;
+                },
+                end: function (data) {
+                    report += data;
+                },
+            })
+            .run()
+            .then(function (failedCount) {
+                expect(failedCount).to.be.equal(0);
+
+                var reportData = JSON.parse(report);
+
+                expectedOSName = Array.isArray(expectedOSName) ? expectedOSName : [expectedOSName];
+
+                for (let i = 0; i < expectedOSName.length; i++)
+                    expect(reportData.userAgents[i]).to.contain(expectedOSName[i]);
+            });
+    };
+
+    it('Should add a correct Windows OS version in report - Windows 11', () => {
+        const testEnv    = 'browserstack:Chrome@101.0:Windows 11';
+        const expectedOS = 'Windows 10';
+
+        return testOSVersion(testEnv, expectedOS);
+    });
+
+    it('Should add a correct Windows OS version in report if two different OS are specified - Windows 10, Windows 11', () => {
+        const testEnv    = ['browserstack:Chrome@101.0:Windows 10', 'browserstack:Chrome@101.0:Windows 11'];
+        const expectedOS = ['Windows 10', 'Windows 11'];
+
+        return testOSVersion(testEnv, expectedOS);
+    });
+
 });
