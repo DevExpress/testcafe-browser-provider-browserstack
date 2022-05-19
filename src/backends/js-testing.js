@@ -17,21 +17,21 @@ const BROWSERSTACK_API_PATHS = {
     },
 
     getWorkerInfo: id => ({
-        url: `https://api.browserstack.com/4/worker/${ id }`,
+        url: `https://api.browserstack.com/4/worker/${id}`,
     }),
 
     deleteWorker: id => ({
-        url:    `https://api.browserstack.com/4/worker/${ id }`,
+        url:    `https://api.browserstack.com/4/worker/${id}`,
         method: 'DELETE',
     }),
 
     screenshot: id => ({
-        url:      `https://api.browserstack.com/4/worker/${ id }/screenshot.png`,
+        url:      `https://api.browserstack.com/4/worker/${id}/screenshot.png`,
         encoding: null,
     }),
 
     setStatus: id => ({
-        url:    `https://api.browserstack.com/automate/sessions/${ id }.json`,
+        url:    `https://api.browserstack.com/automate/sessions/${id}.json`,
         method: 'PUT',
     }),
 };

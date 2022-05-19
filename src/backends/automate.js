@@ -98,9 +98,9 @@ export default class AutomateBackend extends BaseBackend {
         const sessionCapabilities = sessionData.capabilities || {};
 
         sessionInfo.sessionId = sessionInfo.sessionId ||
-            sessionData.sessionId ||
-            sessionData['webdriver.remote.sessionid'] ||
-            sessionCapabilities['webdriver.remote.sessionid'];
+                                sessionData.sessionId ||
+                                sessionData['webdriver.remote.sessionid'] ||
+                                sessionCapabilities['webdriver.remote.sessionid'];
 
         if (!sessionInfo.sessionId) {
             throw new Error(ERROR_MESSAGES.SESSION_ID_NOT_FOUND({
