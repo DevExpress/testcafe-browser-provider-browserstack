@@ -2,7 +2,7 @@ var expect                 = require('chai').expect;
 const browserStackProvider = require('../../');
 
 describe('Get OS info test', function () {
-    this.timeout(10000);
+    this.timeout(20000);
 
     const browserID       = {
         'Win10':   't1t1t1t1',

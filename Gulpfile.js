@@ -1,8 +1,8 @@
-const path        = require('path');
-const { spawn }   = require('child_process');
-const gulp        = require('gulp');
-const eslint      = require('gulp-eslint');
-const del         = require('del');
+const path      = require('path');
+const { spawn } = require('child_process');
+const gulp      = require('gulp');
+const eslint    = require('gulp-eslint');
+const del       = require('del');
 
 
 const PACKAGE_PARENT_DIR  = path.join(__dirname, '../');
@@ -93,13 +93,14 @@ function testTestcafeAutomate () {
     return testTestcafe('browserstack:chrome:windows 10,browserstack:Google Pixel@7.1,browserstack:Safari@12.1');
 }
 
-exports.clean = clean;
-exports.lint  = lint;
-exports.build = gulp.parallel(gulp.series(clean, build), lint);
+exports.clean         = clean;
+exports.lint          = lint;
+exports.build         = gulp.parallel(gulp.series(clean, build), lint);
+exports['fast-build'] = gulp.series(clean, build);
 
 exports.testMochaRest        = testMochaRest;
 exports.testMochaAutomate    = testMochaAutomate;
 exports.testTestcafeRest     = gulp.series(exports.build, testTestcafeRest);
 exports.testTestcafeAutomate = gulp.series(exports.build, testTestcafeAutomate);
 
-exports.test  = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeRest, testTestcafeAutomate);
+exports.test = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeRest, testTestcafeAutomate);
