@@ -166,11 +166,11 @@ module.exports = {
                 var isAnyPlatform = query.platform === 'any';
 
                 var desktopBrowserMatched = browserNameMatched &&
-                    (browserVersionMatched || isAnyVersion) &&
-                    (platformNameMatched || isAnyPlatform);
+                                            (browserVersionMatched || isAnyVersion) &&
+                                            (platformNameMatched || isAnyPlatform);
 
                 var mobileBrowserMatched = deviceNameMatched &&
-                    (platformVersionMatched || isAnyVersion);
+                                           (platformVersionMatched || isAnyVersion);
 
                 return desktopBrowserMatched || mobileBrowserMatched;
             });
@@ -237,7 +237,7 @@ module.exports = {
             ...this._getAdditionalCapabilities()
         };
 
-        capabilities.local           = isLocalEnabled();
+        capabilities.local = isLocalEnabled();
 
         // Give preference to the already running local identifier
         capabilities.localIdentifier = process.env.BROWSERSTACK_LOCAL_IDENTIFIER;
@@ -317,5 +317,9 @@ module.exports = {
 
     async reportJobResult (id, jobResult, jobData) {
         await this.backend.reportJobResult(id, jobResult, jobData, this.JOB_RESULT);
+    },
+
+    async getOSInfo (id) {
+        return await this.backend.getOSInfo(id);
     }
 };

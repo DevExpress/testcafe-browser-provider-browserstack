@@ -109,10 +109,10 @@ export default class AutomateBackend extends BaseBackend {
         }
     }
 
-    async _requestSessionUrl (id) {
+    async _requestSessionInfo (id) {
         var sessionInfo = await requestApiBase(BROWSERSTACK_API_PATHS.getStatus(this.sessions[id].sessionId));
 
-        return sessionInfo['automation_session']['browser_url'];
+        return sessionInfo['automation_session'];
     }
 
     async _requestCurrentWindowSize (id) {
@@ -134,6 +134,13 @@ export default class AutomateBackend extends BaseBackend {
         return this.sessions[id] ? this.sessions[id].sessionUrl : '';
     }
 
+    async getOSInfo (id) {
+        if (this.sessions[id])
+            return this.sessions[id].osInfo;
+
+        return null;
+    }
+
     async openBrowser (id, pageUrl, capabilities) {
         var { localIdentifier, local, ...restCapabilities } = capabilities;
 
@@ -151,7 +158,14 @@ export default class AutomateBackend extends BaseBackend {
 
         AutomateBackend._ensureSessionId(this.sessions[id]);
 
-        this.sessions[id].sessionUrl = await this._requestSessionUrl(id);
+        const sessionInfo = await this._requestSessionInfo(id);
+        const osInfo      = {
+            name:    sessionInfo['os'] || '',
+            version: sessionInfo['os_version'] || ''
+        };
+
+        this.sessions[id].sessionUrl = sessionInfo['browser_url'];
+        this.sessions[id].osInfo     = osInfo;
 
         var sessionId = this.sessions[id].sessionId;
 

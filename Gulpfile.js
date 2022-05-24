@@ -1,8 +1,8 @@
-const path        = require('path');
-const { spawn }   = require('child_process');
-const gulp        = require('gulp');
-const eslint      = require('gulp-eslint');
-const del         = require('del');
+const path      = require('path');
+const { spawn } = require('child_process');
+const gulp      = require('gulp');
+const eslint    = require('gulp-eslint');
+const del       = require('del');
 
 
 const PACKAGE_PARENT_DIR  = path.join(__dirname, '../');
@@ -102,4 +102,4 @@ exports.testMochaAutomate    = testMochaAutomate;
 exports.testTestcafeRest     = gulp.series(exports.build, testTestcafeRest);
 exports.testTestcafeAutomate = gulp.series(exports.build, testTestcafeAutomate);
 
-exports.test  = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeRest, testTestcafeAutomate);
+exports.test = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeRest, testTestcafeAutomate);

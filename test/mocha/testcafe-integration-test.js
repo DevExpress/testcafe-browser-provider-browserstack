@@ -1,5 +1,6 @@
-var expect  = require('chai').expect;
+var expect         = require('chai').expect;
 var createTestCafe = require('testcafe');
+
 
 describe('TestCafe integration', function () {
     this.timeout(2 * 60 * 1000);
@@ -30,7 +31,7 @@ describe('TestCafe integration', function () {
                 },
                 end: function (data) {
                     report += data;
-                }
+                },
             })
             .run()
             .then(function (failedCount) {
@@ -56,7 +57,7 @@ describe('TestCafe integration', function () {
                     },
                     end: function (data) {
                         report += data;
-                    }
+                    },
                 })
                 .run()
                 .then(function () {
@@ -80,7 +81,7 @@ describe('TestCafe integration', function () {
                     },
                     end: function (data) {
                         report += data;
-                    }
+                    },
                 })
                 .run()
                 .then(function () {
