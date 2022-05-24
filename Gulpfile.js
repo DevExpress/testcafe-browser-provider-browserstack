@@ -93,10 +93,9 @@ function testTestcafeAutomate () {
     return testTestcafe('browserstack:chrome:windows 10,browserstack:Google Pixel@7.1,browserstack:Safari@12.1');
 }
 
-exports.clean         = clean;
-exports.lint          = lint;
-exports.build         = gulp.parallel(gulp.series(clean, build), lint);
-exports['fast-build'] = gulp.series(clean, build);
+exports.clean = clean;
+exports.lint  = lint;
+exports.build = gulp.parallel(gulp.series(clean, build), lint);
 
 exports.testMochaRest        = testMochaRest;
 exports.testMochaAutomate    = testMochaAutomate;

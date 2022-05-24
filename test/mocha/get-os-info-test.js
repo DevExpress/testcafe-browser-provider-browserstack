@@ -1,7 +1,7 @@
 var expect                 = require('chai').expect;
 const browserStackProvider = require('../../');
 
-describe('Get OS info test', function () {
+(process.env.BROWSERSTACK_USE_AUTOMATE === '1' ? describe.skip : describe)('Get OS info test', function () {
     this.timeout(20000);
 
     const browserID       = {
@@ -14,24 +14,25 @@ describe('Get OS info test', function () {
         'Win11': 'chrome@101.0:Windows 11'
     };
 
-    const mockProvider = {
+    const providerMock = {
         ...browserStackProvider,
-        setUserAgentMetaInfo: () => {}
+        setUserAgentMetaInfo: () => {
+        }
     };
 
     before(async function () {
-        await mockProvider.init();
+        await providerMock.init();
 
-        await mockProvider.openBrowser(browserID.Win10, 'example.org', browserSettings.Win10);
-        await mockProvider.openBrowser(browserID.Win11, 'example.org', browserSettings.Win11);
+        await providerMock.openBrowser(browserID.Win10, 'example.org', browserSettings.Win10);
+        await providerMock.openBrowser(browserID.Win11, 'example.org', browserSettings.Win11);
 
     });
 
     after(async function () {
-        await mockProvider.closeBrowser(browserID.Win10);
-        await mockProvider.closeBrowser(browserID.Win11);
+        await providerMock.closeBrowser(browserID.Win10);
+        await providerMock.closeBrowser(browserID.Win11);
 
-        await mockProvider.dispose();
+        await providerMock.dispose();
     });
 
     it('getOSInfo should return a correct OS version', async function () {
@@ -46,8 +47,8 @@ describe('Get OS info test', function () {
             }
         };
 
-        const win10Info = await mockProvider.getOSInfo(browserID.Win10);
-        const win11Info = await mockProvider.getOSInfo(browserID.Win11);
+        const win10Info = await providerMock.getOSInfo(browserID.Win10);
+        const win11Info = await providerMock.getOSInfo(browserID.Win11);
 
 
         expect(win10Info).eql(expectedResults.Win10);
@@ -55,7 +56,7 @@ describe('Get OS info test', function () {
     });
 
     it('Should return null if specified browser id is incorrect', async function () {
-        const osInfo = await mockProvider.getOSInfo(browserID.Invalid);
+        const osInfo = await providerMock.getOSInfo(browserID.Invalid);
 
         expect(osInfo).to.be.null;
     });
