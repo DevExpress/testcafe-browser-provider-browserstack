@@ -1,6 +1,6 @@
 # testcafe-browser-provider-browserstack
 
-[![Build Status](https://travis-ci.org/DevExpress/testcafe-browser-provider-browserstack.svg)](https://travis-ci.org/DevExpress/testcafe-browser-provider-browserstack)
+[![Tests](https://github.com/DevExpress/testcafe-browser-provider-browserstack/actions/workflows/test.yml/badge.svg)](https://github.com/DevExpress/testcafe-browser-provider-browserstack/actions/workflows/test.yml)
 
 This plugin integrates [TestCafe](http://devexpress.github.io/testcafe) with the [BrowserStack Testing Cloud](https://browserstack.com/).
 
