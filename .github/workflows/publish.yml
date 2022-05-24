@@ -1,0 +1,18 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    if: ${{ !github.event.release.draft }}
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: DevExpress/testcafe-build-system/actions/publish-with-publish-please@main
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
