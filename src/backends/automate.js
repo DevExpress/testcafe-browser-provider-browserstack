@@ -1,11 +1,12 @@
-import { inspect } from 'util';
-import jimp from 'jimp';
+import { inspect, promisify } from 'util';
 import BaseBackend from './base';
 import requestApiBase from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
 import getAPIPollingInterval from '../utils/get-api-polling-interval';
 import * as ERROR_MESSAGES from '../templates/error-messages';
-
+import fs from 'fs';
+import { PNG } from 'pngjs';
+import promisifyEvent from 'promisify-event';
 
 const API_POLLING_INTERVAL = getAPIPollingInterval();
 
@@ -190,12 +191,16 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async takeScreenshot (id, screenshotPath) {
-        var base64Data = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
-        var buffer     = Buffer.from(base64Data.value, 'base64');
+        var base64Data  = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
+        var buffer      = Buffer.from(base64Data.value, 'base64');
+        var writeStream = fs.createWriteStream(screenshotPath);
+        var png         = new PNG();
 
-        const image = await jimp.read(buffer);
+        await promisify(png.parse).call(png, buffer);
 
-        await image.writeAsync(screenshotPath);
+        png.pack().pipe(writeStream);
+
+        await promisifyEvent(png, 'end');
     }
 
     async resizeWindow (id, width, height, currentWidth, currentHeight) {
