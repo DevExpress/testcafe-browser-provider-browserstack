@@ -1,5 +1,5 @@
-import { inspect } from 'util';
-import jimp from 'jimp';
+import { inspect, promisify } from 'util';
+import fs from 'fs';
 import BaseBackend from './base';
 import requestApiBase from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
@@ -190,12 +190,12 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async takeScreenshot (id, screenshotPath) {
-        var base64Data = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
-        var buffer     = Buffer.from(base64Data.value, 'base64');
+        var base64Data  = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
+        var buffer      = Buffer.from(base64Data.value, 'base64');
+        var writeAsync = promisify(fs.writeFile);
 
-        const image = await jimp.read(buffer);
+        await writeAsync(screenshotPath, buffer);
 
-        await image.writeAsync(screenshotPath);
     }
 
     async resizeWindow (id, width, height, currentWidth, currentHeight) {

@@ -1,7 +1,10 @@
-import jimp from 'jimp';
-import BaseBackend from './base';
-import requestApi from '../utils/request-api';
+import fs from 'fs';
+import JPEG from 'jpeg-js';
+import { PNG } from 'pngjs';
+import promisifyEvent from 'promisify-event';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
+import requestApi from '../utils/request-api';
+import BaseBackend from './base';
 
 
 const TESTS_TIMEOUT = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
@@ -112,10 +115,14 @@ export default class JSTestingBackend extends BaseBackend {
     }
 
     async takeScreenshot (id, screenshotPath) {
-        var buffer = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.workers[id].id));
-        var image  = await jimp.read(buffer);
+        var jpeg      = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.workers[id].id));
+        var writeStream = fs.createWriteStream(screenshotPath);
+        var bitmap = JPEG.decode(jpeg);
+        var png = new PNG({ width: bitmap.width, height: bitmap.height });
 
-        await image.writeAsync(screenshotPath);
+        png.data = bitmap.data;
+        png.pack().pipe(writeStream);
+        await promisifyEvent(writeStream, 'finish');
     }
 
     async resizeWindow (id) {
@@ -133,4 +140,3 @@ export default class JSTestingBackend extends BaseBackend {
         await requestApi(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
     }
 }
-
