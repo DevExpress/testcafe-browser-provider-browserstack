@@ -38,6 +38,13 @@ module.exports = {
     platformsInfo: [],
     browserNames:  [],
 
+    async hasCustomActionForBrowser (/* browserId */) {
+        return {
+            // FIXME: this will disable the broken cropping of screenshots when using the JS Testing API
+            hasChromelessScreenshots: !isAutomateEnabled,
+        };
+    },
+
     _createConnector () {
         this.connectorPromise = this.connectorPromise
             .then(async connector => {
