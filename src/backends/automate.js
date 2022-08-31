@@ -6,7 +6,6 @@ import createBrowserstackStatus from '../utils/create-browserstack-status';
 import getAPIPollingInterval from '../utils/get-api-polling-interval';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
-
 const API_POLLING_INTERVAL = getAPIPollingInterval();
 
 const BROWSERSTACK_API_PATHS = {
@@ -195,7 +194,6 @@ export default class AutomateBackend extends BaseBackend {
         var writeAsync = promisify(fs.writeFile);
 
         await writeAsync(screenshotPath, buffer);
-
     }
 
     async resizeWindow (id, width, height, currentWidth, currentHeight) {

@@ -6,7 +6,6 @@ import createBrowserstackStatus from '../utils/create-browserstack-status';
 import requestApi from '../utils/request-api';
 import BaseBackend from './base';
 
-
 const TESTS_TIMEOUT = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
 
 const BROWSERSTACK_API_PATHS = {
