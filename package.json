@@ -39,10 +39,10 @@
     "mime-db": "^1.43.0",
     "os-family": "^1.0.0",
     "pinkie": "^2.0.4",
-    "pngjs": "^6.0.0",
     "promisify-event": "^1.0.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
+    "sharp": "^0.30.7",
     "tmp": "0.0.31"
   },
   "devDependencies": {
