@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 const { expect }           = require('chai');
 const Promise              = require('pinkie');
 const browserStackProvider = require('../../');
