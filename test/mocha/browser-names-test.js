@@ -17,6 +17,8 @@ describe('Browser names', function () {
     });
 
     it('Should return list of common browsers and devices', function () {
+        throw new Error('This error should cause the tests to fail!');
+
         const IS_AUTOMATE = process.env['BROWSERSTACK_USE_AUTOMATE'] && process.env['BROWSERSTACK_USE_AUTOMATE'] !== '0';
 
         const REST_BROWSER_NAMES = [
