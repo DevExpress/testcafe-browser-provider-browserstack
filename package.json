@@ -53,6 +53,6 @@
     "gulp-eslint": "^6.0.0",
     "mocha": "^7.1.1",
     "publish-please": "^5.4.3",
-    "testcafe": "latest"
+    "testcafe": "^2.0.1-alpha.2"
   }
 }
