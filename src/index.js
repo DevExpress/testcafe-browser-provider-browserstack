@@ -120,7 +120,7 @@ module.exports = {
         // For the full list of capabilities, see https://www.browserstack.com/automate/capabilities
 
         return {
-            'build':                       process.env['BROWSERSTACK_BUILD_ID'],
+            'build':                       process.env['BROWSERSTACK_BUILD_ID'] || process.env['BROWSERSTACK_BUILD_NAME'],
             'project':                     process.env['BROWSERSTACK_PROJECT_NAME'],
             'resolution':                  process.env['BROWSERSTACK_DISPLAY_RESOLUTION'],
             'name':                        process.env['BROWSERSTACK_TEST_RUN_NAME'],
