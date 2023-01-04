@@ -1,6 +1,6 @@
 {
   "name": "testcafe-browser-provider-browserstack",
-  "version": "1.14.1-alpha.1",
+  "version": "1.14.1",
   "description": "Browserstack TestCafe browser provider plugin.",
   "repository": "https://github.com/DevExpress/testcafe-browser-provider-browserstack",
   "engines": {
@@ -52,6 +52,6 @@
     "gulp-eslint": "^6.0.0",
     "mocha": "^7.1.1",
     "publish-please": "^5.4.3",
-    "testcafe": "^2.0.1-alpha.2"
+    "testcafe": "^2.2.0"
   }
 }
