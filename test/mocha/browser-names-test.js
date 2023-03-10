@@ -29,7 +29,7 @@ describe('Browser names', function () {
             'edge@15.0:Windows 10',
             'iPhone SE@11',
             'iPhone XR@12',
-            'Google Nexus 6@6.0'
+            'Google Pixel 7@13.0'
         ];
 
         const AUTOMATE_BROWSER_NAMES = [
@@ -43,7 +43,7 @@ describe('Browser names', function () {
             'iPhone 7@10',
             'iPhone SE@11',
             'iPhone XR@12',
-            'Google Nexus 6@6.0'
+            'Google Pixel 7@13.0'
         ];
 
         return browserStackProvider
@@ -64,7 +64,7 @@ describe('Browser names', function () {
             'ie@10.0:Windows 8':  true,
             'ie@11.0:Windows 10': true,
             'iPhone SE':          true,
-            'Google Nexus 5':     true,
+            'Google Pixel 7':     true,
             'ie@5.0':             false,
             'ie@11:os x':         false
         };
