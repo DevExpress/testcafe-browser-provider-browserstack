@@ -1,5 +1,5 @@
 import Promise from 'pinkie';
-import request from 'request-promise';
+import { httpsRequest as request } from './https-request';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
 const apiRequestPromise = Promise.resolve(null);
@@ -12,16 +12,14 @@ export default function (apiPath, params = {}) {
 
     var opts = {
         url:  apiPath.url,
-        auth: {
-            user: process.env['BROWSERSTACK_USERNAME'],
-            pass: process.env['BROWSERSTACK_ACCESS_KEY'],
-        },
+        user: process.env['BROWSERSTACK_USERNAME'],
+        pass: process.env['BROWSERSTACK_ACCESS_KEY'],
 
         headers: {
             'user-agent': 'testcafe-browserstack',
         },
 
-        qs: { ...queryParams },
+        queryParams,
 
         method: apiPath.method || 'GET',
         json:   apiPath.encoding === void 0
