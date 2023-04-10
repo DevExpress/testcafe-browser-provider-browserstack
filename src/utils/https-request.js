@@ -8,7 +8,7 @@ export function httpsRequest ({ url, user, pass, headers, queryParams, method, b
 
     const options = {
         hostname,
-        path:    `${path}?${querystring.stringify(queryParams)}`,
+        path:    `${path}${ queryParams ? querystring.stringify(queryParams) : ''}`,
         method,
         headers: {
             'Authorization': 'Basic ' + new Buffer(user + ':' + pass).toString('base64'),
