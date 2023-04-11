@@ -21,7 +21,7 @@ export function httpsRequest ({ url, user, pass, headers, queryParams, method, b
         options.agent = new HttpsProxyAgent(proxy);
 
     // eslint-disable-next-line no-console
-    console.log(inspect(options));
+    console.log(inspect({ options, queryParams, path }));
 
     // eslint-disable-next-line no-undef
     return new Promise((resolve, reject) => {
