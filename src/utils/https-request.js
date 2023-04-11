@@ -1,18 +1,21 @@
 import https from 'https';
-import { parse as parseUrl } from 'url';
-import querystring from 'node:querystring';
 import HttpsProxyAgent from 'https-proxy-agent';
 import { inspect } from 'util';
 
 export function httpsRequest ({ url, user, pass, headers, queryParams, method, body, json, encoding, proxy }) {
-    const { hostname, path } = parseUrl(url);
+    const urlObject = new URL(url);
+
+    for (const key in queryParams)
+        urlObject.searchParams.append(key, queryParams[key]);
+
+    const { hostname, pathname, search } = urlObject;
 
     const options = {
-        hostname,
-        path:    `${path}${ queryParams ? querystring.stringify(queryParams) : ''}`,
+        hostname: hostname,
+        path:     `${pathname}${search}`,
         method,
-        headers: {
-            'Authorization': 'Basic ' + new Buffer(user + ':' + pass).toString('base64'),
+        headers:  {
+            'Authorization': 'Basic ' + Buffer.from(user + ':' + pass).toString('base64'),
             ...headers
         }
     };
@@ -21,7 +24,7 @@ export function httpsRequest ({ url, user, pass, headers, queryParams, method, b
         options.agent = new HttpsProxyAgent(proxy);
 
     // eslint-disable-next-line no-console
-    console.log(inspect({ options, queryParams, path }));
+    console.log(inspect({ options, queryParams, pathname }));
 
     // eslint-disable-next-line no-undef
     return new Promise((resolve, reject) => {
@@ -29,7 +32,7 @@ export function httpsRequest ({ url, user, pass, headers, queryParams, method, b
             let data = null;
 
             if (encoding === null) {
-                data = new Buffer();
+                data = Buffer.from();
 
                 response.on('data', chunk => {
                     data = Buffer.concat([data, chunk]);
