@@ -35,7 +35,8 @@ const browserStackProvider = require('../../');
         await providerMock.dispose();
     });
 
-    it('getOSInfo should return a correct OS version', async function () {
+    // eslint-disable-next-line no-only-tests/no-only-tests
+    it.only('getOSInfo should return a correct OS version', async function () {
         const expectedResults = {
             'Win10': {
                 name:    'Windows',

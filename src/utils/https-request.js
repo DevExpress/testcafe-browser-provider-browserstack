@@ -2,6 +2,7 @@ import https from 'https';
 import { parse as parseUrl } from 'url';
 import querystring from 'node:querystring';
 import HttpsProxyAgent from 'https-proxy-agent';
+import { inspect } from 'util';
 
 export function httpsRequest ({ url, user, pass, headers, queryParams, method, body, json, encoding, proxy }) {
     const { hostname, path } = parseUrl(url);
@@ -18,6 +19,9 @@ export function httpsRequest ({ url, user, pass, headers, queryParams, method, b
 
     if (proxy)
         options.agent = new HttpsProxyAgent(proxy);
+
+    // eslint-disable-next-line no-console
+    console.log(inspect(options));
 
     // eslint-disable-next-line no-undef
     return new Promise((resolve, reject) => {
