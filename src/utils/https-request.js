@@ -15,7 +15,7 @@ export function httpsRequest ({ url, user, pass, headers, queryParams, method, b
         path:     `${pathname}${search}`,
         method,
         headers:  {
-            'Authorization': 'Basic ' + Buffer.from(user + ':' + pass).toString('base64'),
+            'Authorization': 'Basic ' + Buffer.from(user + ':' + pass, 'utf8').toString('base64'),
             ...headers
         }
     };
