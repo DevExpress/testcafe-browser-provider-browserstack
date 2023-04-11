@@ -12,7 +12,7 @@ export function httpsRequest ({ url, user, pass, headers, queryParams, method, b
 
     const options = {
         hostname: hostname,
-        path:     `${pathname}${search}`,
+        path:     `${pathname}${method !== 'POST' ? search : ''}`,
         method,
         headers:  {
             'Authorization': 'Basic ' + Buffer.from(user + ':' + pass, 'utf8').toString('base64'),
@@ -59,6 +59,8 @@ export function httpsRequest ({ url, user, pass, headers, queryParams, method, b
         });
 
         request.on('error', reject);
+
+        if (method === 'POST' && search) request.write(search);
 
         if (body) request.write(JSON.stringify(body));
 
