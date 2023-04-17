@@ -213,6 +213,6 @@ export default class AutomateBackend extends BaseBackend {
         var sessionId = this.sessions[id].sessionId;
         var jobStatus = createBrowserstackStatus(jobResult, jobData, possibleResults);
 
-        await getJson(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
+        await requestApi(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
     }
 }

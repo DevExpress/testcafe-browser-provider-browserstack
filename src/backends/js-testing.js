@@ -131,7 +131,7 @@ export default class JSTestingBackend extends BaseBackend {
         var sessionId = this.workers[id].sessionId;
         var jobStatus = createBrowserstackStatus(jobResult, jobData, possibleResults);
 
-        await getJson(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
+        await requestApi(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
     }
 }
 
