@@ -1,6 +1,5 @@
 import { inspect } from 'util';
 import BaseBackend from './base';
-import requestApiBase from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
 import getAPIPollingInterval from '../utils/get-api-polling-interval';
 import * as ERROR_MESSAGES from '../templates/error-messages';
@@ -63,7 +62,7 @@ const BROWSERSTACK_API_PATHS = {
 
 
 function requestApi (path, params) {
-    return requestApiBase(path, params)
+    return getJson(path, params)
         .then(response => {
             if (response.status) {
                 throw new Error(ERROR_MESSAGES.REMOTE_API_REQUEST_FAILED({
@@ -110,13 +109,13 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async _requestSessionInfo (id) {
-        var sessionInfo = await getJson(BROWSERSTACK_API_PATHS.getStatus(this.sessions[id].sessionId).url);
+        var sessionInfo = await getJson(BROWSERSTACK_API_PATHS.getStatus(this.sessions[id].sessionId));
 
         return sessionInfo['automation_session'];
     }
 
     async _requestCurrentWindowSize (id) {
-        var currentWindowSizeData = await getJson(BROWSERSTACK_API_PATHS.getWindowSize(this.sessions[id].sessionId).url);
+        var currentWindowSizeData = await getJson(BROWSERSTACK_API_PATHS.getWindowSize(this.sessions[id].sessionId));
 
         return {
             width:  currentWindowSizeData.value.width,
@@ -125,7 +124,7 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async getBrowsersList () {
-        var platformsInfo = await getJson(BROWSERSTACK_API_PATHS.browserList.url);
+        var platformsInfo = await getJson(BROWSERSTACK_API_PATHS.browserList);
 
         return platformsInfo.reverse();
     }
@@ -190,7 +189,7 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async takeScreenshot (id, screenshotPath) {
-        var base64Data  = await getJson(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId).url);
+        var base64Data  = await getJson(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
         var buffer      = Buffer.from(base64Data.value, 'base64');
         
         await sharp(buffer).toFile(screenshotPath);
@@ -214,6 +213,6 @@ export default class AutomateBackend extends BaseBackend {
         var sessionId = this.sessions[id].sessionId;
         var jobStatus = createBrowserstackStatus(jobResult, jobData, possibleResults);
 
-        await requestApiBase(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
+        await getJson(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
     }
 }
