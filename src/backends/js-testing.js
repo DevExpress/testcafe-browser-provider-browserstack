@@ -2,6 +2,7 @@ import BaseBackend from './base';
 import requestApi from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
 import sharp from 'sharp';
+import { getJson } from '../utils/request-api/get-json';
 
 
 const TESTS_TIMEOUT = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
@@ -54,7 +55,7 @@ export default class JSTestingBackend extends BaseBackend {
     }
 
     async getBrowsersList () {
-        var platformsInfo = await requestApi(BROWSERSTACK_API_PATHS.browserList);
+        var platformsInfo = await getJson(BROWSERSTACK_API_PATHS.browserList.url);
 
         return platformsInfo.reverse();
     }

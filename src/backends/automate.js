@@ -5,6 +5,7 @@ import createBrowserstackStatus from '../utils/create-browserstack-status';
 import getAPIPollingInterval from '../utils/get-api-polling-interval';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 import sharp from 'sharp';
+import { getJson } from '../utils/request-api/get-json';
 
 const API_POLLING_INTERVAL = getAPIPollingInterval();
 
@@ -124,7 +125,7 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async getBrowsersList () {
-        var platformsInfo = await requestApiBase(BROWSERSTACK_API_PATHS.browserList);
+        var platformsInfo = await getJson(BROWSERSTACK_API_PATHS.url);
 
         return platformsInfo.reverse();
     }
