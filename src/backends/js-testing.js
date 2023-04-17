@@ -108,7 +108,7 @@ export default class JSTestingBackend extends BaseBackend {
         if (!workerId || workerId === '')
             return;
 
-        await getJson(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
+        await requestApi(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
 
     }
 
