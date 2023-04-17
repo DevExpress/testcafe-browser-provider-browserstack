@@ -18,8 +18,17 @@ export async function getJson ({ url, method = 'GET' }, { body = null, executeIm
             'Authorization': `Basic ${Buffer.from(user + ':' + pass).toString('base64')}`,
         },
         method,
-        body: body ? JSON.stringify(body) : void 0,
     };
+
+    if (body)
+        options.body = JSON.stringify(body);
+
+    const proxy = process.env['BROWSERSTACK_PROXY'];
+
+    if (proxy) {
+        // eslint-disable-next-line no-console
+        console.log({ proxy });
+    }
 
     // eslint-disable-next-line no-console
     console.log({ url, method, ...options });
