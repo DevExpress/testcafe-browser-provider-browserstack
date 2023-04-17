@@ -125,7 +125,7 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async getBrowsersList () {
-        var platformsInfo = await getJson(BROWSERSTACK_API_PATHS.url);
+        var platformsInfo = await getJson(BROWSERSTACK_API_PATHS.browserList.url);
 
         return platformsInfo.reverse();
     }
