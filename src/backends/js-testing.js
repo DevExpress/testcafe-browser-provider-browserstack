@@ -45,7 +45,7 @@ export default class JSTestingBackend extends BaseBackend {
     }
 
     async _requestSessionInfo (id) {
-        return await getJson(BROWSERSTACK_API_PATHS.getWorkerInfo(this.workers[id].id));
+        return await requestApi(BROWSERSTACK_API_PATHS.getWorkerInfo(this.workers[id].id));
     }
 
     async _getSessionId (id) {

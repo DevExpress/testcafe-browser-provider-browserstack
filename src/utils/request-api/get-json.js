@@ -7,7 +7,7 @@ const apiRequestPromise = Promise.resolve(null);
 
 export async function getJson ({ url, method = 'GET' }, { body = null, executeImmediately = false } = {}) {
     // eslint-disable-next-line no-console
-    console.log({ url });
+    console.log({ url, method });
 
     if (!process.env['BROWSERSTACK_USERNAME'] || !process.env['BROWSERSTACK_ACCESS_KEY'])
         throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
