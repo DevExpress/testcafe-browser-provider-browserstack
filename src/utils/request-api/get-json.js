@@ -28,33 +28,31 @@ export async function getJson ({ url, method = 'GET' }, { body = null, executeIm
 
     const chainPromise = executeImmediately ? Promise.resolve(null) : apiRequestPromise;
 
-    const enableLog = method === 'PUT' && url.startsWith('https://api.browserstack.com/automate/sessions/');
+    //const enableLog = method === 'PUT' && url.startsWith('https://api.browserstack.com/automate/sessions/');
 
     const currentRequestPromise = chainPromise
         .then(async () => {
-            if (enableLog) {
-                // eslint-disable-next-line no-console
-                console.log({ url, method, proxy, ...options });
-            }
+            //if (enableLog) {
+            // eslint-disable-next-line no-console
+            console.log({ url, method, ...options });
+            //}
 
             const response = await fetch(url, options);
+
+            // if (enableLog) {
+            //     // eslint-disable-next-line no-console
+            //     console.log(inspect(response));
+            // }
 
             if (response.status === 401)
                 throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
             else if (!response.ok)
-                throw new Error(await response.text());
-
-            if (enableLog) {
-                // eslint-disable-next-line no-console
-                console.log(inspect(response));
-            }
+                throw new Error({ status: response.status, text: response.statusText });
 
             const result = await response.json();
 
-            if (enableLog) {
-                // eslint-disable-next-line no-console
-                console.log({ result });
-            }
+            // eslint-disable-next-line no-console
+            console.log({ result: 'ok' });
 
             return result;
         })
