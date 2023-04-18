@@ -2,7 +2,7 @@ import BaseBackend from './base';
 import requestApi from '../utils/request-api';
 import createBrowserstackStatus from '../utils/create-browserstack-status';
 import sharp from 'sharp';
-import { getJson } from '../utils/request-api/get-json';
+import { requestJson } from '../utils/request-api/get-json';
 
 
 const TESTS_TIMEOUT = process.env['BROWSERSTACK_TEST_TIMEOUT'] || 1800;
@@ -45,7 +45,7 @@ export default class JSTestingBackend extends BaseBackend {
     }
 
     async _requestSessionInfo (id) {
-        return await requestApi(BROWSERSTACK_API_PATHS.getWorkerInfo(this.workers[id].id));
+        return await requestJson(BROWSERSTACK_API_PATHS.getWorkerInfo(this.workers[id].id));
     }
 
     async _getSessionId (id) {
@@ -55,7 +55,7 @@ export default class JSTestingBackend extends BaseBackend {
     }
 
     async getBrowsersList () {
-        var platformsInfo = await getJson(BROWSERSTACK_API_PATHS.browserList);
+        var platformsInfo = await requestJson(BROWSERSTACK_API_PATHS.browserList);
 
         return platformsInfo.reverse();
     }
@@ -108,7 +108,7 @@ export default class JSTestingBackend extends BaseBackend {
         if (!workerId || workerId === '')
             return;
 
-        await requestApi(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
+        await requestJson(BROWSERSTACK_API_PATHS.deleteWorker(workerId));
 
     }
 
@@ -131,7 +131,7 @@ export default class JSTestingBackend extends BaseBackend {
         var sessionId = this.workers[id].sessionId;
         var jobStatus = createBrowserstackStatus(jobResult, jobData, possibleResults);
 
-        await requestApi(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
+        await getJson(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
     }
 }
 

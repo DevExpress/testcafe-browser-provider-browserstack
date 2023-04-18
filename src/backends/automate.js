@@ -4,8 +4,7 @@ import createBrowserstackStatus from '../utils/create-browserstack-status';
 import getAPIPollingInterval from '../utils/get-api-polling-interval';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 import sharp from 'sharp';
-import { getJson } from '../utils/request-api/get-json';
-//import requestApiBase from '../utils/request-api';
+import { requestJson } from '../utils/request-api/get-json';
 
 const API_POLLING_INTERVAL = getAPIPollingInterval();
 
@@ -63,7 +62,7 @@ const BROWSERSTACK_API_PATHS = {
 
 
 function requestApi (path, params) {
-    return getJson(path, params)
+    return requestJson(path, params)
         .then(response => {
             if (response.status) {
                 throw new Error(ERROR_MESSAGES.REMOTE_API_REQUEST_FAILED({
@@ -110,13 +109,13 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async _requestSessionInfo (id) {
-        var sessionInfo = await getJson(BROWSERSTACK_API_PATHS.getStatus(this.sessions[id].sessionId));
+        var sessionInfo = await requestJson(BROWSERSTACK_API_PATHS.getStatus(this.sessions[id].sessionId));
 
         return sessionInfo['automation_session'];
     }
 
     async _requestCurrentWindowSize (id) {
-        var currentWindowSizeData = await getJson(BROWSERSTACK_API_PATHS.getWindowSize(this.sessions[id].sessionId));
+        var currentWindowSizeData = await requestJson(BROWSERSTACK_API_PATHS.getWindowSize(this.sessions[id].sessionId));
 
         return {
             width:  currentWindowSizeData.value.width,
@@ -125,7 +124,7 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async getBrowsersList () {
-        var platformsInfo = await getJson(BROWSERSTACK_API_PATHS.browserList);
+        var platformsInfo = await requestJson(BROWSERSTACK_API_PATHS.browserList);
 
         return platformsInfo.reverse();
     }
@@ -190,7 +189,7 @@ export default class AutomateBackend extends BaseBackend {
     }
 
     async takeScreenshot (id, screenshotPath) {
-        var base64Data  = await getJson(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
+        var base64Data  = await requestJson(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
         var buffer      = Buffer.from(base64Data.value, 'base64');
         
         await sharp(buffer).toFile(screenshotPath);
