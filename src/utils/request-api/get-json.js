@@ -15,6 +15,7 @@ export async function getJson ({ url, method = 'GET' }, { body = null, executeIm
 
     const options = {
         headers: {
+            'Content-Type': 'application/json',
             'user-agent':    'testcafe-browserstack',
             'Authorization': `Basic ${Buffer.from(user + ':' + pass).toString('base64')}`,
         },
