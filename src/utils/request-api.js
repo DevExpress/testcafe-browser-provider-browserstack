@@ -41,10 +41,23 @@ export default function (apiPath, params = {}) {
     const chainPromise = executeImmediately ? Promise.resolve(null) : apiRequestPromise;
 
     const currentRequestPromise = chainPromise
-        .then(() => request(opts))
+        .then(async () => {
+            // eslint-disable-next-line no-console
+            console.log(opts);
+
+            const result = await request(opts);
+
+            // eslint-disable-next-line no-console
+            console.log({ result: 'ok' });
+
+            return result;
+        })
         .catch(error => {
             if (error.statusCode === 401)
                 throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
+
+            // eslint-disable-next-line no-console
+            console.log({ status: error.statusCode, text: error.toString() });
 
             throw error;
         });

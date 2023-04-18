@@ -5,7 +5,7 @@ import getAPIPollingInterval from '../utils/get-api-polling-interval';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 import sharp from 'sharp';
 import { getJson } from '../utils/request-api/get-json';
-//import requestApiBase from '../utils/request-api';
+import requestApiBase from '../utils/request-api';
 
 const API_POLLING_INTERVAL = getAPIPollingInterval();
 
@@ -171,7 +171,7 @@ export default class AutomateBackend extends BaseBackend {
 
         this.sessions[id].interval = setInterval(() => requestApi(BROWSERSTACK_API_PATHS.getUrl(sessionId), { executeImmediately: true }), API_POLLING_INTERVAL);
 
-        await requestApi(BROWSERSTACK_API_PATHS.openUrl(sessionId), { body: { url: pageUrl } });
+        await requestApiBase(BROWSERSTACK_API_PATHS.openUrl(sessionId), { body: { url: pageUrl } });
     }
 
     async closeBrowser (id) {
