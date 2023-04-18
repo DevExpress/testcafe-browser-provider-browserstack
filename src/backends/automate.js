@@ -171,7 +171,7 @@ export default class AutomateBackend extends BaseBackend {
 
         this.sessions[id].interval = setInterval(() => requestApi(BROWSERSTACK_API_PATHS.getUrl(sessionId), { executeImmediately: true }), API_POLLING_INTERVAL);
 
-        await requestApiBase(BROWSERSTACK_API_PATHS.openUrl(sessionId), { body: { url: pageUrl } });
+        await requestApi(BROWSERSTACK_API_PATHS.openUrl(sessionId), { body: { url: pageUrl } });
     }
 
     async closeBrowser (id) {
@@ -214,6 +214,6 @@ export default class AutomateBackend extends BaseBackend {
         var sessionId = this.sessions[id].sessionId;
         var jobStatus = createBrowserstackStatus(jobResult, jobData, possibleResults);
 
-        await requestApi(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
+        await requestApiBase(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
     }
 }
