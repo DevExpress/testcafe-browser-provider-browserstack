@@ -28,10 +28,14 @@ export async function getJson ({ url, method = 'GET' }, { body = null, executeIm
 
     const chainPromise = executeImmediately ? Promise.resolve(null) : apiRequestPromise;
 
+    const enableLog = method === 'PUT' && url.startsWith('https://api.browserstack.com/automate/sessions/');
+
     const currentRequestPromise = chainPromise
         .then(async () => {
-            // eslint-disable-next-line no-console
-            console.log({ url, method, proxy, ...options });
+            if (enableLog) {
+                // eslint-disable-next-line no-console
+                console.log({ url, method, proxy, ...options });
+            }
 
             const response = await fetch(url, options);
 
@@ -40,19 +44,25 @@ export async function getJson ({ url, method = 'GET' }, { body = null, executeIm
             else if (!response.ok)
                 throw new Error(await response.text());
 
-            if (method !== 'GET') {
+            if (enableLog) {
                 // eslint-disable-next-line no-console
                 console.log(inspect(response));
             }
 
             const result = await response.json();
 
-            if (method !== 'GET') {
+            if (enableLog) {
                 // eslint-disable-next-line no-console
                 console.log({ result });
             }
 
             return result;
+        })
+        .catch(error => {
+            // eslint-disable-next-line no-console
+            console.log(inspect({ error, url, method, proxy, ...options }));
+
+            throw error;
         });
 
     return currentRequestPromise;
