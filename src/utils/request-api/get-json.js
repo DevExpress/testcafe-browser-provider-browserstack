@@ -23,7 +23,7 @@ export async function getJson ({ url, method = 'GET' }, { body = null, executeIm
     if (body)
         options.body = JSON.stringify(body);
 
-    const proxy = process.env['BROWSERSTACK_PROXY'];
+    //const proxy = process.env['BROWSERSTACK_PROXY'];
 
     // eslint-disable-next-line no-console
     //console.log({ url, method, proxy, ...options });
