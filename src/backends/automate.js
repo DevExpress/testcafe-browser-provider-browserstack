@@ -5,7 +5,7 @@ import getAPIPollingInterval from '../utils/get-api-polling-interval';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 import sharp from 'sharp';
 import { getJson } from '../utils/request-api/get-json';
-//import requestApiBase from '../utils/request-api';
+import requestApiBase from '../utils/request-api';
 
 const API_POLLING_INTERVAL = getAPIPollingInterval();
 
@@ -214,6 +214,6 @@ export default class AutomateBackend extends BaseBackend {
         var sessionId = this.sessions[id].sessionId;
         var jobStatus = createBrowserstackStatus(jobResult, jobData, possibleResults);
 
-        await requestApi(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
+        await requestApiBase(BROWSERSTACK_API_PATHS.setStatus(sessionId), { body: jobStatus });
     }
 }
