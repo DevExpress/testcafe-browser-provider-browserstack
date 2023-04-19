@@ -40,7 +40,7 @@ export async function requestJson ({ url, method = 'GET' }, { body = null, execu
             if (response.status === 401)
                 throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
             else if (!response.ok)
-                throw new Error(`${response.statu}: response.statusText`);
+                throw new Error(`${response.status}: ${response.statusText}`);
 
             return await response.json();
         });

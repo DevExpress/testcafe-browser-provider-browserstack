@@ -7,7 +7,7 @@ const LOW_RESOLUTION  = '1024x768';
 const HIGH_RESOLUTION = '1920x1080';
 
 // eslint-disable-next-line no-only-tests/no-only-tests
-describe.only('Resolution Changing', function () {
+describe('Resolution Changing', function () {
     this.timeout(2 * 60 * 1000);
 
     let testcafe = null;
