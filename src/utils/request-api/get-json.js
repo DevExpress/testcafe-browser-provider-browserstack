@@ -5,7 +5,7 @@ import * as ERROR_MESSAGES from '../../templates/error-messages';
 
 const apiRequestPromise = Promise.resolve(null);
 
-export async function requestJson ({ url, method = 'GET' }, { body = null, executeImmediately = false, ...queryParams } = {}) {
+export async function requestJson ({ url, method = 'GET' }, { body = null, executeImmediately = false } = {}) {
     if (!process.env['BROWSERSTACK_USERNAME'] || !process.env['BROWSERSTACK_ACCESS_KEY'])
         throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
 
@@ -26,8 +26,8 @@ export async function requestJson ({ url, method = 'GET' }, { body = null, execu
 
     const urlObject = new URL(url);
 
-    for (const key in queryParams)
-        urlObject.searchParams.append(key, queryParams[key]);
+    // for (const key in queryParams)
+    //     urlObject.searchParams.append(key, queryParams[key]);
 
     //const proxy = process.env['BROWSERSTACK_PROXY'];
 

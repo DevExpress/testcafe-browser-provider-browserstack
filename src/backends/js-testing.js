@@ -83,7 +83,7 @@ export default class JSTestingBackend extends BaseBackend {
             ...restCapabilities,
         };
 
-        this.workers[id] = await requestJson(BROWSERSTACK_API_PATHS.newWorker, {
+        this.workers[id] = await requestApi(BROWSERSTACK_API_PATHS.newWorker, {
             executeImmediately: true,
 
             ...capabilities,
