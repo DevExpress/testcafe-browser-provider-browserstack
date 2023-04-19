@@ -102,4 +102,4 @@ exports.testMochaAutomate    = testMochaAutomate;
 exports.testTestcafeRest     = gulp.series(exports.build, testTestcafeRest);
 exports.testTestcafeAutomate = gulp.series(exports.build, testTestcafeAutomate);
 
-exports.test = gulp.series(exports.build, testMochaAutomate);
+exports.test = gulp.series(exports.build, testMochaRest, testMochaAutomate, testTestcafeRest, testTestcafeAutomate);
