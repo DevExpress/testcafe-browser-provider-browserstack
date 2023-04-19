@@ -31,6 +31,9 @@ export async function requestJson ({ url, method = 'GET' }, { body = null, execu
 
     //const proxy = process.env['BROWSERSTACK_PROXY'];
 
+    // eslint-disable-next-line no-console
+    console.log(urlObject.toString());
+
     const chainPromise = executeImmediately ? Promise.resolve(null) : apiRequestPromise;
 
     const currentRequestPromise = chainPromise
