@@ -83,9 +83,7 @@ export default class JSTestingBackend extends BaseBackend {
         };
 
         this.workers[id] = await requestApi(BROWSERSTACK_API_PATHS.newWorker, {
-            executeImmediately: true,
-
-            ...capabilities,
+            body: { ...capabilities }
         });
 
         const sessionInfo = await this._requestSessionInfo(id);

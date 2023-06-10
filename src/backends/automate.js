@@ -151,8 +151,6 @@ export default class AutomateBackend extends BaseBackend {
 
         this.sessions[id] = await requestApi(BROWSERSTACK_API_PATHS.newSession, {
             body: { desiredCapabilities: capabilities },
-
-            executeImmediately: true
         });
 
         AutomateBackend._ensureSessionId(this.sessions[id]);
@@ -168,7 +166,7 @@ export default class AutomateBackend extends BaseBackend {
 
         var sessionId = this.sessions[id].sessionId;
 
-        this.sessions[id].interval = setInterval(() => requestApi(BROWSERSTACK_API_PATHS.getUrl(sessionId), { executeImmediately: true }), API_POLLING_INTERVAL);
+        this.sessions[id].interval = setInterval(() => requestApi(BROWSERSTACK_API_PATHS.getUrl(sessionId)), API_POLLING_INTERVAL);
 
         await requestApi(BROWSERSTACK_API_PATHS.openUrl(sessionId), { body: { url: pageUrl } });
     }
@@ -191,7 +189,7 @@ export default class AutomateBackend extends BaseBackend {
     async takeScreenshot (id, screenshotPath) {
         var base64Data  = await requestApi(BROWSERSTACK_API_PATHS.screenshot(this.sessions[id].sessionId));
         var buffer      = Buffer.from(base64Data.value, 'base64');
-        
+
         await sharp(buffer).toFile(screenshotPath);
     }
 
