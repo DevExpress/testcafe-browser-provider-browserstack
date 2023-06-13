@@ -4,7 +4,7 @@
   "description": "Browserstack TestCafe browser provider plugin.",
   "repository": "https://github.com/DevExpress/testcafe-browser-provider-browserstack",
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10"
   },
   "homepage": "https://github.com/DevExpress/testcafe-browser-provider-browserstack",
   "author": {
@@ -34,13 +34,13 @@
     "dedent": "^0.7.0",
     "desired-capabilities": "^0.1.0",
     "firefox-profile": "^4.2.2",
+    "https-proxy-agent": "^7.0.0",
     "lodash": "^4.17.15",
     "mime-db": "^1.43.0",
+    "node-fetch": "^2.6.11",
     "os-family": "^1.0.0",
     "pinkie": "^2.0.4",
     "promisify-event": "^1.0.0",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.4",
     "sharp": "^0.30.7",
     "tmp": "0.0.31"
   },

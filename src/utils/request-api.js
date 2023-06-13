@@ -1,53 +1,48 @@
-import Promise from 'pinkie';
-import request from 'request-promise';
+import fetch from 'node-fetch';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import * as ERROR_MESSAGES from '../templates/error-messages';
 
-const apiRequestPromise = Promise.resolve(null);
-
-export default function (apiPath, params = {}) {
+export default async function (apiPath, params = {}) {
     if (!process.env['BROWSERSTACK_USERNAME'] || !process.env['BROWSERSTACK_ACCESS_KEY'])
         throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
 
-    var { body, executeImmediately, ...queryParams } = params;
+    const { body, ...queryParams } = params;
 
-    var opts = {
-        url:  apiPath.url,
-        auth: {
-            user: process.env['BROWSERSTACK_USERNAME'],
-            pass: process.env['BROWSERSTACK_ACCESS_KEY'],
-        },
+    const urlObj = new URL(apiPath.url);
 
+    for (const [key, value] of Object.entries(queryParams))
+        urlObj.searchParams.append(key, value);
+
+    const url = urlObj.toString();
+
+    const user = process.env['BROWSERSTACK_USERNAME'];
+    const pass = process.env['BROWSERSTACK_ACCESS_KEY'];
+
+    const options = {
+        method:  apiPath.method || 'GET',
         headers: {
-            'user-agent': 'testcafe-browserstack',
+            'Authorization': `Basic ${Buffer.from(user + ':' + pass).toString('base64')}`,
+            'User-Agent':    'testcafe-browserstack',
         },
-
-        qs: { ...queryParams },
-
-        method: apiPath.method || 'GET',
-        json:   apiPath.encoding === void 0
     };
 
     const proxy = process.env['BROWSERSTACK_PROXY'];
 
     if (proxy)
-        opts.proxy = `http://${proxy}`;
+        options.agent = new HttpsProxyAgent(`http://${proxy}`);
 
-    if (body)
-        opts.body = body;
+    if (body) {
+        options.body = JSON.stringify(body);
+        options.headers['Content-Type'] = 'application/json';
+    }
 
-    if (apiPath.encoding !== void 0)
-        opts.encoding = apiPath.encoding;
+    const res = await fetch(url, options);
 
-    const chainPromise = executeImmediately ? Promise.resolve(null) : apiRequestPromise;
+    if (res.status === 401)
+        throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
 
-    const currentRequestPromise = chainPromise
-        .then(() => request(opts))
-        .catch(error => {
-            if (error.statusCode === 401)
-                throw new Error(ERROR_MESSAGES.BROWSERSTACK_AUTHENTICATION_FAILED());
+    if (apiPath.encoding === null)
+        return Buffer.from(await res.arrayBuffer());
 
-            throw error;
-        });
-
-    return currentRequestPromise;
+    return res.json();
 }
