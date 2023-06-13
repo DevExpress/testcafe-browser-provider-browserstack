@@ -1,6 +1,6 @@
 {
   "name": "testcafe-browser-provider-browserstack",
-  "version": "1.14.2",
+  "version": "1.15.0",
   "description": "Browserstack TestCafe browser provider plugin.",
   "repository": "https://github.com/DevExpress/testcafe-browser-provider-browserstack",
   "engines": {
