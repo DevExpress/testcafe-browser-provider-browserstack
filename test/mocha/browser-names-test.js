@@ -65,7 +65,7 @@ describe('Browser names', function () {
             'ie@9.0:Windows 7':   true,
             'ie@10.0:Windows 8':  true,
             'ie@11.0:Windows 10': true,
-            'iPhone SE':          true,
+            'iPhone SE 2020':     true,
             'Google Pixel 7':     true,
             'ie@5.0':             false,
             'ie@11:os x':         false
