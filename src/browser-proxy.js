@@ -4,11 +4,12 @@ import Promise from 'pinkie';
 
 
 module.exports = class BrowserProxy {
-    constructor (targetHost, targetPort, { proxyPort, responseDelay } = {}) {
-        this.targetHost    = targetHost;
-        this.targetPort    = targetPort;
-        this.proxyPort     = proxyPort || 0;
-        this.responseDelay = responseDelay || 0;
+    constructor (targetHost, targetPort, { targetProtocol, proxyPort, responseDelay } = {}) {
+        this.targetProtocol = targetProtocol || 'http';
+        this.targetHost     = targetHost;
+        this.targetPort     = targetPort;
+        this.proxyPort      = proxyPort || 0;
+        this.responseDelay  = responseDelay || 0;
 
         this.server = http.createServer((...args) => this._onBrowserRequest(...args));
 
@@ -18,7 +19,7 @@ module.exports = class BrowserProxy {
     _onBrowserRequest (req, res) {
         setTimeout(() => {
             const parsedRequestUrl = parseUrl(req.url);
-            const destinationUrl   = 'http://' + this.targetHost + ':' + this.targetPort + parsedRequestUrl.path;
+            const destinationUrl   = this.targetProtocol + '//' + this.targetHost + ':' + this.targetPort + parsedRequestUrl.path;
 
             res.statusCode = 302;
 
