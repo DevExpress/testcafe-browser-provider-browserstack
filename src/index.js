@@ -65,11 +65,11 @@ module.exports = {
         return this.connectorPromise;
     },
 
-    _getBrowserProxy (host, port) {
+    _getBrowserProxy (protocol, host, port) {
         this.browserProxyPromise = this.browserProxyPromise
             .then(async browserProxy => {
                 if (!browserProxy) {
-                    browserProxy = new BrowserProxy(host, port, { responseDelay: ANDROID_PROXY_RESPONSE_DELAY });
+                    browserProxy = new BrowserProxy(host, port, { targetProtocol: protocol, responseDelay: ANDROID_PROXY_RESPONSE_DELAY });
 
                     await browserProxy.init();
                 }
@@ -250,7 +250,7 @@ module.exports = {
 
         if (capabilities.os.toLowerCase() === 'android') {
             const parsedPageUrl = parseUrl(pageUrl);
-            const browserProxy  = await this._getBrowserProxy(parsedPageUrl.hostname, parsedPageUrl.port);
+            const browserProxy  = await this._getBrowserProxy(parsedPageUrl.protocol, parsedPageUrl.hostname, parsedPageUrl.port);
 
             pageUrl = 'http://' + browserProxy.targetHost + ':' + browserProxy.proxyPort + parsedPageUrl.path;
         }
