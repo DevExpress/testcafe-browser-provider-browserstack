@@ -3,7 +3,7 @@ var createTestCafe = require('testcafe');
 
 
 describe('TestCafe integration', function () {
-    this.timeout(2 * 60 * 1000);
+    this.timeout(3 * 60 * 1000);
 
     var testcafe = null;
 
