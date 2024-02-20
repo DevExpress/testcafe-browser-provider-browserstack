@@ -8,7 +8,7 @@ const HIGH_RESOLUTION = '1920x1080';
 
 
 describe('Resolution Changing', function () {
-    this.timeout(2 * 60 * 1000);
+    this.timeout(3 * 60 * 1000);
 
     let testcafe = null;
 

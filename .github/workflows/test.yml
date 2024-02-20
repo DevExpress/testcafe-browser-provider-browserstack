@@ -19,7 +19,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: [build]
-    environment: CI
     steps:
       - uses: DevExpress/testcafe-build-system/actions/prepare@main
       
