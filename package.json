@@ -52,7 +52,7 @@
     "gulp-eslint": "^6.0.0",
     "mocha": "^10.2.0",
     "publish-please": "^5.4.3",
-    "testcafe": "^3.1.0"
+    "testcafe": "^3.6.2"
   },
   "overrides": {
     "lodash": "^4.17.21"
