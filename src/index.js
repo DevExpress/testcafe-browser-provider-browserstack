@@ -138,18 +138,27 @@ module.exports = {
     },
 
     _getCapabilitiesFromConfig () {
-        const configPath = String(path.relative(__dirname, path.resolve(process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH)));
+        const configPath = path.resolve(process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH);
 
         if (!configPath)
             return {};
+        const relativeConfigPath = path.relative(__dirname, configPath);
 
-        return require(configPath);
+        if (!relativeConfigPath)
+            return {};
+        return require(relativeConfigPath);
     },
 
     _getAdditionalCapabilities () {
         const capabilitiesFromEnvironment = pickBy(this._getCapabilitiesFromEnvironment(), value => value !== void 0);
+        let additionalCapabilities = '';
 
-        return { ...this._getCapabilitiesFromConfig(), ...capabilitiesFromEnvironment };
+        if (process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH)
+            additionalCapabilities = { ...this._getCapabilitiesFromConfig(), ...capabilitiesFromEnvironment };
+        else
+            additionalCapabilities = { ...capabilitiesFromEnvironment };
+
+        return additionalCapabilities;
     },
 
     _filterPlatformInfo (query) {
