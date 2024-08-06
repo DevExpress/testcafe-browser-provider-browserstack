@@ -63,4 +63,38 @@ describe('Browserstack capabilities', function () {
             'browserstack.networkProfile': '4g-lte-lossy'
         });
     });
+
+    it('Should add additional capabilities when both config file and environment variables used', () => {
+        process.env['BROWSERSTACK_BUILD_ID'] = 'build-1';
+        process.env['BROWSERSTACK_PROJECT_NAME'] = 'project-1';
+        process.env['BROWSERSTACK_DISPLAY_RESOLUTION'] = '1024x768';
+        process.env['BROWSERSTACK_TEST_RUN_NAME'] = 'Testcafe test run 1';
+        process.env['BROWSERSTACK_DEBUG'] = 'false'; //env var should take precedence
+        process.env['BROWSERSTACK_CONSOLE'] = 'errors';
+        process.env['BROWSERSTACK_NETWORK_LOGS'] = 'true';
+        process.env['BROWSERSTACK_VIDEO'] = 'true';
+        process.env['BROWSERSTACK_TIMEZONE'] = 'Asia/Taipei';
+        process.env['BROWSERSTACK_GEO_LOCATION'] = 'ZA';
+        process.env['BROWSERSTACK_CUSTOM_NETWORK'] = '"1000", "1000", "100", "1"';
+        process.env['BROWSERSTACK_NETWORK_PROFILE'] = '4g-lte-lossy';
+
+        process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH = require.resolve('./data/capabilities-config.json');
+
+        const capabilities = browserStackProvider._getAdditionalCapabilities();
+
+        expect(capabilities).to.deep.equal({
+            'build':                       'build-1',
+            'project':                     'project-1',
+            'resolution':                  '1024x768',
+            'name':                        'Testcafe test run 1',
+            'browserstack.debug':          'false', //env var should take precedence
+            'browserstack.console':        'errors',
+            'browserstack.networkLogs':    'true',
+            'browserstack.video':          'true',
+            'browserstack.timezone':       'Asia/Taipei',
+            'browserstack.geoLocation':    'ZA',
+            'browserstack.customNetwork':  '"1000", "1000", "100", "1"',
+            'browserstack.networkProfile': '4g-lte-lossy'
+        });
+    });
 });
