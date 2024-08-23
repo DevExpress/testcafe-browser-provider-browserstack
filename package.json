@@ -49,7 +49,7 @@
     "chai": "^3.5.0",
     "del": "^2.2.2",
     "eslint-plugin-no-only-tests": "^2.4.0",
-    "gulp": "^4.0.0",
+    "gulp": "^5.0.0",
     "gulp-eslint": "^6.0.0",
     "mocha": "^10.2.0",
     "testcafe": "^3.6.2"
