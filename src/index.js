@@ -1,4 +1,5 @@
 import { parse as parseUrl } from 'url';
+import path from 'node:path';
 import Promise from 'pinkie';
 import { promisify } from 'util';
 import parseCapabilities from 'desired-capabilities';
@@ -137,12 +138,17 @@ module.exports = {
     },
 
     _getCapabilitiesFromConfig () {
-        const configPath = process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH;
+        let relativeConfigPath;
 
-        if (!configPath)
+        if (process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH) {
+            const configPath = path.resolve(process.env.BROWSERSTACK_CAPABILITIES_CONFIG_PATH);
+
+            relativeConfigPath = path.relative(__dirname, configPath);
+        }
+        else
             return {};
 
-        return require(configPath);
+        return require(relativeConfigPath);
     },
 
     _getAdditionalCapabilities () {
