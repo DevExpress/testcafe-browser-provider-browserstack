@@ -15,7 +15,7 @@ jobs:
       
       - uses: DevExpress/testcafe-build-system/actions/build@main
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4.6.2
         with:
           name: npm-package
           path: .builds/*.tgz
@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: DevExpress/testcafe-build-system/actions/prepare@main
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4.1.3
         with:
           name: npm-package
           path: .builds
