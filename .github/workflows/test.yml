@@ -20,11 +20,6 @@ jobs:
     needs: [build]
     steps:
       - uses: DevExpress/testcafe-build-system/actions/prepare@main
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: npm
-          path: .builds
       
       - uses: DevExpress/testcafe-build-system/actions/test-npm@main
         env:
