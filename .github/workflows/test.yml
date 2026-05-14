@@ -38,6 +38,14 @@ jobs:
         with:
           name: npm
 
+      - name: Debug - list workspace after download
+        shell: bash
+        run: |
+          echo "=== .builds/ contents ==="
+          ls -la .builds/ || echo ".builds/ not found"
+          echo "=== pack-name: ${{ steps.pkg.outputs.pack-name }} ==="
+          echo "=== version: ${{ steps.pkg.outputs.version }} ==="
+
       - name: Extract npm package
         shell: bash
         run: tar --strip-components=1 -xzf ".builds/${{ steps.pkg.outputs.pack-name }}-${{ steps.pkg.outputs.version }}.tgz"
