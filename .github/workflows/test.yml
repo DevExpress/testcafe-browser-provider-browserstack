@@ -20,11 +20,48 @@ jobs:
     needs: [build]
     steps:
       - uses: DevExpress/testcafe-build-system/actions/prepare@main
-      
-      - uses: DevExpress/testcafe-build-system/actions/test-npm@main
+
+      # Inline replacement for test-npm@main + load-artifacts-npm@main.
+      # Workaround: detect-package-metadata@main uses actions/github-script@v3
+      # which relies on the deprecated ::set-output:: command (now disabled by GitHub),
+      # causing pack-name/version outputs to be empty and the tar extraction to fail.
+      - name: Get package metadata
+        id: pkg
+        shell: bash
+        run: |
+          PACK_NAME=$(node -e "const p=require('./package.json'); console.log(p.name.replace('@','').replace(/\//g,'-'))")
+          VERSION=$(node -e "console.log(require('./package.json').version)")
+          echo "pack-name=$PACK_NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm
+
+      - name: Extract npm package
+        shell: bash
+        run: tar --strip-components=1 -xzf ".builds/${{ steps.pkg.outputs.pack-name }}-${{ steps.pkg.outputs.version }}.tgz"
+
+      - name: Get npm cache dir
+        id: npm-cache-dir
+        shell: bash
+        run: echo "dir=$(npm config get cache)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.npm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        shell: bash
+        run: npm ci --legacy-peer-deps
+
+      - name: Run tests
+        shell: bash
         env:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-        with:
-          task: test
+        run: npm run test
  
