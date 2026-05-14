@@ -21,38 +21,6 @@ jobs:
     steps:
       - uses: DevExpress/testcafe-build-system/actions/prepare@main
 
-      # Inline replacement for test-npm@main + load-artifacts-npm@main.
-      # Workaround: detect-package-metadata@main uses actions/github-script@v3
-      # which relies on the deprecated ::set-output:: command (now disabled by GitHub),
-      # causing pack-name/version outputs to be empty and the tar extraction to fail.
-      - uses: actions/download-artifact@v4
-        with:
-          name: npm
-
-      - name: Extract npm package
-        shell: bash
-        run: |
-          TGZ=$(ls .builds/*.tgz 2>/dev/null | head -1)
-          if [ -z "$TGZ" ]; then
-            echo "ERROR: No .tgz found in .builds/. Workspace contents:"
-            find . -maxdepth 3 -not -path '*/node_modules/*' | sort
-            exit 1
-          fi
-          echo "Extracting: $TGZ"
-          tar --strip-components=1 -xzf "$TGZ"
-
-      - name: Get npm cache dir
-        id: npm-cache-dir
-        shell: bash
-        run: echo "dir=$(npm config get cache)" >> "$GITHUB_OUTPUT"
-
-      - uses: actions/cache@v4
-        with:
-          path: ${{ steps.npm-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Install dependencies
         shell: bash
         run: npm ci --legacy-peer-deps
