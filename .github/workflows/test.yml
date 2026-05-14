@@ -25,30 +25,21 @@ jobs:
       # Workaround: detect-package-metadata@main uses actions/github-script@v3
       # which relies on the deprecated ::set-output:: command (now disabled by GitHub),
       # causing pack-name/version outputs to be empty and the tar extraction to fail.
-      - name: Get package metadata
-        id: pkg
-        shell: bash
-        run: |
-          PACK_NAME=$(node -e "const p=require('./package.json'); console.log(p.name.replace('@','').replace(/\//g,'-'))")
-          VERSION=$(node -e "console.log(require('./package.json').version)")
-          echo "pack-name=$PACK_NAME" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
       - uses: actions/download-artifact@v4
         with:
           name: npm
 
-      - name: Debug - list workspace after download
-        shell: bash
-        run: |
-          echo "=== .builds/ contents ==="
-          ls -la .builds/ || echo ".builds/ not found"
-          echo "=== pack-name: ${{ steps.pkg.outputs.pack-name }} ==="
-          echo "=== version: ${{ steps.pkg.outputs.version }} ==="
-
       - name: Extract npm package
         shell: bash
-        run: tar --strip-components=1 -xzf ".builds/${{ steps.pkg.outputs.pack-name }}-${{ steps.pkg.outputs.version }}.tgz"
+        run: |
+          TGZ=$(ls .builds/*.tgz 2>/dev/null | head -1)
+          if [ -z "$TGZ" ]; then
+            echo "ERROR: No .tgz found in .builds/. Workspace contents:"
+            find . -maxdepth 3 -not -path '*/node_modules/*' | sort
+            exit 1
+          fi
+          echo "Extracting: $TGZ"
+          tar --strip-components=1 -xzf "$TGZ"
 
       - name: Get npm cache dir
         id: npm-cache-dir
