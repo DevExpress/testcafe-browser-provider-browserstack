@@ -48,7 +48,10 @@ describe('Browser names', function () {
         return browserStackProvider
             .getBrowserList()
             .then(function (list) {
-                expect(list).to.include.members(IS_AUTOMATE ? AUTOMATE_BROWSER_NAMES : REST_BROWSER_NAMES);
+                const expectedList  = IS_AUTOMATE ? AUTOMATE_BROWSER_NAMES : REST_BROWSER_NAMES;
+                const missingItems  = expectedList.filter(item => !list.includes(item));
+
+                expect(missingItems, `Missing from browser list: ${missingItems.join(', ')}`).to.be.empty;
             });
     });
 
