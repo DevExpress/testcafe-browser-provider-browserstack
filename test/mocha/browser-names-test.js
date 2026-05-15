@@ -28,7 +28,7 @@ describe('Browser names', function () {
             'ie@11.0:Windows 8.1',
             'edge@15.0:Windows 10',
             'iPhone SE 2022@15',
-            'iPhone XR@15',
+            'iPhone 12@14',
             'Google Pixel 7@13.0'
         ];
 
@@ -42,7 +42,7 @@ describe('Browser names', function () {
             'edge@15.0:Windows 10',
             'iPhone 14@16',
             'iPhone SE 2022@15',
-            'iPhone XR@15',
+            'iPhone 12@14',
         ];
 
         return browserStackProvider
