@@ -27,7 +27,7 @@ describe('Browser names', function () {
             'ie@10.0:Windows 8',
             'ie@11.0:Windows 8.1',
             'edge@15.0:Windows 10',
-            'iPhone SE 2020@13',
+            'iPhone SE 2022@15',
             'iPhone XR@15',
             'Google Pixel 7@13.0'
         ];
@@ -40,8 +40,8 @@ describe('Browser names', function () {
             'ie@10.0:Windows 8',
             'ie@11.0:Windows 8.1',
             'edge@15.0:Windows 10',
-            'iPhone 7@10',
-            'iPhone SE 2020@13',
+            'iPhone 14@16',
+            'iPhone SE 2022@15',
             'iPhone XR@15',
         ];
 
@@ -62,7 +62,7 @@ describe('Browser names', function () {
             'ie@9.0:Windows 7':   true,
             'ie@10.0:Windows 8':  true,
             'ie@11.0:Windows 10': true,
-            'iPhone SE 2020':     true,
+            'iPhone SE 2022':     true,
             'Google Pixel 7':     true,
             'ie@5.0':             false,
             'ie@11:os x':         false
