@@ -18,9 +18,7 @@
   "scripts": {
     "build": "gulp build",
     "test": "gulp test",
-    "prepare": "gulp build",
-    "publish-please": "publish-please",
-    "prepublish": "publish-please guard"
+    "prepare": "gulp build"
   },
   "keywords": [
     "testcafe",
@@ -45,7 +43,6 @@
     "tmp": "^0.2.6"
   },
   "devDependencies": {
-    "@testcafe/publish-please": "^5.6.0",
     "chai": "^3.5.0",
     "del": "^2.2.2",
     "eslint-plugin-no-only-tests": "^2.4.0",
