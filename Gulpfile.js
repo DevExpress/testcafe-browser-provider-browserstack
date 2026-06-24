@@ -26,7 +26,7 @@ function lint () {
 }
 
 function build () {
-    return spawn('npx tsc -p src/tsconfig.json', { stdio: 'inherit', shell: true });
+    return spawn('npx --no-install tsc -p src/tsconfig.json', { stdio: 'inherit', shell: true });
 }
 
 function ensureAuthCredentials () {
@@ -50,7 +50,7 @@ function testMocha () {
     // to find the plugin. So this function starts mocha with proper NODE_PATH.
     process.env.NODE_PATH = PACKAGE_SEARCH_PATH;
 
-    return spawn(`npx mocha ${mochaOpts.join(' ')}`, { stdio: 'inherit', shell: true });
+    return spawn(`npx --no-install mocha ${mochaOpts.join(' ')}`, { stdio: 'inherit', shell: true });
 }
 
 function testMochaRest () {
@@ -78,7 +78,7 @@ function testTestcafe (browsers) {
     // to find the plugin. So this function starts testcafe with proper NODE_PATH.
     process.env.NODE_PATH = PACKAGE_SEARCH_PATH;
 
-    return spawn(`npx testcafe ${testCafeOpts.join(' ')}`, { stdio: 'inherit', shell: true });
+    return spawn(`npx --no-install testcafe ${testCafeOpts.join(' ')}`, { stdio: 'inherit', shell: true });
 }
 
 function testTestcafeRest () {
