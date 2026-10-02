@@ -29,8 +29,8 @@ function getProxyOptions (proxyConfig) {
             pass: parsedAuth && parsedAuth[2]
         };
     }
-    catch (e) {
-        return {};
+    catch (_) {
+        return { };
     }
 }
 
