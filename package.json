@@ -41,7 +41,7 @@
     "os-family": "^1.0.0",
     "pinkie": "^2.0.4",
     "promisify-event": "^1.0.0",
-    "sharp": "^0.32.4",
+    "sharp": "^0.35.5",
     "tmp": "^0.2.6"
   },
   "devDependencies": {
@@ -51,5 +51,10 @@
     "gulp": "^5.0.0",
     "mocha": "^10.2.0",
     "testcafe": "^3.6.2"
+  },
+  "overrides": {
+    "mocha": {
+      "serialize-javascript": "^7.0.4"
+    }
   }
 }
