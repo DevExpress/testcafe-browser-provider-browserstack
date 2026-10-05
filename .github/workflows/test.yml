@@ -23,17 +23,6 @@ jobs:
           echo "--- package-lock.json ---"
           ls -la package-lock.json || echo "package-lock.json does not exist"
 
-      # Shared build-npm action omits include-hidden-files, so .builds/ gets dropped
-      - name: Re-upload 'npm' artifact including hidden .builds folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: npm
-          overwrite: true
-          include-hidden-files: true
-          path: |
-            .builds/
-            package-lock.json
-
       - name: Download uploaded 'npm' artifact for inspection
         uses: actions/download-artifact@v4
         with:
