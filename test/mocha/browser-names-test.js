@@ -16,6 +16,7 @@ describe('Browser names', function () {
             .dispose();
     });
 
+    // eslint-disable-next-line no-only-tests/no-only-tests
     it('Should return list of common browsers and devices', function () {
         const IS_AUTOMATE = process.env['BROWSERSTACK_USE_AUTOMATE'] && process.env['BROWSERSTACK_USE_AUTOMATE'] !== '0';
 
@@ -62,7 +63,7 @@ describe('Browser names', function () {
             'ie@9.0:Windows 7':   true,
             'ie@10.0:Windows 8':  true,
             'ie@11.0:Windows 10': true,
-            'iPhone SE 2020':     true,
+            'iPhone SE 2022':     true,
             'Google Pixel 7':     true,
             'ie@5.0':             false,
             'ie@11:os x':         false
