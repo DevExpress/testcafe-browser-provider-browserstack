@@ -1,17 +1,26 @@
-name: Publish
+name: On-release
 
 on:
-  release:
-    types: [published]
+    release:
+        types: [published]
+
+permissions:
+    id-token: write
+    contents: read
 
 jobs:
-  publish:
-    if: ${{ !github.event.release.draft }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: DevExpress/testcafe-build-system/actions/publish-with-publish-please@main
-        env:
-          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
-          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+    publish:
+        if: ${{ !github.event.release.draft }}
+        runs-on: ubuntu-latest
+        environment: npmjs
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  ref: ${{ github.event.release.target_commitish }}
+
+            - uses: DevExpress/testcafe-build-system/actions/publish@main
+              with:
+                  pre-publish-script: npm test
+                  audit-level: critical
+                  omit-dev-dependencies: true
+                  version: ${{ github.event.release.tag_name }}

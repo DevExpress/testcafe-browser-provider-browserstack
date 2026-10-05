@@ -1,7 +1,7 @@
 const path      = require('path');
 const { spawn } = require('child_process');
 const gulp      = require('gulp');
-const eslint    = require('gulp-eslint');
+const eslint    = require('gulp-eslint-new');
 const del       = require('del');
 
 
