@@ -20,7 +20,6 @@ jobs:
 
       - uses: DevExpress/testcafe-build-system/actions/publish@main
         env:
-          NODE_AUTH_TOKEN: ''
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         with:
